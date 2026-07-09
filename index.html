@@ -442,7 +442,7 @@
       <div class="ct-row"><span>Jami</span><b id="cartTotal">0</b></div>
       <div class="ct-row2"><input id="discInp" type="text" inputmode="numeric" placeholder="Chegirma (so'm yoki 10%)" oninput="cartRecalc()"><span id="discShow" class="disc-x"></span></div>
       <div class="ct-row ct-fin"><span>To'lov <button id="roundBtn" class="roundbtn" onclick="cycleRound()">≈ Yo'q</button></span><b id="finalTotal">0</b></div>
-      <div class="pays pays5"><button class="pay active" data-p="naqd" onclick="setPay('naqd',this)">💵 Naqd</button><button class="pay" data-p="karta" onclick="setPay('karta',this)">💳 Karta</button><button class="pay" data-p="payme1" onclick="setPay('payme1',this)">📱 P1</button><button class="pay" data-p="payme2" onclick="setPay('payme2',this)">📱 P2</button><button class="pay" data-p="qarz" onclick="setPay('qarz',this)">🧾 Qarz</button></div><div class="pays" style="grid-template-columns:repeat(3,1fr)"><button class="pay" data-p="bol:tunukafon" onclick="setBolPay('tunukafon',this)">\ud83c\udfed Tunukafon</button><button class="pay" data-p="bol:birja" onclick="setBolPay('birja',this)">\ud83c\udfe2 Birja</button><button class="pay" data-p="bol:travertin" onclick="setBolPay('travertin',this)">\ud83e\uddf1 Travertin</button></div><div id="custRow" class="custrow" style="display:flex;flex-direction:column;align-items:stretch;gap:6px"><div style="display:flex;gap:6px;align-items:center"><input id="custSearch" type="search" placeholder="Mijoz qidiring..." autocomplete="off" oninput="custSearchFn()" style="flex:1;padding:9px 10px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-family:inherit"><button class="btn btn-ghost sm" onclick="addCust(true)">➕</button><input type="hidden" id="custSel"></div><div id="custResults" class="sv-results" style="max-height:190px;overflow:auto"></div></div>
+      <div class="pays pays5"><button class="pay active" data-p="naqd" onclick="setPay('naqd',this)">💵 Naqd</button><button class="pay" data-p="karta" onclick="setPay('karta',this)">💳 Karta</button><button class="pay" data-p="payme1" onclick="setPay('payme1',this)">📱 P1</button><button class="pay" data-p="payme2" onclick="setPay('payme2',this)">📱 P2</button><button class="pay" data-p="qarz" onclick="setPay('qarz',this)">🧾 Qarz</button></div><div class="pays" style="grid-template-columns:repeat(3,1fr)"><button class="pay" data-p="bol:tunukafon" onclick="setBolPay('tunukafon',this)">Tunukafon</button><button class="pay" data-p="bol:birja" onclick="setBolPay('birja',this)">Birja</button><button class="pay" data-p="bol:travertin" onclick="setBolPay('travertin',this)">Travertin</button></div><div id="custRow" class="custrow" style="display:flex;flex-direction:column;align-items:stretch;gap:6px"><div style="display:flex;gap:6px;align-items:center"><input id="custSearch" type="search" placeholder="Mijoz qidiring..." autocomplete="off" oninput="custSearchFn()" style="flex:1;padding:9px 10px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-family:inherit"><button class="btn btn-ghost sm" onclick="addCust(true)">➕</button><input type="hidden" id="custSel"></div><div id="custResults" class="sv-results" style="max-height:190px;overflow:auto"></div></div>
       <div id="bolimRow" class="custrow" style="display:none"><select id="bolimSel" onchange="onBolimSel()"><option value="">— yoki bo'lim qarzi —</option><option value="tunukafon">Tunukafon</option><option value="birja">Birja</option><option value="travertin">Travertin</option></select></div>
       <div class="ct-row2" id="cashRow"><input id="cashInp" type="text" inputmode="numeric" placeholder="Berilgan pul" oninput="calcChange()"><span><b id="changeLbl">Qaytim:</b> <b id="changeShow">—</b></span></div>
       <div class="ct-row2" id="paidRow" style="display:none"><span style="font-size:12px;color:var(--muted);white-space:nowrap">Berilgan turi:</span><div class="paidsel"><button class="pm active" onclick="setPaidM('naqd',this)">Naqd</button><button class="pm" onclick="setPaidM('karta',this)">Karta</button><button class="pm" onclick="setPaidM('payme1',this)">Payme1</button><button class="pm" onclick="setPaidM('payme2',this)">Payme2</button></div></div>
@@ -954,7 +954,7 @@ function completeSale(){
   if(PAY==='qarz'){
     if(BOL){_bolim=BOL;}else{var bs=document.getElementById('bolimSel');_bolim=bs?bs.value:'';}
     if(_bolim){custName='';}
-    else{var cs=document.getElementById('custSel');custName=cs?cs.value:'';if(!custName){toast('Qarz uchun mijoz yoki bo\u2018lim tanlang');return;}}
+    else{var cs=document.getElementById('custSel');custName=cs?cs.value:'';if(!custName){var si=document.getElementById('custSearch');custName=si?(si.value||'').trim():'';}if(!custName){toast('Qarz uchun mijoz yoki bo\u2018lim tanlang');return;}}
     var gq=document.getElementById('cashInp');_qgiven=gq?(_pf(gq.value)||0):0;if(_qgiven<0)_qgiven=0;if(_qgiven>total)_qgiven=total;
   }
   var factor=sub>0?(total/sub):1;
@@ -963,7 +963,7 @@ function completeSale(){
   if(disc>0){sale.disc=disc;sale.sub=sub;}
   if(PAY==='naqd'){var gi=document.getElementById('cashInp');var giv=gi?(_pf(gi.value)||0):0;if(giv>0){sale.given=giv;sale.change=giv-total;}}
   if(PAY==='qarz'){if(_qgiven>0){sale.given=_qgiven;sale.paidMethod=PAIDM;}sale.debt=total-_qgiven;if(_bolim)sale.bolim=_bolim;}
-  if(PAY!=='qarz'){var _cs=document.getElementById('custSel');if(_cs&&_cs.value)custName=_cs.value;}
+  if(PAY!=='qarz'){var _cs=document.getElementById('custSel');custName=(_cs&&_cs.value)?_cs.value:'';if(!custName){var _si=document.getElementById('custSearch');custName=_si?(_si.value||'').trim():'';}}
   if(custName)sale.customer=custName;
   commitEvent('sale',sale);
   CART=[];renderCart();renderStats();updateDayTotal();
@@ -1441,7 +1441,7 @@ function custSearchFn(){
   if(!q){for(i=c.length-1;i>=0&&out.length<20;i--)out.push(c[i]);}
   else{for(i=0;i<c.length&&out.length<30;i++){if(c[i].nom&&c[i].nom.toLowerCase().indexOf(q)>=0)out.push(c[i]);}}
   window.CUSTRES=out;
-  if(el)el.innerHTML=out.length?out.map(function(x,ix){return '<button class="svr" onclick="custPickIdx('+ix+')"><span class="svr-n">'+esc(x.nom)+'</span><span class="svr-r">'+(x.debt>0?'qarzi '+grp(x.debt):'')+'</span></button>';}).join(''):'<div class="svr-empty">Mijoz yo\u2018q \u2014 \u2795 bilan qo\u2018shing</div>';
+  if(el)el.innerHTML=out.length?out.map(function(x,ix){return '<button class="svr" onclick="custPickIdx('+ix+')"><span class="svr-n">'+esc(x.nom)+'</span><span class="svr-r">'+(x.debt>0?'qarzi '+grp(x.debt):'')+'</span></button>';}).join(''):'<div class="svr-empty">Mijoz yo\u2018q ('+getCust().length+' ta bazada) \u2014 \u2795 bilan qo\u2018shing</div>';
 }
 function custPickIdx(i){var x=(window.CUSTRES||[])[i];if(!x)return;var hid=document.getElementById('custSel');if(hid)hid.value=x.nom;var inp=document.getElementById('custSearch');if(inp)inp.value=x.nom;var el=document.getElementById('custResults');if(el)el.innerHTML='';}
 var MTAB='barcha';
