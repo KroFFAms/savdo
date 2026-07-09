@@ -401,7 +401,7 @@
     <h1>KROFF <span class="dot">·</span> Savdo</h1>
     <div class="syncchip" id="syncChip" onclick="manualSync()">☁️ …</div>
     <button class="menu-btn" onclick="toggleMenu(event)" aria-label="Menyu">☰</button>
-    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v35</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)">📦 Tovarlar</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)">🛒 Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)">📈 Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)">🚚 Kirim</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)">👤 Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)">🔧 Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)">💰 Kassa</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)">📋 Sanoq</button><button class="menu-item" data-v="tahlil" data-admin="1" onclick="switchView('tahlil',this)">📊 Tahlil</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)">🛠 Boshqaruv</button><button class="menu-item" data-admin="1" onclick="manualSync()">🔄 Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="editPins()">🔑 Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)">👥 Qurilmalar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d">🔒 Qulflash (chiqish)</button></div>
+    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v37</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)">📦 Tovarlar</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)">🛒 Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)">📈 Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)">🚚 Kirim</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)">👤 Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)">🔧 Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)">💰 Kassa</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)">📋 Sanoq</button><button class="menu-item" data-v="tahlil" data-admin="1" onclick="switchView('tahlil',this)">📊 Tahlil</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)">🛠 Boshqaruv</button><button class="menu-item" data-admin="1" onclick="manualSync()">🔄 Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="editPins()">🔑 Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)">👥 Qurilmalar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d">🔒 Qulflash (chiqish)</button></div>
     <div class="stats" id="stats">
       <div class="stat"><div class="v" id="s_tovar">0</div><div class="l">Tovar turi</div></div>
       <div class="stat"><div class="v" id="s_qty">0</div><div class="l">Qoldiq (dona)</div></div>
@@ -984,6 +984,7 @@ var HTAB='dashboard';
 function setHTab(t,btn){HTAB=t;var b=document.querySelectorAll('.htab .ht');for(var i=0;i<b.length;i++)b[i].classList.remove('active');btn.classList.add('active');var hp=document.getElementById('hperRow');if(hp)hp.style.display=(t==='oylik'||t==='qoldiq')?'none':'flex';renderHisobot();}
 function setHPer(p,btn){HPER=p;var b=document.querySelectorAll('.hper .hp');for(var i=0;i<b.length;i++)b[i].classList.remove('active');btn.classList.add('active');renderHisobot();}
 function gotoQoldiq(){var b=document.querySelectorAll('.htab .ht');for(var i=0;i<b.length;i++){if(/Qoldiq/.test(b[i].textContent)){setHTab('qoldiq',b[i]);return;}}}
+function gotoQarzdor(){switchView('mijoz');var b=document.querySelectorAll('#view-mijoz .htab .ht');for(var i=0;i<b.length;i++){if(/Qarzdor/.test(b[i].textContent)){setMTab('qarz',b[i]);return;}}}
 function inPeriod(day){var t=new Date();
   if(HPER==='bugun')return day===dayStr(t);
   if(HPER==='oy')return day.slice(0,7)===dayStr(t).slice(0,7);
@@ -1061,6 +1062,8 @@ function renderH_dashboard(el,all){
   var _lowN=0,_outN=0; if(window.PRODUCTS){PRODUCTS.forEach(function(p){if(p.arxiv)return;var q=p.qoldiq||0; if(q<=0)_outN++; else if(q<=3)_lowN++;});}
   var h='';
   if(_lowN||_outN){h+='<div onclick="gotoQoldiq()" style="cursor:pointer;background:#FFF4E5;border:1px solid #F0C98B;color:#8a4b00;border-radius:11px;padding:10px 12px;margin-bottom:10px;font-weight:700;font-size:13.5px">\u26a0\ufe0f Kam qolgan: '+_lowN+' ta \u00b7 Tugagan: '+_outN+' ta \u2014 Qoldiqni ko\u2018rish \u203a</div>';}
+  {var _od=0,_odC=0;try{var _dm={};all.forEach(function(x){if(x.pay==='qarz'&&x.due&&x.customer){if(!_dm[x.customer]||x.due<_dm[x.customer])_dm[x.customer]=x.due;}});var _tod=dayStr(new Date());getCust().forEach(function(cx){if((cx.debt||0)>0&&_dm[cx.nom]&&_dm[cx.nom]<_tod){_od+=cx.debt;_odC++;}});}catch(e){}
+  if(_od>0)h+='<div onclick="gotoQarzdor()" style="cursor:pointer;background:#FDECEA;border:1px solid #E8A9A0;color:#a32d2d;border-radius:11px;padding:10px 12px;margin-bottom:10px;font-weight:700;font-size:13.5px">\u26a0\ufe0f Muddati o\u2019tgan qarz: '+grp(_od)+' \u00b7 '+_odC+' mijoz \u2014 ko\u2019rish \u203a</div>';}
   h+='<div class="dcards">';
   h+=_dcard('Savdo',grp(rev),'#1F4E79','\ud83d\udcb0');
   h+=_dcard('Foyda',grp(foyda),'#375623','\ud83d\udcc8');
@@ -1253,6 +1256,8 @@ function chkFilterRows(){
   }
   if(lastBar)lastBar.style.display=barVis?'':'none';
 }
+var _openChecks={};
+function chekToggle(el,id){el.classList.toggle('open');if(el.classList.contains('open'))_openChecks[id]=1;else delete _openChecks[id];}
 function renderH_cheklar(el,all){
   HCHQ='';
   var sel=all.filter(function(x){return inPeriod(x.day);});
@@ -1278,7 +1283,7 @@ function renderH_cheklar(el,all){
       var num=String(x.id).replace(/\D/g,'').slice(-6),isR=!!x.isReturn,done=!!retSet[x.id];
       var it=(x.items||[]).map(function(z){return '<div class="ci-row"><span>'+esc(z.nom)+' \u00d7'+Math.abs(z.qty)+'</span><b>'+grp(Math.abs(z.narx*z.qty))+'</b></div>';}).join('');
       var retBtn=(!isR&&!done)?'<button class="retbtn" onclick="event.stopPropagation();returnSale(\''+x.id+'\')">\u21a9\ufe0f</button>':'';
-      h+='<div class="sale'+(isR?' isret':'')+'" data-f="'+((String(x.id).replace(/\D/g,'')+' '+(x.customer||'')+' '+(x.seller||'')).toLowerCase())+'" onclick="this.classList.toggle(\'open\')"><div class="sale-u">'+grp(Math.abs(Math.round(u)))+'<i>dona</i></div>'+
+      h+='<div class="sale'+(isR?' isret':'')+(_openChecks[x.id]?' open':'')+'" data-f="'+((String(x.id).replace(/\D/g,'')+' '+(x.customer||'')+' '+(x.seller||'')).toLowerCase())+'" onclick="chekToggle(this,\''+x.id+'\')"><div class="sale-u">'+grp(Math.abs(Math.round(u)))+'<i>dona</i></div>'+
          '<div class="sale-m"><div class="sale-t">'+(isR?'\u21a9\ufe0f Qaytarilgan \u00b7 ':'#'+num+' \u00b7 ')+tm+'</div><div class="sale-c">'+(x.seller?esc(x.seller):'')+(x.customer?' \u00b7 \ud83d\udc64 '+esc(x.customer):'')+'</div></div>'+
          '<div class="sale-r"><div class="sale-a'+(isR?' ret':'')+'">'+(isR?'\u2212':'')+grp(Math.abs(x.total))+'</div><div class="sale-p '+x.pay+'">'+payLbl(x.pay)+'</div></div>'+retBtn+
          '<div class="sale-items">'+it+'<div style="margin-top:8px;text-align:right"><button class="prnbtn" onclick="event.stopPropagation();printSaleById(\''+x.id+'\')">\ud83d\udda8\ufe0f Chek chiqarish</button></div></div></div>';
@@ -1447,6 +1452,9 @@ function uid(pre){return pre+Date.now()+Math.floor(Math.random()*1000);}
 function addSup(){var n=prompt('Ta\u2019minotchi nomi:');if(!n)return;var p=prompt('Telefon (ixtiyoriy):','')||'';commitEvent('sup',{id:uid('sup'),nom:n.trim(),phone:p.trim()});renderKirim();toast('\u2705 Ta\u2019minotchi qo\u2019shildi');}
 function supPay(id){var s=getSup();for(var i=0;i<s.length;i++)if(s[i].id===id){var a=_pf(prompt('To\u2019lov summasi (qarzdan ayiriladi):','0'));if(!a)return;commitEvent('pay',{typ:'sup',id:id,amount:a});renderKirim();toast('\u2705 To\u2019lov: '+grp(a));break;}}
 function supDel(id){if(!confirm('Ta\u2019minotchi o\u2019chirilsinmi?'))return;commitEvent('supdel',{id:id});renderKirim();}
+var _supDueTarget=null;
+function supDueOpen(id){_supDueTarget=id;var inp=document.getElementById('supDueInp');if(!inp)return;var s=getSup();for(var i=0;i<s.length;i++)if(s[i].id===id){inp.value=s[i].due||'';break;}if(inp.showPicker){try{inp.showPicker();return;}catch(e){}}inp.click();}
+function _supDuePick(){var inp=document.getElementById('supDueInp');if(!inp||!_supDueTarget)return;var id=_supDueTarget;_supDueTarget=null;commitEvent('supdue',{id:id,due:inp.value||''});renderKirim();toast(inp.value?('\u2705 To\u2019lov muddati: '+_dmy(inp.value)):'Muddat olib tashlandi');}
 function renderKirimHist(){
   var el=document.getElementById('kirimHist');if(!el)return;
   var sup=getSup(),supMap={};sup.forEach(function(s){supMap[s.id]=s.nom;});
@@ -1470,10 +1478,12 @@ function renderKirim(){
   var el=document.getElementById('supList');
   if(!sup.length){el.innerHTML='<div class="cart-empty">Ta\u2019minotchi yo\u2018q. \u201cQo\u2019shish\u201d bosing.</div>';}
   else{var jami=0;var h='';sup.forEach(function(s){jami+=(s.debt||0);var dc=(s.debt>0)?'pos':'zero';
-    h+='<div class="supitem"><div class="sm2"><div class="nn">'+esc(s.nom)+'</div><div class="pp">'+(s.phone?esc(s.phone)+' \u00b7 ':'')+'qarzimiz: <span class="'+dc+'" style="font-weight:700">'+grp(s.debt||0)+'</span></div></div>'+
+    var _sdh='';if((s.debt||0)>0&&s.due){var _sod=s.due<dayStr(new Date());_sdh=' \u00b7 <span style="font-weight:700;color:'+(_sod?'#a32d2d':'#9aa4b2')+'">'+(_sod?'\u26a0\ufe0f muddati o\u2019tgan ':'muddat ')+_dmy(s.due)+'</span>';}
+    h+='<div class="supitem"><div class="sm2"><div class="nn">'+esc(s.nom)+'</div><div class="pp">'+(s.phone?esc(s.phone)+' \u00b7 ':'')+'qarzimiz: <span class="'+dc+'" style="font-weight:700">'+grp(s.debt||0)+'</span>'+_sdh+'</div></div>'+
+      ((s.debt||0)>0?'<button class="minibtn" onclick="supDueOpen(\''+s.id+'\')">\ud83d\uddd3\ufe0f</button>':'')+
       '<button class="minibtn" onclick="supPay(\''+s.id+'\')">To\u2019lov</button>'+
       '<button class="minibtn" onclick="supDel(\''+s.id+'\')">\u2715</button></div>';});
-    h='<div class="brow" style="font-weight:800"><span>Jami qarzimiz</span><b class="'+(jami>0?"debt pos":"debt zero")+'">'+grp(jami)+'</b></div>'+h;
+    h='<input type="date" id="supDueInp" onchange="_supDuePick()" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0"><div class="brow" style="font-weight:800"><span>Jami qarzimiz</span><b class="'+(jami>0?"debt pos":"debt zero")+'">'+grp(jami)+'</b></div>'+h;
     el.innerHTML=h;}
   // kirim search
   if(!renderKirim._bound){var kq=document.getElementById('kq');if(kq){kq.addEventListener('input',function(){clearTimeout(_kqt);_kqt=setTimeout(kSearch,120);});renderKirim._bound=1;}}
@@ -2253,7 +2263,7 @@ function applyEvent(ev){
   }else if(ev.kind==='pay'){
     if(pl.typ==='bolim'){var bl=getBolim();for(var bk=0;bk<bl.length;bk++){if(bl[bk].id===pl.id){bl[bk].debt=Math.max(0,(bl[bk].debt||0)-pl.amount);break;}}setBolim(bl);}
     else{var arr=(pl.typ==='sup')?getSup():getCust();for(var k=0;k<arr.length;k++){if(arr[k].id===pl.id){arr[k].debt=Math.max(0,(arr[k].debt||0)-pl.amount);break;}}if(pl.typ==='sup')setSup(arr);else setCust(arr);}
-  }else if(ev.kind==='sup'||ev.kind==='cust'){
+  }else if(ev.kind==='supdue'){var sdd=getSup();for(var sq=0;sq<sdd.length;sq++){if(sdd[sq].id===pl.id){sdd[sq].due=pl.due||'';break;}}setSup(sdd);}else if(ev.kind==='sup'||ev.kind==='cust'){
     var g=(ev.kind==='sup')?getSup():getCust(),ex=0;for(var m=0;m<g.length;m++){if(g[m].id===pl.id){g[m].nom=pl.nom;g[m].phone=pl.phone;ex=1;break;}}if(!ex)g.push({id:pl.id,nom:pl.nom,phone:pl.phone,debt:0});if(ev.kind==='sup')setSup(g);else setCust(g);
   }else if(ev.kind==='custbulk'){
     var cu=getCust();(pl.list||[]).forEach(function(it){var cf=0;for(var ci=0;ci<cu.length;ci++){if(cu[ci].nom===it.nom){cu[ci].debt=it.debt||0;if(it.phone)cu[ci].phone=it.phone;cf=1;break;}}if(!cf)cu.push({id:uid('cust'),nom:it.nom,phone:it.phone||'',debt:it.debt||0});});setCust(cu);
