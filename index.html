@@ -401,7 +401,7 @@
     <h1>KROFF <span class="dot">·</span> Savdo</h1>
     <div class="syncchip" id="syncChip" onclick="manualSync()">☁️ …</div>
     <button class="menu-btn" onclick="toggleMenu(event)" aria-label="Menyu">☰</button>
-    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v51</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)">📦 Tovarlar</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)">🛒 Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)">📈 Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)">🚚 Kirim</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)">👤 Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)">🔧 Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)">💰 Kassa</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)">📋 Sanoq</button><button class="menu-item" data-v="tahlil" data-admin="1" onclick="switchView('tahlil',this)">📊 Tahlil</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)">🛠 Boshqaruv</button><button class="menu-item" data-admin="1" onclick="manualSync()">🔄 Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="editPins()">🔑 Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)">👥 Qurilmalar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d">🔒 Qulflash (chiqish)</button></div>
+    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v53</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)">📦 Tovarlar</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)">🛒 Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)">📈 Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)">🚚 Kirim</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)">👤 Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)">🔧 Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)">💰 Kassa</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)">📋 Sanoq</button><button class="menu-item" data-v="tahlil" data-admin="1" onclick="switchView('tahlil',this)">📊 Tahlil</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)">🛠 Boshqaruv</button><button class="menu-item" data-admin="1" onclick="manualSync()">🔄 Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="editPins()">🔑 Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)">👥 Qurilmalar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d">🔒 Qulflash (chiqish)</button></div>
     <div class="stats" id="stats">
       <div class="stat"><div class="v" id="s_tovar">0</div><div class="l">Tovar turi</div></div>
       <div class="stat"><div class="v" id="s_qty">0</div><div class="l">Qoldiq (dona)</div></div>
@@ -921,8 +921,11 @@ function printReceipt(sale){
   h+='<div class="r-c">&nbsp;</div>';
   document.getElementById('receiptArea').innerHTML=h;
   try{JsBarcode('#rcBar',recNo,{format:'CODE128',width:2,height:46,margin:0,displayValue:true,fontSize:13});}catch(e){}
-  setTimeout(function(){window.print();},80);
+  var _rp=document.getElementById('rcPaper');if(_rp){_rp.innerHTML=h.replace('id="rcBar"','id="rcBar2"');try{JsBarcode('#rcBar2',recNo,{format:'CODE128',width:2,height:46,margin:0,displayValue:true,fontSize:13});}catch(e){}}
+  var _rm=document.getElementById('rcModal');if(_rm)_rm.style.display='block';
 }
+function closeRcModal(){var m=document.getElementById('rcModal');if(m)m.style.display='none';}
+function printNow(){window.print();}
 function printLabelIdx(i){var p=(window.LASTRES||[])[i]; if(p)printLabel(p); else toast('Tovar topilmadi');}
 function printLabel(p){
   var h='<div class="lbl">';
@@ -1070,7 +1073,7 @@ function renderH_moliya(el,all){
     var bolDebt=0;getBolim().forEach(function(b){if((b.debt||0)>0)bolDebt+=b.debt;});
     function tbl(title){return '<div class="htbl"><div class="htr hth"><span style="grid-column:1/4">'+title+'</span><span>Summa (so\u2019m)</span></div>';}
     function row(lbl,val,cls){return '<div class="htr"><span style="grid-column:1/4;text-align:left">'+lbl+'</span><span'+(cls?' class="'+cls+'"':'')+'>'+grp(Math.round(val))+'</span></div>';}
-    var h='<div class="bstat"><div class="bv">'+grp(net)+'</div><div class="bl">'+_periodLabel()+' \u00b7 sof foyda</div></div>';
+    var h='<div class="bstat"><div class="bv">'+grp(rev)+'</div><div class="bl">'+_periodLabel()+' \u00b7 savdo \u00b7 sof foyda '+grp(net)+'</div></div>';
     h+=tbl('Moliyaviy natija');
     h+=row('Savdo (jami)',rev);
     h+=row('Tannarx (COGS)',cogs);
@@ -2665,6 +2668,7 @@ openDB(function(){
 });
 </script>
 <button id="printLastBtn" onclick="printLast()">🖨 Chek chiqarish</button>
+<div id="rcModal" onclick="if(event.target===this)closeRcModal()" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);overflow:auto;padding:16px;box-sizing:border-box"><div style="background:#fff;border-radius:12px;max-width:340px;width:100%;margin:0 auto;overflow:hidden"><div id="rcPaper" style="padding:16px 16px 8px;font-family:'Courier New',ui-monospace,monospace;color:#000;font-size:12.5px;line-height:1.4"></div><div style="display:flex;gap:8px;padding:12px 16px;border-top:1px solid #eee"><button class="btn btn-ghost" style="flex:1" onclick="closeRcModal()">Yopish</button><button class="btn" style="flex:1;color:#fff" onclick="printNow()">🖨 Chop etish</button></div></div></div>
 <div id="receiptArea"></div>
 <script>
 try{
