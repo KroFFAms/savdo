@@ -401,7 +401,7 @@
     <h1>KROFF <span class="dot">·</span> Savdo</h1>
     <div class="syncchip" id="syncChip" onclick="manualSync()">☁️ …</div>
     <button class="menu-btn" onclick="toggleMenu(event)" aria-label="Menyu">☰</button>
-    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v48</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)">📦 Tovarlar</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)">🛒 Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)">📈 Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)">🚚 Kirim</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)">👤 Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)">🔧 Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)">💰 Kassa</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)">📋 Sanoq</button><button class="menu-item" data-v="tahlil" data-admin="1" onclick="switchView('tahlil',this)">📊 Tahlil</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)">🛠 Boshqaruv</button><button class="menu-item" data-admin="1" onclick="manualSync()">🔄 Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="editPins()">🔑 Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)">👥 Qurilmalar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d">🔒 Qulflash (chiqish)</button></div>
+    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v50</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)">📦 Tovarlar</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)">🛒 Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)">📈 Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)">🚚 Kirim</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)">👤 Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)">🔧 Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)">💰 Kassa</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)">📋 Sanoq</button><button class="menu-item" data-v="tahlil" data-admin="1" onclick="switchView('tahlil',this)">📊 Tahlil</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)">🛠 Boshqaruv</button><button class="menu-item" data-admin="1" onclick="manualSync()">🔄 Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="editPins()">🔑 Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)">👥 Qurilmalar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d">🔒 Qulflash (chiqish)</button></div>
     <div class="stats" id="stats">
       <div class="stat"><div class="v" id="s_tovar">0</div><div class="l">Tovar turi</div></div>
       <div class="stat"><div class="v" id="s_qty">0</div><div class="l">Qoldiq (dona)</div></div>
@@ -492,6 +492,11 @@
     <button class="btn btn-ghost sm" onclick="document.getElementById('restoreFile').click()">📂 Fayldan tiklash</button>
     <input id="restoreFile" type="file" accept="application/json,.json" style="display:none" onchange="restoreFile(this)">
   </div>
+  <div class="bhead">📦 Arxiv (o’tgan yillar)</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+    <button class="btn btn-ghost sm" onclick="arxivExport()">📦 Yilni arxivga chiqarish</button>
+    <button class="btn btn-ghost sm" onclick="arxivOpen()">👁️ Arxivni ochib ko’rish</button>
+  </div>
   <div style="font-size:11.5px;color:var(--muted);margin-bottom:6px">Zaxira faylni xavfsiz joyda saqlang. Tiklash hozirgi ma'lumotni almashtiradi.</div>
   <div id="persistInfo" style="font-size:11.5px;color:var(--muted);margin-bottom:14px">Doimiy saqlash tekshirilmoqda…</div>
   <div class="bhead">O'zgarishlar tarixi</div>
@@ -513,6 +518,12 @@
   <div style="padding:8px 12px 0"><input id="retSearch" type="search" inputmode="search" placeholder="🔎 Chek № / mijoz / tovar (skaner ham)" oninput="retSearch()" style="width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font-size:14px;font-family:inherit;box-sizing:border-box"></div>
   <div class="cmledger" id="retBody"></div>
   <div class="cmfoot" id="retFoot" style="display:none"></div>
+</div></div>
+<div class="cmodal" id="arxivModal" onclick="if(event.target===this)closeArxiv()"><div class="cmbox">
+  <div class="cmhead"><div><div class="cmnom">📦 Arxiv ko’ruvchi</div><div class="cmph">O’tgan yillar savdosi</div></div><button class="cmx" onclick="closeArxiv()">✕</button></div>
+  <div style="padding:8px 12px 0"><button class="btn btn-ghost sm" onclick="document.getElementById('arxFile').click()">📂 Arxiv faylini tanlash</button><input id="arxFile" type="file" accept="application/json,.json" style="display:none" onchange="arxivViewFile(this)"></div>
+  <div id="arxSum" style="padding:4px 12px 0;font-size:13px"></div>
+  <div class="cmledger" id="arxBody"></div>
 </div></div>
 <div id="scanOv" class="scanov">
   <div class="scan-top"><span>📷 Shtrix skaner</span><button onclick="closeScan()" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer">✕</button></div>
@@ -1989,6 +2000,7 @@ function doBackup(){
       a.href=url;a.download='kroff_backup_'+d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'_'+('0'+d.getHours()).slice(-2)+('0'+d.getMinutes()).slice(-2)+'.json';
       document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},1000);
       toast('\u2705 Zaxira yuklandi ('+events.length+' amal)');
+      try{localStorage.setItem('kroff_lastbk',String(Date.now()));}catch(e){}
     }catch(e){toast('Zaxira xato: '+e.message);}
   }); });
 }
@@ -2218,6 +2230,42 @@ function custDetail(id){
   });
 }
 function closeCust(){document.getElementById('custModal').classList.remove('open');}
+function arxivExport(){
+  var yv=prompt('Qaysi yil arxivini chiqaramiz? (masalan 2025):', String(new Date().getFullYear()-1));
+  if(!yv)return; var y=String(parseInt(yv,10)); if(y==='NaN'){toast('Yil noto\u2019g\u2019ri');return;}
+  salesLoad(function(all){
+    var sel=all.filter(function(x){return String(x.day||'').slice(0,4)===y;});
+    if(!sel.length){toast(y+'-yil uchun savdo topilmadi');return;}
+    var rev=0,cost=0,ret=0,bp={naqd:0,karta:0,payme1:0,payme2:0,qarz:0};
+    sel.forEach(function(x){rev+=x.total; if(x.isReturn)ret+=Math.abs(x.total); bp[x.pay]=(bp[x.pay]||0)+x.total; (x.items||[]).forEach(function(it){cost+=(it.xarid||0)*it.qty;});});
+    var data={app:'kroff-arxiv',year:y,ts:new Date().toISOString(),count:sel.length,summary:{savdo:rev,tannarx:cost,foyda:rev-cost,vozvrat:ret,payments:bp},sales:sel};
+    try{var blob=new Blob([JSON.stringify(data)],{type:'application/json'});var url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='kroff_arxiv_'+y+'.json';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},1000);toast('\u2705 '+y+'-yil arxivi: '+sel.length+' savdo yuklandi');}catch(e){toast('Xato: '+e.message);}
+  });
+}
+function arxivOpen(){document.getElementById('arxivModal').classList.add('open');document.getElementById('arxSum').innerHTML='';document.getElementById('arxBody').innerHTML='<div class="cart-empty">Arxiv faylini tanlang (\U0001F4C2 tugma)</div>';}
+function closeArxiv(){document.getElementById('arxivModal').classList.remove('open');}
+function arxivViewFile(input){
+  var f=input.files&&input.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(e){
+    try{var d=JSON.parse(e.target.result);
+      if(d.app!=='kroff-arxiv'||!d.sales){toast('Bu KROFF arxiv fayli emas');input.value='';return;}
+      var sm=d.summary||{};
+      document.getElementById('arxSum').innerHTML='<div style="background:#EEF4FB;border:1px solid #B9D3EC;border-radius:10px;padding:9px 11px;margin:4px 0"><b>'+esc(String(d.year))+'-yil arxivi</b> \u00b7 '+d.count+' savdo<br>Savdo: '+grp(sm.savdo||0)+' \u00b7 Foyda: '+grp(sm.foyda||0)+' \u00b7 Vozvrat: '+grp(sm.vozvrat||0)+'</div>';
+      var list=d.sales.slice().sort(function(a,b){return (new Date(b.ts||b.day))-(new Date(a.ts||a.day));});
+      var h='';list.slice(0,500).forEach(function(x){
+        var t=new Date(x.ts||x.day),tm=('0'+t.getDate()).slice(-2)+'.'+('0'+(t.getMonth()+1)).slice(-2)+'.'+t.getFullYear();
+        var its=(x.items||[]).map(function(z){return esc(z.nom)+' \u00d7'+z.qty;}).join(', ')||'savdo';
+        h+='<div class="cmrow"><div class="cmr-l"><div class="cmr-d">'+tm+(x.customer?' \u00b7 \U0001F464 '+esc(x.customer):'')+' \u00b7 '+payLbl(x.pay)+(x.isReturn?' \u00b7 \u21a9\uFE0F':'')+'</div><div class="cmr-t">'+its+'</div></div><div class="cmr-a" style="color:'+(x.isReturn?'#a32d2d':'#1F4E79')+'">'+grp(x.total)+'</div></div>';
+      });
+      if(list.length>500)h+='<div style="text-align:center;color:var(--muted);padding:10px;font-size:12px">... '+list.length+' tadan 500 tasi ko\u2019rsatildi</div>';
+      document.getElementById('arxBody').innerHTML=h||'<div class="cart-empty">Bo\u2018sh</div>';
+    }catch(err){toast('Fayl xato: '+err.message);}
+    input.value='';
+  };
+  r.readAsText(f);
+}
+
 var _retSel=null,_retRemain={},_retQty={};
 function openReturn(){
   if(!can('vazvrat')){toast('Qaytarishga ruxsat yo\u2019q');return;}
@@ -2456,6 +2504,13 @@ function _afterState(){
   else if(b.indexOf('v-kirim')>=0)renderKirim();
   else if(b.indexOf('v-mijoz')>=0)renderMijoz();
   else if(b.indexOf('v-sotuv')>=0){renderCart();updateDayTotal();}
+  _bkReminder();
+}
+var _bkChecked=false;
+function _bkReminder(){if(_bkChecked)return;_bkChecked=true;
+  try{var last=+localStorage.getItem('kroff_lastbk')||0;var days=(Date.now()-last)/86400000;
+    if(days>=7){setTimeout(function(){toast('\ud83d\udcbe Zaxira olishni unutmang \u2014 Boshqaruv \u2192 Zaxira olish');},4500);}
+  }catch(e){}
 }
 
 function cloudPushSoon(){if(!_syncOn)return;clearTimeout(_pushT);_pushT=setTimeout(cloudSync,1200);}
