@@ -401,7 +401,7 @@
     <h1>KROFF <span class="dot">·</span> Savdo</h1>
     <div class="syncchip" id="syncChip" onclick="manualSync()">☁️ …</div>
     <button class="menu-btn" onclick="toggleMenu(event)" aria-label="Menyu">☰</button>
-    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v55</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)">📦 Tovarlar</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)">🛒 Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)">📈 Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)">🚚 Kirim</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)">👤 Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)">🔧 Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)">💰 Kassa</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)">📋 Sanoq</button><button class="menu-item" data-v="tahlil" data-admin="1" onclick="switchView('tahlil',this)">📊 Tahlil</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)">🛠 Boshqaruv</button><button class="menu-item" data-admin="1" onclick="manualSync()">🔄 Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="editPins()">🔑 Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)">👥 Qurilmalar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d">🔒 Qulflash (chiqish)</button></div>
+    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v57</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)">📦 Tovarlar</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)">🛒 Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)">📈 Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)">🚚 Kirim</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)">👤 Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)">🔧 Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)">💰 Kassa</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)">📋 Sanoq</button><button class="menu-item" data-v="tahlil" data-admin="1" onclick="switchView('tahlil',this)">📊 Tahlil</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)">🛠 Boshqaruv</button><button class="menu-item" data-admin="1" onclick="manualSync()">🔄 Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="editPins()">🔑 Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)">👥 Qurilmalar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d">🔒 Qulflash (chiqish)</button></div>
     <div class="stats" id="stats">
       <div class="stat"><div class="v" id="s_tovar">0</div><div class="l">Tovar turi</div></div>
       <div class="stat"><div class="v" id="s_qty">0</div><div class="l">Qoldiq (dona)</div></div>
@@ -496,6 +496,12 @@
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px">
     <button class="btn btn-ghost sm" onclick="arxivExport()">📦 Yilni arxivga chiqarish</button>
     <button class="btn btn-ghost sm" onclick="arxivOpen()">👁️ Arxivni ochib ko’rish</button>
+  </div>
+  <div class="bhead">🌐 Onlayn katalog</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+    <button class="btn btn-ghost sm" onclick="catCfg()">⚙️ Katalog sozlamasi</button>
+    <button class="btn btn-ghost sm" onclick="catalogPush()">🌐 Katalogga yuklash</button>
+    <a class="btn btn-ghost sm" href="https://kroffams.github.io/shop/" target="_blank" style="text-decoration:none">🔗 Katalogni ochish</a>
   </div>
   <div style="font-size:11.5px;color:var(--muted);margin-bottom:6px">Zaxira faylni xavfsiz joyda saqlang. Tiklash hozirgi ma'lumotni almashtiradi.</div>
   <div id="persistInfo" style="font-size:11.5px;color:var(--muted);margin-bottom:14px">Doimiy saqlash tekshirilmoqda…</div>
@@ -2002,6 +2008,26 @@ function setProdSup(id){var pr=findProd(id);if(!pr)return;var s=getSup();
   var bq=document.getElementById('boshq');if(bq)bq.value='';var br=document.getElementById('bosh-results');if(br)br.innerHTML='';
   toast('\u2705 Ta\u2019minotchi: '+(sid?(s[n-1].nom):'tozalandi'));
 }
+function setProdImg(id){var pr=findProd(id);if(!pr)return;var u=prompt('Tovar rasmi havolasi (URL):',pr.img||'');if(u===null)return;commitEvent('prodimg',{pid:id,url:u.trim()});toast(u.trim()?'\u2705 Rasm biriktirildi':'Rasm olib tashlandi');var br=document.getElementById('bosh-results');if(br)br.innerHTML='';var bq=document.getElementById('boshq');if(bq)bq.value='';}
+function _catCfg(){var c={};try{c=JSON.parse(localStorage.getItem('kroff_catcfg'))||{};}catch(e){}return c;}
+function catCfg(){var c=_catCfg();
+  var ph=prompt('\ud83d\udcde Katalog uchun telefon (masalan +998901234567):',c.phone||'');if(ph===null)return;
+  var tg=prompt('\u2708\ufe0f Telegram username (@ belgisiz):',c.tg||'');if(tg===null)return;
+  var nm=prompt('\ud83c\udfea Do\u2019kon nomi:',c.name||'KROFF');if(nm===null)return;
+  var cfg={phone:ph.trim(),tg:(tg.trim().replace(/^@/,'')),name:(nm.trim()||'KROFF')};
+  localStorage.setItem('kroff_catcfg',JSON.stringify(cfg));
+  toast('\u2705 Saqlandi. Endi "Katalogga yuklash" bosing.');}
+function catalogPush(){
+  var arr=[];PRODUCTS.forEach(function(p){if(p.arxiv)return;arr.push({nom:p.nom,narx:p.sotuv,qoldiq:p.qoldiq,barcode:p.barcode||'',artikul:p.artikul||'',img:p.img||''});});
+  var cfg=_catCfg();
+  if(!cfg.phone&&!cfg.tg){if(!confirm('Telefon/Telegram hali kiritilmagan (\u2699\ufe0f Katalog sozlamasi). Baribir yuklaymizmi?'))return;}
+  else if(!confirm(arr.length+' ta tovar onlayn katalogga yuklansinmi?'))return;
+  toast('\u2601\ufe0f Katalog yuklanmoqda...');
+  var body=[{id:1,data:{contacts:cfg,products:arr},updated_at:new Date().toISOString()}];
+  fetch(SB_URL+'/rest/v1/catalog',{method:'POST',headers:_sbHdr({'Prefer':'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify(body)})
+    .then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error('HTTP '+r.status+': '+t.slice(0,140));});toast('\u2705 Katalog yuklandi: '+arr.length+' tovar');})
+    .catch(function(e){toast('Katalog xato: '+e.message);});
+}
 function writeoffProd(id){if(!can('proddel')){toast('Tovar o\u2019chirishga ruxsat yo\u2019q');return;}var pr=findProd(id);if(!pr)return;
   var qty=_pf(prompt('Hisobdan chiqariladigan soni ('+pr.nom+')\nQoldiq: '+grp(pr.qoldiq),'0'));if(!qty)return;
   var reason=prompt('Sabab (buzilgan/yo\u2018qolgan...):','buzilgan')||'';
@@ -2013,7 +2039,7 @@ function boshSearch(){ensureIndex();var q=_norm(document.getElementById('boshq')
   if(!q){el.innerHTML='';return;}
   var res=[];for(var i=0;i<PRODUCTS.length&&res.length<30;i++){var pp=PRODUCTS[i];if((pp._s&&pp._s.indexOf(q)>=0)||(pp.barcode&&pp.barcode.indexOf(q)>=0))res.push(pp);}
   if(!res.length){el.innerHTML='<div class="svr-empty">Topilmadi</div>';return;}
-  var h='';res.forEach(function(pp){h+='<div class="svr" style="cursor:default"><span class="svr-n">'+esc(pp.nom)+'<div class="svr-r" style="margin-top:3px">'+grp(pp.sotuv)+(pp.optom?' \u00b7 optom '+grp(pp.optom):'')+' \u00b7 qoldiq '+grp(pp.qoldiq)+'</div></span><span style="display:flex;gap:6px;flex-shrink:0"><button class="minibtn" onclick="repriceProd(\''+pp.id+'\')">\ud83c\udff7 Narx</button><button class="minibtn" onclick="setOptomPrice(\''+pp.id+'\')">\ud83d\udce6 Optom</button><button class="minibtn" onclick="setProdSup(\''+pp.id+'\')">\ud83d\ude9a</button><button class="minibtn" onclick="writeoffProd(\''+pp.id+'\')">\u2796</button></span></div>';});
+  var h='';res.forEach(function(pp){h+='<div class="svr" style="cursor:default"><span class="svr-n">'+esc(pp.nom)+'<div class="svr-r" style="margin-top:3px">'+grp(pp.sotuv)+(pp.optom?' \u00b7 optom '+grp(pp.optom):'')+' \u00b7 qoldiq '+grp(pp.qoldiq)+'</div></span><span style="display:flex;gap:6px;flex-shrink:0"><button class="minibtn" onclick="repriceProd(\''+pp.id+'\')">\ud83c\udff7 Narx</button><button class="minibtn" onclick="setOptomPrice(\''+pp.id+'\')">\ud83d\udce6 Optom</button><button class="minibtn" onclick="setProdSup(\''+pp.id+'\')">\ud83d\ude9a</button><button class="minibtn" onclick="setProdImg(\''+pp.id+'\')">\ud83d\udcf7</button><button class="minibtn" onclick="writeoffProd(\''+pp.id+'\')">\u2796</button></span></div>';});
   el.innerHTML=h;
 }
 function ensurePersist(){
@@ -2521,7 +2547,7 @@ function applyEvent(ev){
     var cu=getCust();(pl.list||[]).forEach(function(it){var cf=0;for(var ci=0;ci<cu.length;ci++){if(cu[ci].nom===it.nom){cu[ci].debt=it.debt||0;if(it.phone)cu[ci].phone=it.phone;cf=1;break;}}if(!cf)cu.push({id:uid('cust'),nom:it.nom,phone:it.phone||'',debt:it.debt||0});});setCust(cu);
   }else if(ev.kind==='supdel'||ev.kind==='custdel'){
     var typ=(ev.kind==='supdel')?'sup':'cust';var d2=((typ==='sup')?getSup():getCust()).filter(function(x){return x.id!==pl.id;});if(typ==='sup')setSup(d2);else setCust(d2);
-  }else if(ev.kind==='adjust'){var pa=findProd(pl.pid);if(pa)pa.qoldiq=pl.to;}else if(ev.kind==='config'){if(pl.pins){try{localStorage.setItem('kroff_pins',JSON.stringify(pl.pins));}catch(e){}}}else if(ev.kind==='prodadd'){if(!findProd(pl.id)){var np={id:pl.id,nom:pl.nom,artikul:pl.artikul||'',barcode:pl.barcode||'',olchov:pl.olchov||'dona',kategoriya:pl.kategoriya||'',brend:'',sotuv:pl.sotuv||0,xarid:pl.xarid||0,qoldiq:pl.qoldiq||0,marja:0,arxiv:false};np._s=(np.nom+' '+np.brend+' '+np.kategoriya).toLowerCase();PRODUCTS.push(np);if(np.barcode){if(!BCX[np.barcode])BCX[np.barcode]=[];BCX[np.barcode].push(np);}}}else if(ev.kind==='reprice'){var rp=findProd(pl.pid);if(rp){if(pl.sotuv!=null)rp.sotuv=pl.sotuv;if(pl.xarid!=null)rp.xarid=pl.xarid;}}else if(ev.kind==='writeoff'){var wp=findProd(pl.pid);if(wp)wp.qoldiq=Math.round((wp.qoldiq-pl.qty)*1000)/1000;}else if(ev.kind==='optom'){var oo=findProd(pl.pid);if(oo&&pl.optom!=null)oo.optom=pl.optom;}else if(ev.kind==='prodsup'){var psx=findProd(pl.pid);if(psx)psx.supId=(pl.supId||'');}
+  }else if(ev.kind==='adjust'){var pa=findProd(pl.pid);if(pa)pa.qoldiq=pl.to;}else if(ev.kind==='config'){if(pl.pins){try{localStorage.setItem('kroff_pins',JSON.stringify(pl.pins));}catch(e){}}}else if(ev.kind==='prodadd'){if(!findProd(pl.id)){var np={id:pl.id,nom:pl.nom,artikul:pl.artikul||'',barcode:pl.barcode||'',olchov:pl.olchov||'dona',kategoriya:pl.kategoriya||'',brend:'',sotuv:pl.sotuv||0,xarid:pl.xarid||0,qoldiq:pl.qoldiq||0,marja:0,arxiv:false};np._s=(np.nom+' '+np.brend+' '+np.kategoriya).toLowerCase();PRODUCTS.push(np);if(np.barcode){if(!BCX[np.barcode])BCX[np.barcode]=[];BCX[np.barcode].push(np);}}}else if(ev.kind==='reprice'){var rp=findProd(pl.pid);if(rp){if(pl.sotuv!=null)rp.sotuv=pl.sotuv;if(pl.xarid!=null)rp.xarid=pl.xarid;}}else if(ev.kind==='writeoff'){var wp=findProd(pl.pid);if(wp)wp.qoldiq=Math.round((wp.qoldiq-pl.qty)*1000)/1000;}else if(ev.kind==='optom'){var oo=findProd(pl.pid);if(oo&&pl.optom!=null)oo.optom=pl.optom;}else if(ev.kind==='prodsup'){var psx=findProd(pl.pid);if(psx)psx.supId=(pl.supId||'');}else if(ev.kind==='prodimg'){var pix=findProd(pl.pid);if(pix)pix.img=(pl.url||'');}
   else if(ev.kind==='aritem'){if(pl.del){for(var ai=0;ai<ARITEMS.length;ai++){if(ARITEMS[ai].id===pl.id){ARITEMS.splice(ai,1);break;}}}else{var af=0;for(var ai2=0;ai2<ARITEMS.length;ai2++){if(ARITEMS[ai2].id===pl.id){ARITEMS[ai2]={id:pl.id,nom:pl.nom,kun:pl.kun,soat:pl.soat};af=1;break;}}if(!af)ARITEMS.push({id:pl.id,nom:pl.nom,kun:pl.kun,soat:pl.soat});}}
   else if(ev.kind==='arout'){ARENTALS[pl.rid]={rid:pl.rid,itemId:pl.itemId,nom:pl.nom,mijoz:pl.mijoz,kun:pl.kun,soat:pl.soat,tsOut:pl.ts,zalog:pl.zalog||0,closed:false};}
   else if(ev.kind==='arin'){if(ARENTALS[pl.rid]){ARENTALS[pl.rid].closed=true;ARENTALS[pl.rid].tsIn=pl.ts;ARENTALS[pl.rid].haqi=pl.haqi;ARENTALS[pl.rid].method=pl.method;}}
