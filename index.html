@@ -904,7 +904,7 @@ function addToCart(id){var p=findProd(id);if(!p){toast('Topilmadi (id): '+id);re
   var px=(OPTOM&&p.optom>0)?p.optom:p.sotuv;
   if(c)c.qty+=addQ;else CART.push({id:id,nom:p.nom,narx:px,xarid:p.xarid||0,qty:addQ,max:p.qoldiq,olchov:p.olchov});
   if(qEl)qEl.value='';
-  document.getElementById('sq').value='';document.getElementById('sv-results').innerHTML='';renderCart();}
+  document.getElementById('sq').value='';document.getElementById('sv-results').innerHTML='';var _qb2=document.getElementById('quickBar');if(_qb2&&SVPHASE!=='pay')_qb2.style.display='';renderCart();}
 function cartQty(id,d){for(var i=0;i<CART.length;i++)if(CART[i].id===id){CART[i].qty+=d;if(CART[i].qty<=0)CART.splice(i,1);break;}renderCart();}
 function cartSetQty(id,val){var v=parseFloat((''+val).replace(',','.'));for(var i=0;i<CART.length;i++)if(CART[i].id===id){if(isNaN(v)||v<=0){CART.splice(i,1);}else{CART[i].qty=v;}break;}renderCart();}
 function cartDel(id){for(var i=0;i<CART.length;i++)if(CART[i].id===id){CART.splice(i,1);break;}renderCart();}
@@ -1802,6 +1802,7 @@ function renderH_qoldiq(el){
 function svSearch(){
   ensureIndex();
   var q=_norm(document.getElementById('sq').value),el=document.getElementById('sv-results');
+  var _qb=document.getElementById('quickBar');if(_qb)_qb.style.display=q?'none':'';
   if(!q){el.innerHTML='';return;}
   var res=[];for(var i=0;i<PRODUCTS.length&&res.length<30;i++){var p=PRODUCTS[i];if(p.arxiv)continue;
     if((p._s&&p._s.indexOf(q)>=0)||(p.barcode&&p.barcode.indexOf(q)>=0)||(p.artikul&&p.artikul.toLowerCase().indexOf(q)>=0))res.push(p);}
