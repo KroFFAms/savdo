@@ -1460,6 +1460,19 @@ function renderH_oylik(el){
     h+='</div>';el.innerHTML=h;
   });
 }
+function pickAccount(msg,cb){
+  var ov=document.getElementById('accPickOv');if(ov)ov.remove();
+  var d=document.createElement('div');d.id='accPickOv';
+  d.style.cssText='position:fixed;inset:0;background:rgba(20,30,50,.5);z-index:400;display:flex;align-items:center;justify-content:center;padding:18px';
+  function b(m,l){return '<button onclick="_accPick(\''+m+'\')" style="padding:16px 10px;border:1.5px solid #d7deea;background:#fff;border-radius:12px;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit">'+l+'</button>';}
+  d.innerHTML='<div style="background:#fff;border-radius:16px;max-width:360px;width:100%;padding:20px;box-shadow:0 12px 40px rgba(0,0,0,.25)">'+
+    '<div style="font-size:15px;font-weight:800;margin-bottom:14px;text-align:center">'+esc(msg||'To\u2018lov usuli?')+'</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+b('naqd','\ud83d\udcb5 Naqd')+b('karta','\ud83d\udcb3 Karta')+b('payme1','\ud83d\udcf1 Payme 1')+b('payme2','\ud83d\udcf1 Payme 2')+'</div>'+
+    '<button onclick="_accPick(null)" style="width:100%;margin-top:12px;padding:11px;border:1px solid #e5e7eb;background:#fff;border-radius:10px;font-weight:700;color:#6b7280;cursor:pointer;font-family:inherit">Bekor</button>'+
+    '</div>';
+  document.body.appendChild(d);window._accPickCb=cb;
+}
+function _accPick(m){var ov=document.getElementById('accPickOv');if(ov)ov.remove();var cb=window._accPickCb;window._accPickCb=null;if(cb)cb(m);}
 function returnSale(id){
   salesLoad(function(all){
     var s=null,already=false;
@@ -1468,19 +1481,22 @@ function returnSale(id){
     if(s.isReturn){toast('Bu qaytarilgan chek');return;}
     if(already){toast('Bu chek allaqachon qaytarilgan');return;}
     if(!confirm(grp(s.total)+' so\u2018m chek qaytarilsinmi?\nTovar omborga qaytadi'+(s.pay==='qarz'?', mijoz qarzi kamayadi.':', pul mijozga qaytariladi.')))return;
-    var _given=s.given||0, refMethod='';
-    if(s.pay==='qarz'){if(_given>0)refMethod=_askAcc();}
-    else{refMethod=_askAcc();}
-    var now=new Date();
-    var r={id:'r'+now.getTime(),day:dayStr(now),ts:now.toISOString(),seller:_curSeller()||s.seller,pay:s.pay,total:-Math.abs(s.total),isReturn:true,refId:s.id,
-      items:(s.items||[]).map(function(it){return {id:it.id,nom:it.nom,narx:it.narx,xarid:it.xarid||0,qty:-Math.abs(it.qty)};})};
-    if(s.customer)r.customer=s.customer;
-    if(s.pay==='qarz'){r.given=-_given;if(refMethod)r.paidMethod=refMethod;}
-    else if(refMethod){r.pay=refMethod;}
-    commitEvent('sale',r);
-    if(s.pay==='qarz'&&refMethod&&_given>0)commitEvent('kassa',{dir:'out',acc:refMethod,amount:_given,cat:'Vozvrat',note:'Vozvrat'});
-    toast('\u21a9\ufe0f Qaytarildi: '+grp(Math.abs(s.total))+(refMethod?(' \u00b7 pul: '+_accLabel(refMethod)):''));renderHisobot();
-    if(typeof switchView==='function'&&confirm('Mijoz o\u2019rniga boshqa tovar oladimi? (almashtirish)\nOK = ha, sotuvga o\u2018tamiz'))switchView('sotuv');
+    var _given=s.given||0;
+    function _fin(refMethod){
+      var now=new Date();
+      var r={id:'r'+now.getTime(),day:dayStr(now),ts:now.toISOString(),seller:_curSeller()||s.seller,pay:s.pay,total:-Math.abs(s.total),isReturn:true,refId:s.id,
+        items:(s.items||[]).map(function(it){return {id:it.id,nom:it.nom,narx:it.narx,xarid:it.xarid||0,qty:-Math.abs(it.qty)};})};
+      if(s.customer)r.customer=s.customer;
+      if(s.pay==='qarz'){r.given=-_given;if(refMethod)r.paidMethod=refMethod;}
+      else if(refMethod){r.pay=refMethod;}
+      commitEvent('sale',r);
+      if(s.pay==='qarz'&&refMethod&&_given>0)commitEvent('kassa',{dir:'out',acc:refMethod,amount:_given,cat:'Vozvrat',note:'Vozvrat'});
+      toast('\u21a9\ufe0f Qaytarildi: '+grp(Math.abs(s.total))+(refMethod?(' \u00b7 pul: '+_accLabel(refMethod)):''));renderHisobot();
+      if(typeof switchView==='function'&&confirm('Mijoz o\u2019rniga boshqa tovar oladimi? (almashtirish)\nOK = ha, sotuvga o\u2018tamiz'))switchView('sotuv');
+    }
+    var _need=(s.pay==='qarz')?(_given>0):true;
+    if(_need)pickAccount('Pulni qaysi hisobdan qaytaramiz?',function(m){if(m===null)return;_fin(m);});
+    else _fin('');
   });
 }
 function editSale(id){
@@ -2742,19 +2758,21 @@ function retConfirm(){
   var _rt=Math.round(tot);
   var _frac=(s.total)?(_rt/Math.abs(s.total)):1;
   var _givenP=Math.round((s.given||0)*_frac);
-  var refMethod='';
-  if(s.pay==='qarz'){if(_givenP>0)refMethod=_askAcc();}
-  else{refMethod=_askAcc();}
-  var now=new Date();
-  var r={id:'r'+now.getTime(),day:dayStr(now),ts:now.toISOString(),seller:_curSeller()||s.seller,pay:s.pay,total:-_rt,isReturn:true,refId:s.id,items:items};
-  if(s.customer)r.customer=s.customer;
-  if(s.pay==='qarz'){r.given=-_givenP;if(refMethod)r.paidMethod=refMethod;}
-  else if(refMethod){r.pay=refMethod;}
-  commitEvent('sale',r);
-  if(s.pay==='qarz'&&refMethod&&_givenP>0)commitEvent('kassa',{dir:'out',acc:refMethod,amount:_givenP,cat:'Vozvrat',note:'Vozvrat'});
-  toast('\u21a9\ufe0f Qaytarildi: '+grp(_rt)+(refMethod?(' \u00b7 pul: '+_accLabel(refMethod)):''));
-  closeRet();if(typeof renderStats==='function')renderStats();if(typeof updateDayTotal==='function')updateDayTotal();
-  if(typeof switchView==='function'&&confirm('Mijoz o\u2019rniga boshqa tovar oladimi? (almashtirish)\nOK = ha, sotuvga o\u2018tamiz'))switchView('sotuv');
+  function _fin(refMethod){
+    var now=new Date();
+    var r={id:'r'+now.getTime(),day:dayStr(now),ts:now.toISOString(),seller:_curSeller()||s.seller,pay:s.pay,total:-_rt,isReturn:true,refId:s.id,items:items};
+    if(s.customer)r.customer=s.customer;
+    if(s.pay==='qarz'){r.given=-_givenP;if(refMethod)r.paidMethod=refMethod;}
+    else if(refMethod){r.pay=refMethod;}
+    commitEvent('sale',r);
+    if(s.pay==='qarz'&&refMethod&&_givenP>0)commitEvent('kassa',{dir:'out',acc:refMethod,amount:_givenP,cat:'Vozvrat',note:'Vozvrat'});
+    toast('\u21a9\ufe0f Qaytarildi: '+grp(_rt)+(refMethod?(' \u00b7 pul: '+_accLabel(refMethod)):''));
+    closeRet();if(typeof renderStats==='function')renderStats();if(typeof updateDayTotal==='function')updateDayTotal();
+    if(typeof switchView==='function'&&confirm('Mijoz o\u2019rniga boshqa tovar oladimi? (almashtirish)\nOK = ha, sotuvga o\u2018tamiz'))switchView('sotuv');
+  }
+  var _need=(s.pay==='qarz')?(_givenP>0):true;
+  if(_need)pickAccount('Pulni qaysi hisobdan qaytaramiz?',function(m){if(m===null)return;_fin(m);});
+  else _fin('');
 }
 
 function custPayFromDetail(){if(!_cmId)return;var a=_pf(prompt('To’lov summasi (qarzdan ayiriladi):','0'));if(!a)return;var m=_payMethod();commitEvent('pay',{typ:'cust',id:_cmId,amount:a,method:m});toast('✅ To’lov: '+grp(a)+' ('+(m==='naqd'?'naqd':'karta')+')');custDetail(_cmId);renderMijoz();}
