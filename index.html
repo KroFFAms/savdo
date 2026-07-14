@@ -1772,6 +1772,7 @@ function supBulkSave(){
   toast('\u2705 '+add+' ta ta\u2019minotchi qo\u2019shildi'+(skip?(' \u00b7 '+skip+' takror o\u2019tkazildi'):''));
 }
 function supPay(id){var s=getSup();for(var i=0;i<s.length;i++)if(s[i].id===id){var a=_pf(prompt('To\u2019lov summasi (qarzdan ayiriladi):','0'));if(!a)return;commitEvent('pay',{typ:'sup',id:id,amount:a});renderKirim();toast('\u2705 To\u2019lov: '+grp(a));break;}}
+function supSetDebt(id){var s=getSup();for(var i=0;i<s.length;i++)if(s[i].id===id){var cur=s[i].debt||0;var raw=prompt('\u201c'+s[i].nom+'\u201d\nJoriy/boshlang\u2018ich qarz (jami so\u2018m):',String(Math.round(cur)));if(raw==null)return;var t=Math.round(_pf(raw)||0);if(t<0)t=0;var delta=t-cur;commitEvent('supadj',{id:id,amount:delta});renderKirim();toast('\u2705 Qarz belgilandi: '+grp(t));break;}}
 function supDel(id){if(!confirm('Ta\u2019minotchi o\u2019chirilsinmi?'))return;commitEvent('supdel',{id:id});renderKirim();}
 var _supDueTarget=null;
 function supDueOpen(id){_supDueTarget=id;var inp=document.getElementById('supDueInp');if(!inp)return;var s=getSup();for(var i=0;i<s.length;i++)if(s[i].id===id){inp.value=s[i].due||'';break;}if(inp.showPicker){try{inp.showPicker();return;}catch(e){}}inp.click();}
@@ -1802,6 +1803,7 @@ function renderKirim(){
     var _sdh='';if((s.debt||0)>0&&s.due){var _sod=s.due<dayStr(new Date());_sdh=' \u00b7 <span style="font-weight:700;color:'+(_sod?'#a32d2d':'#9aa4b2')+'">'+(_sod?'\u26a0\ufe0f muddati o\u2019tgan ':'muddat ')+_dmy(s.due)+'</span>';}
     h+='<div class="supitem"><div class="sm2"><div class="nn">'+esc(s.nom)+'</div><div class="pp">'+(s.phone?esc(s.phone)+' \u00b7 ':'')+'qarzimiz: <span class="'+dc+'" style="font-weight:700">'+grp(s.debt||0)+'</span>'+_sdh+'</div></div>'+
       ((s.debt||0)>0?'<button class="minibtn" onclick="supDueOpen(\''+s.id+'\')">\ud83d\uddd3\ufe0f</button>':'')+
+      '<button class="minibtn" onclick="supSetDebt(\''+s.id+'\')" title="Boshlang\u2018ich qarz">\ud83d\udcb0</button>'+
       '<button class="minibtn" onclick="supPay(\''+s.id+'\')">To\u2019lov</button>'+
       '<button class="minibtn" onclick="supDel(\''+s.id+'\')">\u2715</button></div>';});
     h='<input type="date" id="supDueInp" onchange="_supDuePick()" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0"><div class="brow" style="font-weight:800"><span>Jami qarzimiz</span><b class="'+(jami>0?"debt pos":"debt zero")+'">'+grp(jami)+'</b></div>'+h;
@@ -2738,6 +2740,7 @@ function applyEvent(ev){
   }else if(ev.kind==='pay'){
     if(pl.typ==='bolim'){var bl=getBolim();for(var bk=0;bk<bl.length;bk++){if(bl[bk].id===pl.id){bl[bk].debt=Math.max(0,(bl[bk].debt||0)-pl.amount);break;}}setBolim(bl);}
     else{var arr=(pl.typ==='sup')?getSup():getCust();for(var k=0;k<arr.length;k++){if(arr[k].id===pl.id){arr[k].debt=Math.max(0,(arr[k].debt||0)-pl.amount);break;}}if(pl.typ==='sup')setSup(arr);else setCust(arr);}
+  }else if(ev.kind==='supadj'){var saa=getSup();for(var sj=0;sj<saa.length;sj++){if(saa[sj].id===pl.id){saa[sj].debt=Math.max(0,(saa[sj].debt||0)+(pl.amount||0));break;}}setSup(saa);
   }else if(ev.kind==='supdue'){var sdd=getSup();for(var sq=0;sq<sdd.length;sq++){if(sdd[sq].id===pl.id){sdd[sq].due=pl.due||'';break;}}setSup(sdd);}else if(ev.kind==='sup'||ev.kind==='cust'){
     var g=(ev.kind==='sup')?getSup():getCust(),ex=0;for(var m=0;m<g.length;m++){if(g[m].id===pl.id){g[m].nom=pl.nom;g[m].phone=pl.phone;ex=1;break;}}if(!ex)g.push({id:pl.id,nom:pl.nom,phone:pl.phone,debt:0});if(ev.kind==='sup')setSup(g);else setCust(g);
   }else if(ev.kind==='custbulk'){
