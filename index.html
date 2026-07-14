@@ -453,12 +453,12 @@
   </div>
   <div id="view-sotuv" class="view">
     <div class="sv-bar"><select id="seller" class="seller"></select><button class="btn btn-ghost sm" onclick="editSellers()" title="Sotuvchilar">⚙️</button><button id="optomBtn" class="optbtn" onclick="toggleOptom()" title="Optom/Dona narx">Dona</button><button id="retBtn" class="btn btn-ghost sm" onclick="openReturn()" title="Qaytarish" style="display:none">↩️ Qaytar</button><button class="btn btn-ghost sm" onclick="holdSale()" title="Kutishga olish">⏸ Kutish</button><span style="flex:1"></span><div class="dtot">Bugun: <b id="dayTotal">0</b></div></div>
-    <div id="draftBar" class="draftbar" style="display:none"></div><div class="sv-search"><div class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input id="sq" type="search" inputmode="search" placeholder="Sotuv — tovar qidiring…" autocomplete="off"></div><div class="bc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5v14M7 5v14M11 5v14M15 5v14M19 5v14M21 5v14"/></svg><input id="sbc" type="text" inputmode="numeric" placeholder="Skaner" autocomplete="off"></div><div class="sqty"><input id="sqQty" type="text" inputmode="decimal" placeholder="Soni" autocomplete="off"></div></div>
-    <div style="padding:2px 16px 6px"><button class="btn" style="width:100%" onclick="openScan()">📷 Kamera bilan skanerlash</button></div>
+    <div id="draftBar" class="draftbar" style="display:none"></div><div class="sv-search" id="svSearchWrap"><div class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input id="sq" type="search" inputmode="search" placeholder="Sotuv — tovar qidiring…" autocomplete="off"></div><div class="bc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5v14M7 5v14M11 5v14M15 5v14M19 5v14M21 5v14"/></svg><input id="sbc" type="text" inputmode="numeric" placeholder="Skaner" autocomplete="off"></div><div class="sqty"><input id="sqQty" type="text" inputmode="decimal" placeholder="Soni" autocomplete="off"></div></div>
+    <div style="padding:2px 16px 6px" id="svScanWrap"><button class="btn" style="width:100%" onclick="openScan()">📷 Kamera bilan skanerlash</button></div>
     <div id="quickBar" class="quickbar"></div>
     <div id="sv-results" class="sv-results"></div>
-    <div id="cart" class="cart"></div>
-    <div class="cart-foot" id="cartFoot" style="display:none">
+    <div id="cart" class="cart"></div><div id="toPayBar" style="display:none;padding:8px 16px"><button class="btn" style="width:100%;font-size:16px;font-weight:800;padding:14px" onclick="setSvPhase('pay')">To'lovga o'tish →</button></div>
+    <div class="cart-foot" id="cartFoot" style="display:none"><button class="btn btn-ghost sm" onclick="setSvPhase('cart')" style="margin-bottom:8px">← Savatga qaytish</button>
       <div class="ct-row"><span>Jami</span><b id="cartTotal">0</b></div>
       <div class="ct-row2"><input id="discInp" type="text" inputmode="numeric" placeholder="Chegirma (so'm yoki 10%)" oninput="cartRecalc()"><span id="discShow" class="disc-x"></span></div>
       <div class="ct-row ct-fin"><span>To'lov <button id="roundBtn" class="roundbtn" onclick="cycleRound()">≈ Yo'q</button></span><b id="finalTotal">0</b></div>
@@ -831,7 +831,7 @@ function switchView(v,btn){
   if(btn)btn.classList.add('active');
   menuOpen(false);
   document.body.className=(v==='tovarlar')?'':'v-'+v;
-  if(v==='sotuv'){renderSellers();renderCart();updateDayTotal();if(typeof renderQuick==='function')renderQuick();if(typeof renderDrafts==='function')renderDrafts();}
+  if(v==='sotuv'){SVPHASE='cart';renderSellers();renderCart();if(typeof _applyPhase==='function')_applyPhase();updateDayTotal();if(typeof renderQuick==='function')renderQuick();if(typeof renderDrafts==='function')renderDrafts();}
   if(v==='hisobot')renderHisobot();
   if(v==='kirim')renderKirim();
   if(v==='mijoz')renderMijoz();
@@ -927,9 +927,12 @@ function setPaidM(m,btn){PAIDM=m;var b=document.querySelectorAll('#paidRow .pm')
 function calcChange(){var el=document.getElementById('cashInp');var giv=el?(_pf(el.value)||0):0;var e=document.getElementById('changeShow');if(!e)return;
   if(PAY==='qarz'){var debt=Math.max(0,saleTotal()-giv);e.textContent=grp(debt);}
   else{var ch=giv-saleTotal();e.textContent=giv?grp(ch):'\u2014';}}
+var SVPHASE='cart';
+function _applyPhase(){var cartMode=(SVPHASE!=='pay');['svSearchWrap','svScanWrap','quickBar','sv-results'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display=cartMode?'':'none';});}
+function setSvPhase(p){SVPHASE=p;_applyPhase();renderCart();if(p!=='pay'&&typeof renderQuick==='function')renderQuick();try{window.scrollTo(0,0);}catch(e){}}
 function renderCart(){
   var el=document.getElementById('cart'),foot=document.getElementById('cartFoot');if(!el)return;
-  if(!CART.length){el.innerHTML='<div class="cart-empty">Savat bo\u2018sh \u2014 tovar qidiring yoki skaner qiling</div>';foot.style.display='none';return;}
+  if(!CART.length){el.innerHTML='<div class="cart-empty">Savat bo\u2018sh \u2014 tovar qidiring yoki skaner qiling</div>';foot.style.display='none';var _tpb0=document.getElementById('toPayBar');if(_tpb0)_tpb0.style.display='none';SVPHASE='cart';_applyPhase();return;}
   var h='';CART.forEach(function(c){var over=c.qty>c.max;
     h+='<div class="citem"><div class="cmain"><div class="cnom">'+esc(c.nom)+'</div>'+
       '<div class="csub">'+grp(c.narx)+' \u00d7 '+c.qty+(_measured(c.olchov)?(' '+esc(c.olchov)):'')+(over?' <span style="color:#a32d2d">(qoldiq '+grp(c.max)+')</span>':'')+'</div></div>'+
@@ -937,7 +940,7 @@ function renderCart(){
       '<div class="cline">'+grp(c.narx*c.qty)+'</div>'+
       '<button class="cedit" onclick="cartPrice(\''+c.id+'\')" title="Narxni o\u2018zgartirish">\u270e</button>'+
       '<button class="cx" onclick="cartDel(\''+c.id+'\')">\u2715</button></div>';});
-  el.innerHTML=h;document.getElementById('cartTotal').textContent=grp(cartSum());foot.style.display='block';cartRecalc();
+  el.innerHTML=h;document.getElementById('cartTotal').textContent=grp(cartSum());var _tpb=document.getElementById('toPayBar');if(SVPHASE==='pay'){foot.style.display='block';if(_tpb)_tpb.style.display='none';}else{foot.style.display='none';if(_tpb)_tpb.style.display='block';}cartRecalc();
 }
 function onBolimSel(){var b=document.getElementById('bolimSel'),cr=document.getElementById('custRow');if(b&&cr){cr.style.opacity=b.value?'0.4':'1';}}
 var BOL='';
@@ -2710,12 +2713,17 @@ function retConfirm(){
   (s.items||[]).forEach(function(it,idx){var q=_retQty[idx]||0;if(q>0){items.push({id:it.id,nom:it.nom,narx:it.narx,xarid:it.xarid||0,qty:-Math.abs(q)});tot+=it.narx*q;}});
   if(!items.length){toast('Miqdor tanlanmadi');return;}
   if(!confirm(grp(Math.round(tot))+' so\u2018m qaytarilsinmi?\n'+(s.pay==='qarz'?'Mijoz qarzi kamayadi.':'Pul mijozga qaytariladi.')))return;
+  var refMethod='';
+  if(s.pay!=='qarz'){refMethod=_askAcc();}
   var now=new Date();
   var r={id:'r'+now.getTime(),day:dayStr(now),ts:now.toISOString(),seller:_curSeller()||s.seller,pay:s.pay,total:-Math.round(tot),isReturn:true,refId:s.id,items:items};
   if(s.customer)r.customer=s.customer;
+  if(refMethod)r.refMethod=refMethod;
   commitEvent('sale',r);
-  toast('\u21a9\ufe0f Qaytarildi: '+grp(Math.round(tot)));
+  if(refMethod)commitEvent('kassa',{dir:'out',acc:refMethod,amount:Math.round(tot),cat:'Vozvrat',note:'Vozvrat'});
+  toast('\u21a9\ufe0f Qaytarildi: '+grp(Math.round(tot))+(refMethod?(' \u00b7 '+_accLabel(refMethod)):''));
   closeRet();if(typeof renderStats==='function')renderStats();if(typeof updateDayTotal==='function')updateDayTotal();
+  if(s.pay!=='qarz'&&typeof switchView==='function'&&confirm('Mijoz o\u2019rniga boshqa tovar oladimi? (almashtirish)\nOK = ha, sotuvga o\u2018tamiz'))switchView('sotuv');
 }
 
 function custPayFromDetail(){if(!_cmId)return;var a=_pf(prompt('To’lov summasi (qarzdan ayiriladi):','0'));if(!a)return;var m=_payMethod();commitEvent('pay',{typ:'cust',id:_cmId,amount:a,method:m});toast('✅ To’lov: '+grp(a)+' ('+(m==='naqd'?'naqd':'karta')+')');custDetail(_cmId);renderMijoz();}
