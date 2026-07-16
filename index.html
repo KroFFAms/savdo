@@ -98,9 +98,9 @@
 
   /* ===== views + bottom nav ===== */
   .view{display:none}.view.active{display:block}
-  .wrap{padding-bottom:20px}
+  .wrap{padding-bottom:calc(78px + env(safe-area-inset-bottom,0px))}
   body.v-sotuv header .stats, body.v-bugun header .stats{display:none}
-  .bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:#fff;border-top:1px solid var(--line);display:flex;max-width:760px;margin:0 auto;box-shadow:0 -4px 14px -10px rgba(0,0,0,.2)}
+  .bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:#fff;border-top:1px solid var(--line);display:flex;max-width:760px;margin:0 auto;box-shadow:0 -4px 14px -10px rgba(0,0,0,.2);padding-bottom:env(safe-area-inset-bottom,0px)}
   .bottomnav .nav{flex:1;background:none;border:none;padding:9px 4px 8px;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
   .bottomnav .nav .i{font-size:20px;line-height:1}
   .bottomnav .nav.active{color:var(--accent)}
@@ -188,13 +188,14 @@
   .custrow{display:flex;gap:8px;margin-bottom:9px}
   .custrow select{flex:1;border:1.5px solid var(--line);border-radius:10px;padding:10px;font-size:14px;background:#fff;color:var(--ink)}
 
-  .menu-btn{position:absolute;top:14px;right:14px;z-index:30;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.24);color:#fff;border-radius:11px;width:44px;height:44px;font-size:21px;line-height:1;cursor:pointer}
+  .menu-btn{display:none;position:absolute;top:14px;right:14px;z-index:30;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.24);color:#fff;border-radius:11px;width:44px;height:44px;font-size:21px;line-height:1;cursor:pointer}
   .menu-btn:active{background:rgba(255,255,255,.26)}
   .menu-back{position:fixed;inset:0;background:rgba(20,30,50,.42);z-index:94;opacity:0;pointer-events:none;transition:opacity .25s}
   .menu-back.open{opacity:1;pointer-events:auto}
-  .menu-drop{position:fixed;top:0;right:0;height:100vh;width:266px;max-width:82vw;z-index:95;background:#fff;box-shadow:-10px 0 34px -8px rgba(0,0,0,.4);padding:10px 10px 24px;display:flex;flex-direction:column;gap:2px;transform:translateX(106%);transition:transform .26s ease;overflow-y:auto}
-  .menu-drop.open{transform:translateX(0)}
-  .menu-head{display:flex;justify-content:space-between;align-items:center;padding:8px 10px 12px;font-size:16px;font-weight:800;color:var(--ink);border-bottom:1px solid var(--line);margin-bottom:6px}
+  .menu-drop{position:fixed;left:0;right:0;bottom:0;top:auto;width:auto;height:auto;max-width:760px;max-height:88vh;margin:0 auto;z-index:95;background:#fff;border-radius:22px 22px 0 0;box-shadow:0 -12px 40px -6px rgba(0,0,0,.32);padding:6px 14px calc(20px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:repeat(3,1fr);gap:9px;align-content:start;transform:translateY(100%);transition:transform .28s cubic-bezier(.32,.72,0,1);overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .menu-drop.open{transform:translateY(0)}
+  .menu-drop::before{content:'';grid-column:1/-1;width:40px;height:4px;border-radius:3px;background:#dde3ea;margin:4px auto 2px}
+  .menu-head{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;padding:4px 2px 10px;font-size:15px;font-weight:800;color:var(--ink);border-bottom:1px solid var(--line);margin-bottom:2px}
   .menu-x{background:none;border:none;font-size:20px;color:#aaa;cursor:pointer;line-height:1}
   .lockscr{position:fixed;inset:0;z-index:200;background:linear-gradient(160deg,#1F4E79,#16233A);display:none;align-items:center;justify-content:center}
   .lockscr.show{display:flex}
@@ -227,10 +228,11 @@
   .perm-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
   .permchip{border:1.5px solid var(--line);background:#f5f6f8;border-radius:999px;padding:6px 11px;font-size:12px;font-weight:600;cursor:pointer;color:var(--muted)}
   .permchip.on{background:#EEF4FB;border-color:#1F4E79;color:#1F4E79}
-  .menu-item{display:block;width:100%;text-align:left;background:none;border:none;border-left:3px solid transparent;padding:11px 14px;font-size:14.5px;font-weight:600;color:#555;cursor:pointer;border-radius:0 8px 8px 0;transition:background .12s}
-  .menu-item.active{background:#EEF4FB;color:var(--accent);border-left-color:var(--accent);font-weight:700}
-  .menu-item:hover:not(.active){background:#f5f6f8}
-  .menu-item:active{background:#eef1f5}
+  .menu-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%;text-align:center;background:#f6f8fa;border:1px solid var(--line);padding:13px 5px;font-size:11.5px;font-weight:700;line-height:1.25;color:#42505f;cursor:pointer;border-radius:14px;min-height:82px;transition:background .12s,border-color .12s}
+  .menu-item .mi-i{font-size:22px;line-height:1}
+  .menu-item.active{background:#EEF4FB;color:var(--accent);border-color:var(--accent);font-weight:800}
+  .menu-item:hover:not(.active){background:#eef1f5}
+  .menu-item:active{transform:scale(.96)}
   .syncchip{position:absolute;top:17px;right:66px;z-index:30;font-size:11px;font-weight:700;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:9px;padding:5px 9px;white-space:nowrap;max-width:130px;overflow:hidden;text-overflow:ellipsis}
   .cmodal{position:fixed;inset:0;background:rgba(26,43,69,.5);display:none;align-items:flex-end;justify-content:center;z-index:80}
   .cmodal.open{display:flex}
@@ -364,7 +366,7 @@
   .scan-hint{position:absolute;bottom:56px;left:0;right:0;text-align:center;color:#fff;font-size:14px;padding:0 24px;text-shadow:0 1px 3px rgba(0,0,0,.8)}
   /* ===== Chek (58mm termal) + print ===== */
   #receiptArea{display:none}
-  #printLastBtn{position:fixed;right:14px;bottom:80px;z-index:9998;display:none;
+  #printLastBtn{position:fixed;right:14px;bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:9998;display:none;
     background:#1F4E79;color:#fff;border:none;border-radius:24px;padding:12px 18px;
     font-size:15px;font-weight:700;box-shadow:0 8px 20px rgba(0,0,0,.28);cursor:pointer}
   .prnbtn{background:#EEF4FB;color:#1F4E79;border:1px solid #cfe0f2;border-radius:8px;
@@ -425,7 +427,7 @@
     <h1>KROFF <span class="dot">·</span> Savdo</h1>
     <div class="syncchip" id="syncChip" onclick="manualSync()">☁️ …</div>
     <button class="menu-btn" onclick="toggleMenu(event)" aria-label="Menyu">☰</button>
-    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v58</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)">📦 Tovarlar</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)">🛒 Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)">📈 Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)">🚚 Kirim</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)">👤 Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)">🔧 Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)">💰 Kassa</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)">📋 Sanoq</button><button class="menu-item" data-v="tahlil" data-admin="1" onclick="switchView('tahlil',this)">📊 Tahlil</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)">🛠 Boshqaruv</button><button class="menu-item" data-admin="1" onclick="manualSync()">🔄 Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="editPins()">🔑 Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)">👥 Qurilmalar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d">🔒 Qulflash (chiqish)</button></div>
+    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v58</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)"><span class="mi-i">📦</span>Tovarlar</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)"><span class="mi-i">🛒</span>Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)"><span class="mi-i">📈</span>Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)"><span class="mi-i">🚚</span>Kirim</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)"><span class="mi-i">👤</span>Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)"><span class="mi-i">🔧</span>Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)"><span class="mi-i">💰</span>Kassa</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)"><span class="mi-i">📋</span>Sanoq</button><button class="menu-item" data-v="tahlil" data-admin="1" onclick="switchView('tahlil',this)"><span class="mi-i">📊</span>Tahlil</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)"><span class="mi-i">🛠</span>Boshqaruv</button><button class="menu-item" data-admin="1" onclick="manualSync()"><span class="mi-i">🔄</span>Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="editPins()"><span class="mi-i">🔑</span>Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)"><span class="mi-i">👥</span>Qurilmalar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d"><span class="mi-i">🔒</span>Qulflash (chiqish)</button></div>
     <div class="stats" id="stats">
       <div class="stat"><div class="v" id="s_tovar">0</div><div class="l">Tovar turi</div></div>
       <div class="stat"><div class="v" id="s_qty">0</div><div class="l">Qoldiq (dona)</div></div>
@@ -537,6 +539,13 @@
 
 
 <input type="file" id="file" accept=".xlsx,.xls" style="display:none">
+<nav class="bottomnav" id="bottomNav">
+  <button class="nav active" data-v="tovarlar" onclick="switchView('tovarlar')"><span class="i">📦</span>Tovarlar</button>
+  <button class="nav" data-v="sotuv" onclick="switchView('sotuv')"><span class="i">🛒</span>Sotuv</button>
+  <button class="nav" data-v="kirim" data-admin="1" onclick="switchView('kirim')"><span class="i">🚚</span>Kirim</button>
+  <button class="nav" data-v="hisobot" data-admin="1" onclick="switchView('hisobot')"><span class="i">📈</span>Hisobot</button>
+  <button class="nav" id="navMenuBtn" onclick="toggleMenu(event)"><span class="i">☰</span>Menyu</button>
+</nav>
 <div id="toast"></div>
 <div class="cmodal" id="custModal" onclick="if(event.target===this)closeCust()"><div class="cmbox">
   <div class="cmhead"><div><div class="cmnom" id="cmNom"></div><div class="cmph" id="cmPh"></div></div><button class="cmx" onclick="closeCust()">✕</button></div>
@@ -834,6 +843,8 @@ function switchView(v,btn){
   document.getElementById('view-'+v).classList.add('active');
   var mi=document.querySelectorAll('.menu-item');for(var j=0;j<mi.length;j++)mi[j].classList.remove('active');
   if(btn)btn.classList.add('active');
+  else{var mm=document.querySelectorAll('#menuDrop .menu-item[data-v="'+v+'"]');for(var jm=0;jm<mm.length;jm++)mm[jm].classList.add('active');}
+  var nv=document.querySelectorAll('.bottomnav .nav');for(var jn=0;jn<nv.length;jn++){if(nv[jn].getAttribute('data-v')===v)nv[jn].classList.add('active');else nv[jn].classList.remove('active');}
   menuOpen(false);
   document.body.className=(v==='tovarlar')?'':'v-'+v;
   if(v==='sotuv'){SVPHASE='cart';renderSellers();renderCart();if(typeof _applyPhase==='function')_applyPhase();updateDayTotal();if(typeof renderQuick==='function')renderQuick();if(typeof renderDrafts==='function')renderDrafts();}
@@ -3146,6 +3157,8 @@ function setRole(r,perms){_role=r;_perms=perms||{};hideLock();applyRole();if(r==
 function lockApp(){_role=null;try{localStorage.removeItem('kroff_authmode');}catch(e){}menuOpen(false);openLock();resolveAuth(routeAuth);}
 function applyRole(){var admin=(_role==='admin'),perms=_perms||{};var items=document.querySelectorAll('#menuDrop .menu-item');
   for(var i=0;i<items.length;i++){var b=items[i];if(b.getAttribute('data-admin')!=='1')continue;var v=b.getAttribute('data-v');var allow=admin||(v&&v!=='devices'&&perms[v]===true);b.style.display=allow?'':'none';}
+  var nav=document.querySelectorAll('.bottomnav .nav');
+  for(var k=0;k<nav.length;k++){var nb=nav[k];if(nb.getAttribute('data-admin')!=='1')continue;var nvv=nb.getAttribute('data-v');nb.style.display=(admin||(nvv&&perms[nvv]===true))?'':'none';}
   var rb=document.getElementById('roleBadge');if(rb)rb.textContent=admin?'Admin':'Sotuvchi';
   var _di=document.getElementById('discInp');if(_di&&_di.parentNode)_di.parentNode.style.display=(admin||perms.discount===true)?'':'none';var _rb=document.getElementById('retBtn');if(_rb)_rb.style.display=(admin||perms.vazvrat===true)?'':'none';}
 function editPins(){if(_role!=='admin'){toast('Faqat admin');return;}var q=getPins();var a=prompt('Admin paroli:',q.admin);if(a==null)return;commitEvent('config',{pins:{admin:String(a).trim()||'1992'}});menuOpen(false);toast('\u2705 Admin paroli yangilandi');}
