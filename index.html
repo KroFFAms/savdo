@@ -3225,7 +3225,7 @@ function onlRender(){
     var isD=(o.mode!=='pickup');
     h+='<div class="onl-card"><div class="onl-c-top"><span>#'+esc2(String(o.id).slice(-6))+' · '+ds+'</span><span class="onl-c-tot">'+grp(o.total)+' so\u2018m</span></div>';
     h+='<div class="onl-bdg" style="background:'+st[1]+';color:'+st[2]+'">'+st[0]+' · '+(isD?'🚚 Yetkazish':'🏪 Olib ketish')+' · '+({payme:'📲 Payme',karta:'💳 Karta',hisob:'🏦 Hisob raqam'}[o.pay]||'💵 Naqd')+'</div>';
-    if(o.name||o.phone)h+='<div class="onl-c-cust">'+esc2(o.name||'')+(o.phone?(' · '+esc2(o.phone)):'')+'</div>';
+    if(o.name||o.phone)h+='<div class="onl-c-cust">'+esc2(o.name||'')+(o.phone?(' · '+esc2(o.phone)):'')+'</div>';if(o.legal&&o.legal.name)h+='<div class="onl-c-addr">🏢 '+esc2(o.legal.name)+(o.legal.stir?(' · STIR '+esc2(o.legal.stir)):'')+'</div>';
     if(isD&&o.address)h+='<div class="onl-c-addr">📍 '+esc2(o.address)+(o.lat?(' · <a href="https://maps.google.com/?q='+o.lat+','+o.lng+'" target="_blank">xarita</a>'):'')+'</div>';
     h+='<div class="onl-c-items">'+items+'</div>';
     h+='<div class="onl-btns">';
