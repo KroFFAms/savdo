@@ -1600,7 +1600,7 @@ function pickAccount(msg,cb){
   function b(m,l){return '<button onclick="_accPick(\''+m+'\')" style="padding:16px 10px;border:1.5px solid #d7deea;background:#fff;border-radius:12px;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit">'+l+'</button>';}
   d.innerHTML='<div style="background:#fff;border-radius:16px;max-width:360px;width:100%;padding:20px;box-shadow:0 12px 40px rgba(0,0,0,.25)">'+
     '<div style="font-size:15px;font-weight:800;margin-bottom:14px;text-align:center">'+esc(msg||'To\u2018lov usuli?')+'</div>'+
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+b('naqd','\ud83d\udcb5 Naqd')+b('karta','\ud83d\udcb3 Karta')+b('payme1','\ud83d\udcf1 Payme 1')+b('payme2','\ud83d\udcf1 Payme 2')+'</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+b('naqd','\ud83d\udcb5 Naqd')+b('karta','\ud83d\udcb3 Karta')+b('payme1','\ud83d\udcf1 Payme 1')+b('payme2','\ud83d\udcf1 Payme 2')+b('bank','\ud83c\udfe6 Hisob raqam')+'</div>'+
     '<button onclick="_accPick(null)" style="width:100%;margin-top:12px;padding:11px;border:1px solid #e5e7eb;background:#fff;border-radius:10px;font-weight:700;color:#6b7280;cursor:pointer;font-family:inherit">Bekor</button>'+
     '</div>';
   document.body.appendChild(d);window._accPickCb=cb;
@@ -2163,7 +2163,7 @@ function renderBolimSel(){var s=document.getElementById('bolimSel');if(!s)return
 function bolimAdd(){var n=prompt('Yangi bo\u2018lim nomi:');if(!n||!n.trim())return;var b=getBolim();b.push({id:uid('bol'),nom:n.trim(),debt:0});setBolim(b);renderMijoz();toast('\u2705 Bo\u2018lim qo\u2018shildi');}
 function bolimRename(id){var b=getBolim();for(var i=0;i<b.length;i++)if(b[i].id===id){var n=prompt('Yangi nom:',b[i].nom);if(!n||!n.trim())return;b[i].nom=n.trim();setBolim(b);renderMijoz();break;}}
 function bolimDel(id){var b=getBolim();for(var i=0;i<b.length;i++)if(b[i].id===id){if((b[i].debt||0)>0){toast('Qarzi bor bo\u2018limni o\u2018chirib bo\u2018lmaydi');return;}if(!confirm(b[i].nom+' o\u2019chirilsinmi?'))return;b.splice(i,1);setBolim(b);renderMijoz();break;}}
-function bolimPay(id){var bl=getBolim();for(var i=0;i<bl.length;i++)if(bl[i].id===id){var a=_pf(prompt('To\u2019lov ('+bl[i].nom+' qarzidan ayiriladi):','0'));if(!a)return;var m=_payMethod();commitEvent('pay',{typ:'bolim',id:id,amount:a,method:m});renderMijoz();toast('\u2705 To\u2019lov: '+grp(a)+' ('+(m==='naqd'?'naqd':'karta')+')');break;}}
+function bolimPay(id){var bl=getBolim();for(var i=0;i<bl.length;i++)if(bl[i].id===id){var a=_pf(prompt('To\u2019lov ('+bl[i].nom+' qarzidan ayiriladi):','0'));if(!a)return;var m=_askAcc();commitEvent('pay',{typ:'bolim',id:id,amount:a,method:m});renderMijoz();toast('\u2705 To\u2019lov: '+grp(a)+' \u00b7 '+_accLabel(m));break;}}
 function custPay(id){var c=getCust();for(var i=0;i<c.length;i++)if(c[i].id===id){var a=_pf(prompt('To\u2019lov (qarzdan ayiriladi):','0'));if(!a)return;var m=_askAcc();commitEvent('pay',{typ:'cust',id:id,amount:a,method:m});commitEvent('kassa',{dir:'in',acc:m,amount:a,cat:'Qarz to\u2019lovi',note:c[i].nom});renderMijoz();toast('\u2705 Qarz to\u2019lovi: '+grp(a)+' \u00b7 '+_accLabel(m));break;}}
 function _accLabel(m){return m==='karta'?'Karta':(m==='payme1'?'Payme 1':(m==='payme2'?'Payme 2':(m==='bank'?'Hisob raqam':'Naqd')));}
 function custDel(id){if(!confirm('Mijoz o\u2019chirilsinmi?'))return;commitEvent('custdel',{id:id});renderMijoz();}
@@ -2977,7 +2977,7 @@ function retConfirm(){
   else _fin('');
 }
 
-function custPayFromDetail(){if(!_cmId)return;var a=_pf(prompt('To’lov summasi (qarzdan ayiriladi):','0'));if(!a)return;var m=_payMethod();commitEvent('pay',{typ:'cust',id:_cmId,amount:a,method:m});toast('✅ To’lov: '+grp(a)+' ('+(m==='naqd'?'naqd':'karta')+')');custDetail(_cmId);renderMijoz();}
+function custPayFromDetail(){if(!_cmId)return;var a=_pf(prompt('To’lov summasi (qarzdan ayiriladi):','0'));if(!a)return;var m=_askAcc();commitEvent('pay',{typ:'cust',id:_cmId,amount:a,method:m});toast('✅ To’lov: '+grp(a)+' · '+_accLabel(m));custDetail(_cmId);renderMijoz();}
 
 /* ---- SHTRIX SKANER (kamera) ---- */
 var _scanStream=null,_scanRAF=null,_scanRAF2=null,_scanDet=null,_scanLast=0,_zxMFR=null,_zxCanvas=null,_zxHints=null,_scanN=0,_zxReader=null;
@@ -3216,7 +3216,7 @@ function onlRender(){
     var d=o.created_at?new Date(o.created_at):null;var ds=d?(('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)):'';
     var isD=(o.mode!=='pickup');
     h+='<div class="onl-card"><div class="onl-c-top"><span>#'+esc2(String(o.id).slice(-6))+' · '+ds+'</span><span class="onl-c-tot">'+grp(o.total)+' so\u2018m</span></div>';
-    h+='<div class="onl-bdg" style="background:'+st[1]+';color:'+st[2]+'">'+st[0]+' · '+(isD?'🚚 Yetkazish':'🏪 Olib ketish')+'</div>';
+    h+='<div class="onl-bdg" style="background:'+st[1]+';color:'+st[2]+'">'+st[0]+' · '+(isD?'🚚 Yetkazish':'🏪 Olib ketish')+' · '+({payme:'📲 Payme',karta:'💳 Karta'}[o.pay]||'💵 Naqd')+'</div>';
     if(o.name||o.phone)h+='<div class="onl-c-cust">'+esc2(o.name||'')+(o.phone?(' · '+esc2(o.phone)):'')+'</div>';
     if(isD&&o.address)h+='<div class="onl-c-addr">📍 '+esc2(o.address)+(o.lat?(' · <a href="https://maps.google.com/?q='+o.lat+','+o.lng+'" target="_blank">xarita</a>'):'')+'</div>';
     h+='<div class="onl-c-items">'+items+'</div>';
