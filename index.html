@@ -1271,7 +1271,7 @@ function renderH_taminot(el){
 function renderH_moliya(el,all){
   evAll(function(evs){
     var sel=all.filter(function(x){return inPeriod(x.day);});
-    var rev=0,cogs=0,bp={naqd:0,karta:0,payme1:0,payme2:0,qarz:0},bbol={};
+    var rev=0,cogs=0,bp={naqd:0,karta:0,payme1:0,payme2:0,bank:0,qarz:0},bbol={};
     sel.forEach(function(x){rev+=x.total;
       if(x.pay==='qarz'&&x.given){bp[x.paidMethod||'naqd']=(bp[x.paidMethod||'naqd']||0)+x.given;bp.qarz+=(x.total-x.given);}
       else bp[x.pay]=(bp[x.pay]||0)+x.total;
@@ -1299,8 +1299,16 @@ function renderH_moliya(el,all){
     h+=row('Chiqim (xarajat)',exp);
     h+=row('SOF FOYDA',net,'pos');
     h+='</div>';
-    h+='<div class="bhead">To\u2019lov turlari</div>'+tbl('Tur');
-    [['naqd','Naqd'],['karta','Karta'],['payme1','Payme1'],['payme2','Payme2'],['qarz','Qarz (yangi)']].forEach(function(k){if(bp[k[0]])h+=row(k[1],bp[k[0]]);});
+    h+='<div class="bhead">To\u2019lov turlari (savdo)</div>'+tbl('Tur');
+    [['naqd','Naqd'],['karta','Karta'],['payme1','Payme1'],['payme2','Payme2'],['bank','Hisob raqam'],['qarz','Qarz (yangi)']].forEach(function(k){if(bp[k[0]])h+=row(k[1],bp[k[0]]);});
+    h+='</div>';
+    var accIn={naqd:0,karta:0,payme1:0,payme2:0,bank:0};
+    sel.forEach(function(x){if(x.pay!=='qarz'&&accIn[x.pay]!=null)accIn[x.pay]+=x.total;});
+    evs.forEach(function(e){if(e.kind!=='kassa'||!e.payload||VOID[e.id])return;if(e.payload.dir!=='in')return;var ds2=dayStr(new Date(e.ts));if(!inPeriod(ds2))return;var a2=e.payload.acc||'naqd';if(accIn[a2]!=null)accIn[a2]+=e.payload.amount;});
+    var accInTot=accIn.naqd+accIn.karta+accIn.payme1+accIn.payme2+accIn.bank;
+    h+='<div class="bhead">Hisoblar bo\u2019yicha kirim \u00b7 '+_periodLabel()+'</div>'+tbl('Hisob');
+    [['naqd','\ud83d\udcb5 Naqd'],['karta','\ud83d\udcb3 Karta'],['payme1','\ud83d\udcf1 Payme 1'],['payme2','\ud83d\udcf1 Payme 2'],['bank','\ud83c\udfe6 Hisob raqam']].forEach(function(k){h+=row(k[1],accIn[k[0]]);});
+    h+=row('Jami kirim',accInTot,'pos');
     h+='</div>';
     var bk=Object.keys(bbol);
     if(bk.length){h+='<div class="bhead">Bo\u2019limlar (savdo)</div>'+tbl('Bo\u2019lim');bk.sort(function(a,b){return bbol[b]-bbol[a];}).forEach(function(k){h+=row(bolimNom(k),bbol[k]);});h+='</div>';}
@@ -2977,7 +2985,7 @@ function retConfirm(){
   else _fin('');
 }
 
-function custPayFromDetail(){if(!_cmId)return;var a=_pf(prompt('To’lov summasi (qarzdan ayiriladi):','0'));if(!a)return;var m=_askAcc();commitEvent('pay',{typ:'cust',id:_cmId,amount:a,method:m});toast('✅ To’lov: '+grp(a)+' · '+_accLabel(m));custDetail(_cmId);renderMijoz();}
+function custPayFromDetail(){if(!_cmId)return;var a=_pf(prompt('To’lov summasi (qarzdan ayiriladi):','0'));if(!a)return;var m=_askAcc();var _cn='';var _cl=getCust();for(var _ci=0;_ci<_cl.length;_ci++)if(_cl[_ci].id===_cmId)_cn=_cl[_ci].nom;commitEvent('pay',{typ:'cust',id:_cmId,amount:a,method:m});commitEvent('kassa',{dir:'in',acc:m,amount:a,cat:'Qarz to’lovi',note:_cn});toast('✅ To’lov: '+grp(a)+' · '+_accLabel(m));custDetail(_cmId);renderMijoz();}
 
 /* ---- SHTRIX SKANER (kamera) ---- */
 var _scanStream=null,_scanRAF=null,_scanRAF2=null,_scanDet=null,_scanLast=0,_zxMFR=null,_zxCanvas=null,_zxHints=null,_scanN=0,_zxReader=null;
@@ -3216,7 +3224,7 @@ function onlRender(){
     var d=o.created_at?new Date(o.created_at):null;var ds=d?(('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)):'';
     var isD=(o.mode!=='pickup');
     h+='<div class="onl-card"><div class="onl-c-top"><span>#'+esc2(String(o.id).slice(-6))+' · '+ds+'</span><span class="onl-c-tot">'+grp(o.total)+' so\u2018m</span></div>';
-    h+='<div class="onl-bdg" style="background:'+st[1]+';color:'+st[2]+'">'+st[0]+' · '+(isD?'🚚 Yetkazish':'🏪 Olib ketish')+' · '+({payme:'📲 Payme',karta:'💳 Karta'}[o.pay]||'💵 Naqd')+'</div>';
+    h+='<div class="onl-bdg" style="background:'+st[1]+';color:'+st[2]+'">'+st[0]+' · '+(isD?'🚚 Yetkazish':'🏪 Olib ketish')+' · '+({payme:'📲 Payme',karta:'💳 Karta',hisob:'🏦 Hisob raqam'}[o.pay]||'💵 Naqd')+'</div>';
     if(o.name||o.phone)h+='<div class="onl-c-cust">'+esc2(o.name||'')+(o.phone?(' · '+esc2(o.phone)):'')+'</div>';
     if(isD&&o.address)h+='<div class="onl-c-addr">📍 '+esc2(o.address)+(o.lat?(' · <a href="https://maps.google.com/?q='+o.lat+','+o.lng+'" target="_blank">xarita</a>'):'')+'</div>';
     h+='<div class="onl-c-items">'+items+'</div>';
@@ -3233,7 +3241,7 @@ function onlPatch(id,body){return fetch(SB_URL+'/rest/v1/catalog_orders?id=eq.'+
 function onlSaleItems(o,neg){return (o.items||[]).map(function(it){var p=findProd(it.id);return {id:it.id,nom:it.nom||(p&&p.nom)||'',narx:+it.price||+it.narx||0,narx0:+it.price||+it.narx||0,xarid:(p&&p.xarid)||0,qty:(neg?-Math.abs(+it.qty||0):(+it.qty||0))};});}
 function onlConfirm(id){var o=onlFind(id);if(!o)return;if(!confirm('Buyurtma tasdiqlansinmi? Qoldiq kamayadi.'))return;
   var now=new Date(),items=onlSaleItems(o,false),tot=items.reduce(function(a,it){return a+it.narx*it.qty;},0);
-  var sale={id:'s'+now.getTime()+Math.floor(Math.random()*1000),day:dayStr(now),ts:now.toISOString(),seller:'ONLAYN',pay:'naqd',online:true,orderId:o.id,total:tot,items:items};
+  var sale={id:'s'+now.getTime()+Math.floor(Math.random()*1000),day:dayStr(now),ts:now.toISOString(),seller:'ONLAYN',pay:({payme:'payme1',karta:'karta',hisob:'bank'}[o.pay]||'naqd'),online:true,orderId:o.id,total:tot,items:items};
   if(o.name)sale.customer=o.name;
   commitEvent('sale',sale);
   onlPatch(id,{status:'tasdiq',updated_at:new Date().toISOString()}).then(function(){toast('✅ Tasdiqlandi, qoldiq kamaydi');publishCatalog(false);onlFetch();}).catch(function(){toast('Holat saqlanmadi');});
