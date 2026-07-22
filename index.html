@@ -36,8 +36,8 @@
   .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9fb4d4;font-weight:600}
   h1{margin:2px 0 0;font-size:22px;font-weight:800;letter-spacing:-.02em}
   h1 .dot{color:#C65911}
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
-  .stat{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:9px 10px}
+  .stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;justify-content:flex-start}
+  .stat{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:8px 13px;flex:0 0 auto;min-width:138px}
   .stat .v{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
   .stat .l{font-size:10px;color:#a9bdd9;margin-top:2px;font-weight:500}
   @media(max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}.stat .v{font-size:15px}}
@@ -1201,6 +1201,7 @@ function hisobotExport(){
   if(!rows.length){toast('Bu bo\u2018limda jadval yo\u2018q');return;}
   try{var ws=XLSX.utils.aoa_to_sheet(rows);var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Hisobot');XLSX.writeFile(wb,title+'_'+dayStr(new Date())+'.xlsx');toast('\u2705 Excel yuklandi');}catch(e){toast('Xato: '+e.message);}
 }
+function supDetail(id){var s=getSup(),sup=null;for(var i=0;i<s.length;i++)if(s[i].id===id){sup=s[i];break;}if(!sup)return;var ov=document.getElementById('supDetOv');if(ov)ov.remove();var debt=Math.round(sup.debt||0);var d=document.createElement('div');d.id='supDetOv';d.style.cssText='position:fixed;inset:0;background:rgba(20,30,50,.5);z-index:250;display:flex;align-items:center;justify-content:center;padding:16px';d.innerHTML='<div style="background:#fff;border-radius:16px;max-width:400px;width:100%;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,.25)"><div style="font-size:17px;font-weight:800;margin-bottom:4px">\ud83d\ude9a '+esc(sup.nom)+'</div><div style="font-size:13px;color:#6b7280;margin-bottom:14px">Joriy qarz: <b style="color:'+(debt>0?'#a32d2d':'#16a34a')+'">'+grp(debt)+'</b> so\u2018m</div><div style="display:flex;gap:10px"><button type="button" onclick="var o=document.getElementById(\'supDetOv\');if(o)o.remove();" style="flex:1;padding:12px;border:1px solid #e5e7eb;background:#fff;border-radius:10px;font-weight:700;cursor:pointer;font-family:inherit">Yopish</button>'+(debt>0?('<button type="button" onclick="var o=document.getElementById(\'supDetOv\');if(o)o.remove();supPay(\''+id+'\')" style="flex:2;padding:12px;border:0;background:#1F4E79;color:#fff;border-radius:10px;font-weight:800;cursor:pointer;font-family:inherit">\ud83d\udcb5 To\u2018lov qilish</button>'):'')+'</div></div>';document.body.appendChild(d);}
 function renderH_taminot(el){
   evAll(function(evs){
     var sups=getSup();
@@ -1226,7 +1227,7 @@ function renderH_taminot(el){
     var rows=sups.map(function(s){
       var r=led[s.id]||{open:0,plus:0,minus:0};
       var close=r.open+r.plus-r.minus;if(close<0)close=0;
-      return {nom:s.nom,due:s.due,open:r.open,plus:r.plus,minus:r.minus,close:close};
+      return {id:s.id,nom:s.nom,due:s.due,open:r.open,plus:r.plus,minus:r.minus,close:close};
     }).filter(function(r){return r.close>0||r.plus>0||r.minus>0||r.open>0;})
       .sort(function(a,b){return b.close-a.close;});
 
@@ -1242,7 +1243,7 @@ function renderH_taminot(el){
       qh+='<div class="htbl"><div class="htr t5 hth"><span>Ta\u2019minotchi</span><span>Boshi</span><span>Qo\u2019shildi</span><span>To\u2019landi</span><span>Qoldi</span></div>';
       rows.forEach(function(r){
         var od=(r.close>0&&r.due&&r.due<dayStr(new Date()));
-        qh+='<div class="htr t5"><span style="text-align:left;font-weight:600;white-space:normal;word-break:break-word">'+esc(r.nom)+
+        qh+='<div class="htr t5" onclick="supDetail(\''+r.id+'\')" style="cursor:pointer"><span style="text-align:left;font-weight:600;white-space:normal;word-break:break-word">'+esc(r.nom)+
           (od?'<div style="font-size:10.5px;color:#a32d2d;font-weight:700">\u26a0\ufe0f '+_dmy(r.due)+'</div>':(r.due?'<div style="font-size:10.5px;color:#9aa4b2">'+_dmy(r.due)+'</div>':''))+'</span>'+
           '<span class="dim">'+(r.open?grp(r.open):'\u2014')+'</span>'+
           '<span class="'+(r.plus?'neg':'dim')+'">'+(r.plus?'+'+grp(r.plus):'\u2014')+'</span>'+
@@ -2069,7 +2070,7 @@ function supBulkSave(){
   toast('\u2705 '+add+' ta ta\u2019minotchi qo\u2019shildi'+(skip?(' \u00b7 '+skip+' takror o\u2019tkazildi'):''));
 }
 function pickAccountSup(msg,cb){var ov=document.getElementById('accPickOv');if(ov)ov.remove();window._accPickCb=cb;var d=document.createElement('div');d.id='accPickOv';d.style.cssText='position:fixed;inset:0;background:rgba(20,30,50,.5);z-index:400;display:flex;align-items:center;justify-content:center;padding:18px';function b(m,l){return '<button onclick="_accPick(\''+m+'\')" style="padding:16px 10px;border:1.5px solid #d7deea;background:#fff;border-radius:12px;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit">'+l+'</button>';}d.innerHTML='<div style="background:#fff;border-radius:16px;max-width:360px;width:100%;padding:20px;box-shadow:0 12px 40px rgba(0,0,0,.25)"><div style="font-size:15px;font-weight:800;margin-bottom:14px;text-align:center">'+esc(msg||'To\u2018lov usuli?')+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+b('naqd','\ud83d\udcb5 Naqd')+b('ichki','\ud83c\udfe0 Ichki kassa')+b('payme1','\ud83d\udcf1 Payme 1')+b('payme2','\ud83d\udcf1 Payme 2')+b('bank','\ud83c\udfe6 Hisob raqam')+'</div><button onclick="_accPick(null)" style="width:100%;margin-top:12px;padding:11px;border:1px solid #e5e7eb;background:#fff;border-radius:10px;font-weight:700;color:#6b7280;cursor:pointer;font-family:inherit">Bekor</button></div>';document.body.appendChild(d);}
-function supPay(id){var s=getSup();for(var i=0;i<s.length;i++)if(s[i].id===id){var nm=s[i].nom;var a=Math.round(_pf(prompt('To\u2019lov summasi (qarzdan ayiriladi):\nQarz: '+grp(s[i].debt||0),'0'))||0);if(!a)return;pickAccountSup('Ta\u2019minotchiga to\u2019lov \u2014 qayerdan?',function(acc){if(!acc)return;commitEvent('pay',{typ:'sup',id:id,amount:a});if(acc!=='ichki')commitEvent('kassa',{dir:'out',acc:acc,amount:a,cat:'Xarid',note:'Ta\u2019minotchiga to\u2019lov \u00b7 '+nm});renderKirim();if(typeof refresh==='function')refresh();toast('\u2705 To\u2019lov: '+grp(a)+' \u00b7 '+_accLabel(acc)+(acc==='ichki'?' (kunlikka ta\u2019sir qilmaydi)':''));});break;}}
+function supPay(id){var s=getSup();for(var i=0;i<s.length;i++)if(s[i].id===id){var nm=s[i].nom;var a=Math.round(_pf(prompt('To\u2019lov summasi (qarzdan ayiriladi):\nQarz: '+grp(s[i].debt||0),'0'))||0);if(!a)return;pickAccountSup('Ta\u2019minotchiga to\u2019lov \u2014 qayerdan?',function(acc){if(!acc)return;commitEvent('pay',{typ:'sup',id:id,amount:a});if(acc!=='ichki')commitEvent('kassa',{dir:'out',acc:acc,amount:a,cat:'Xarid',note:'Ta\u2019minotchiga to\u2019lov \u00b7 '+nm});renderKirim();if(typeof renderHisobot==='function')renderHisobot();if(typeof refresh==='function')refresh();toast('\u2705 To\u2019lov: '+grp(a)+' \u00b7 '+_accLabel(acc)+(acc==='ichki'?' (kunlikka ta\u2019sir qilmaydi)':''));});break;}}
 function supSetDebt(id){var s=getSup();for(var i=0;i<s.length;i++)if(s[i].id===id){var cur=s[i].debt||0;var raw=prompt('\u201c'+s[i].nom+'\u201d\nJoriy/boshlang\u2018ich qarz (jami so\u2018m):',String(Math.round(cur)));if(raw==null)return;var t=Math.round(_pf(raw)||0);if(t<0)t=0;var delta=t-cur;commitEvent('supadj',{id:id,amount:delta});renderKirim();toast('\u2705 Qarz belgilandi: '+grp(t));break;}}
 function supDel(id){if(!confirm('Ta\u2019minotchi o\u2019chirilsinmi?'))return;commitEvent('supdel',{id:id});renderKirim();}
 var _supDueTarget=null;
