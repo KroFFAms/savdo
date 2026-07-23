@@ -124,7 +124,7 @@
   .qb-p{font-size:12.5px;font-weight:800;color:#1F4E79;font-variant-numeric:tabular-nums}
   .draftbar{padding:2px 12px 4px}
   .draft-h{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin:2px 2px 6px}
-  .draft-g{display:flex;flex-wrap:wrap;gap:8px}
+  .draft-g{display:flex;flex-wrap:wrap;gap:8px;max-height:132px;overflow-y:auto;-webkit-overflow-scrolling:touch}
   .dchip{display:flex;align-items:stretch;border:1.5px solid #F0C98B;background:#FFF7E9;border-radius:10px;overflow:hidden}
   .dchip-b{border:0;background:transparent;padding:7px 10px;font-size:13px;font-weight:700;color:#8a4b00;cursor:pointer;font-family:inherit}
   .dchip-b small{color:#b07a2a;font-weight:600}
@@ -2152,19 +2152,37 @@ function holdSale(){
   if(!CART.length){toast('Savat bo\u2018sh');return;}
   var cust=_draftCust();var now=new Date();
   var lbl=cust||('Qoralama '+('0'+now.getHours()).slice(-2)+':'+('0'+now.getMinutes()).slice(-2));
-  var d=getDrafts();
-  d.unshift({id:'d'+now.getTime(),ts:now.getTime(),label:lbl,cust:cust,pay:PAY,cart:_draftCopy(CART)});
-  setDrafts(d);CART=[];renderCart();renderDrafts();
+  commitEvent('draft',{id:'d'+now.getTime()+Math.floor(Math.random()*1000),ts:now.getTime(),label:lbl,cust:cust,pay:PAY,cart:_draftCopy(CART)});
+  CART=[];renderCart();renderDrafts();
   toast('\u23f8\ufe0f Kutishga olindi: '+lbl);
+}
+var _draftQ='';
+function _draftFilter(v){
+  _draftQ=(v||'').toLowerCase();
+  var g=document.getElementById('draftG');if(!g)return;
+  var ch=g.querySelectorAll('.dchip'),shown=0;
+  for(var i=0;i<ch.length;i++){
+    var t=ch[i].getAttribute('data-l')||'';
+    var ok=(!_draftQ||t.indexOf(_draftQ)>=0);
+    ch[i].style.display=ok?'flex':'none';if(ok)shown++;
+  }
+  var e=document.getElementById('draftNone');if(e)e.style.display=shown?'none':'block';
 }
 function renderDrafts(){
   var bar=document.getElementById('draftBar');if(!bar)return;
   var d=getDrafts();
   if(!d.length){bar.innerHTML='';bar.style.display='none';return;}
-  var h='<div class="draft-h">\ud83d\uddc2\ufe0f Kutayotgan savdolar:</div><div class="draft-g">';
-  d.forEach(function(x){var n=(x.cart||[]).length;
-    h+='<div class="dchip"><button class="dchip-b" onclick="resumeDraft(\''+x.id+'\')">'+esc(x.label)+' <small>('+n+')</small></button><button class="dchip-x" onclick="delDraft(\''+x.id+'\')">\u00d7</button></div>';});
-  h+='</div>';bar.innerHTML=h;bar.style.display='block';
+  var h='<div class="draft-h">\ud83d\uddc2\ufe0f Kutayotgan savdolar \u00b7 '+d.length+' ta</div>';
+  if(d.length>6)h+='<input id="draftFilter" class="kf-inp" style="margin:0 0 6px" placeholder="Qoralama qidirish (ism)\u2026" oninput="_draftFilter(this.value)" value="'+esc(_draftQ)+'">';
+  h+='<div class="draft-g" id="draftG">';
+  d.forEach(function(x){
+    var n=(x.cart||[]).length;
+    var key=((x.label||'')+' '+(x.seller||'')).toLowerCase();
+    h+='<div class="dchip" data-l="'+esc(key)+'"><button class="dchip-b" onclick="resumeDraft(\''+x.id+'\')">'+esc(x.label)+' <small>('+n+(x.seller?(' \u00b7 '+esc(x.seller)):'')+')</small></button><button class="dchip-x" onclick="delDraft(\''+x.id+'\')">\u00d7</button></div>';
+  });
+  h+='</div><div id="draftNone" style="display:none;font-size:12px;color:#6b7280;padding:4px 2px">Topilmadi</div>';
+  bar.innerHTML=h;bar.style.display='block';
+  if(_draftQ)_draftFilter(_draftQ);
 }
 function resumeDraft(id){
   var d=getDrafts();var found=null;for(var i=0;i<d.length;i++)if(d[i].id===id){found=d[i];break;}
@@ -2173,11 +2191,11 @@ function resumeDraft(id){
   d=getDrafts();var idx=-1,dr=null;for(var j=0;j<d.length;j++)if(d[j].id===id){idx=j;dr=d[j];break;}
   if(idx<0)return;
   CART=_draftCopy(dr.cart);
-  d.splice(idx,1);setDrafts(d);
+  commitEvent('draftdel',{id:id});
   var si=document.getElementById('custSearch');if(si&&dr.cust)si.value=dr.cust;
   renderCart();renderDrafts();toast('\u25b6\ufe0f Davom: '+dr.label);
 }
-function delDraft(id){if(!confirm('Qoralama o\u2018chirilsinmi?'))return;var d=getDrafts();for(var i=0;i<d.length;i++)if(d[i].id===id){d.splice(i,1);break;}setDrafts(d);renderDrafts();}
+function delDraft(id){if(!confirm('Qoralama o\u2018chirilsinmi?'))return;commitEvent('draftdel',{id:id});renderDrafts();}
 function renderQuick(){
   var bar=document.getElementById('quickBar');if(!bar)return;
   if(typeof salesLoad!=='function'){bar.innerHTML='';return;}
@@ -3405,7 +3423,7 @@ function applyEvent(ev){
     var cu=getCust();(pl.list||[]).forEach(function(it){var cf=0;for(var ci=0;ci<cu.length;ci++){if(cu[ci].nom===it.nom){cu[ci].debt=it.debt||0;if(it.phone)cu[ci].phone=it.phone;cf=1;break;}}if(!cf)cu.push({id:uid('cust'),nom:it.nom,phone:it.phone||'',debt:it.debt||0});});setCust(cu);
   }else if(ev.kind==='supdel'||ev.kind==='custdel'){
     var typ=(ev.kind==='supdel')?'sup':'cust';var d2=((typ==='sup')?getSup():getCust()).filter(function(x){return x.id!==pl.id;});if(typ==='sup')setSup(d2);else setCust(d2);
-  }else if(ev.kind==='adjust'){var pa=findProd(pl.pid);if(pa)pa.qoldiq=pl.to;}else if(ev.kind==='config'){if(pl.pins){try{localStorage.setItem('kroff_pins',JSON.stringify(pl.pins));}catch(e){}}}else if(ev.kind==='prodadd'){if(!findProd(pl.id)){var np={id:pl.id,nom:pl.nom,artikul:pl.artikul||'',barcode:pl.barcode||'',olchov:pl.olchov||'dona',kategoriya:pl.kategoriya||'',brend:'',sotuv:pl.sotuv||0,xarid:pl.xarid||0,qoldiq:pl.qoldiq||0,marja:0,arxiv:false,erkin:(pl.erkin?true:false)};np._s=(np.nom+' '+np.brend+' '+np.kategoriya).toLowerCase();PRODUCTS.push(np);if(np.barcode){if(!BCX[np.barcode])BCX[np.barcode]=[];BCX[np.barcode].push(np);}}}else if(ev.kind==='reprice'){var rp=findProd(pl.pid);if(rp){if(pl.sotuv!=null)rp.sotuv=pl.sotuv;if(pl.xarid!=null)rp.xarid=pl.xarid;}}else if(ev.kind==='writeoff'){var wp=findProd(pl.pid);if(wp)wp.qoldiq=Math.round((wp.qoldiq-pl.qty)*1000)/1000;}else if(ev.kind==='optom'){var oo=findProd(pl.pid);if(oo&&pl.optom!=null)oo.optom=pl.optom;}else if(ev.kind==='prodsup'){var psx=findProd(pl.pid);if(psx)psx.supId=(pl.supId||'');}else if(ev.kind==='prodimg'){var pix=findProd(pl.pid);if(pix)pix.img=(pl.url||'');}else if(ev.kind==='prodedit'){var pe=findProd(pl.pid);if(pe){if(pl.nom!=null)pe.nom=pl.nom;if(pl.kategoriya!=null)pe.kategoriya=pl.kategoriya;if(pl.olchov!=null)pe.olchov=pl.olchov;if(pl.barcode!=null&&pl.barcode!=='')pe.barcode=pl.barcode;if(pl.erkin!=null)pe.erkin=!!pl.erkin;pe._s=((pe.nom||'')+' '+(pe.brend||'')+' '+(pe.kategoriya||'')).toLowerCase();}}
+  }else if(ev.kind==='adjust'){var pa=findProd(pl.pid);if(pa)pa.qoldiq=pl.to;}else if(ev.kind==='config'){if(pl.pins){try{localStorage.setItem('kroff_pins',JSON.stringify(pl.pins));}catch(e){}}}else if(ev.kind==='prodadd'){if(!findProd(pl.id)){var np={id:pl.id,nom:pl.nom,artikul:pl.artikul||'',barcode:pl.barcode||'',olchov:pl.olchov||'dona',kategoriya:pl.kategoriya||'',brend:'',sotuv:pl.sotuv||0,xarid:pl.xarid||0,qoldiq:pl.qoldiq||0,marja:0,arxiv:false,erkin:(pl.erkin?true:false)};np._s=(np.nom+' '+np.brend+' '+np.kategoriya).toLowerCase();PRODUCTS.push(np);if(np.barcode){if(!BCX[np.barcode])BCX[np.barcode]=[];BCX[np.barcode].push(np);}}}else if(ev.kind==='reprice'){var rp=findProd(pl.pid);if(rp){if(pl.sotuv!=null)rp.sotuv=pl.sotuv;if(pl.xarid!=null)rp.xarid=pl.xarid;}}else if(ev.kind==='writeoff'){var wp=findProd(pl.pid);if(wp)wp.qoldiq=Math.round((wp.qoldiq-pl.qty)*1000)/1000;}else if(ev.kind==='optom'){var oo=findProd(pl.pid);if(oo&&pl.optom!=null)oo.optom=pl.optom;}else if(ev.kind==='prodsup'){var psx=findProd(pl.pid);if(psx)psx.supId=(pl.supId||'');}else if(ev.kind==='prodimg'){var pix=findProd(pl.pid);if(pix)pix.img=(pl.url||'');}else if(ev.kind==='prodedit'){var pe=findProd(pl.pid);if(pe){if(pl.nom!=null)pe.nom=pl.nom;if(pl.kategoriya!=null)pe.kategoriya=pl.kategoriya;if(pl.olchov!=null)pe.olchov=pl.olchov;if(pl.barcode!=null&&pl.barcode!=='')pe.barcode=pl.barcode;if(pl.erkin!=null)pe.erkin=!!pl.erkin;pe._s=((pe.nom||'')+' '+(pe.brend||'')+' '+(pe.kategoriya||'')).toLowerCase();}}else if(ev.kind==='draft'){var _drL=getDrafts(),_drI=-1;for(var _drX=0;_drX<_drL.length;_drX++)if(_drL[_drX].id===pl.id){_drI=_drX;break;}var _drO={id:pl.id,ts:pl.ts||ev.ts,label:pl.label,cust:pl.cust,pay:pl.pay,cart:pl.cart||[],seller:ev.seller||''};if(_drI>=0)_drL[_drI]=_drO;else _drL.unshift(_drO);setDrafts(_drL);}else if(ev.kind==='draftdel'){var _drZ=getDrafts();for(var _drY=0;_drY<_drZ.length;_drY++)if(_drZ[_drY].id===pl.id){_drZ.splice(_drY,1);break;}setDrafts(_drZ);}
   else if(ev.kind==='aritem'){if(pl.del){for(var ai=0;ai<ARITEMS.length;ai++){if(ARITEMS[ai].id===pl.id){ARITEMS.splice(ai,1);break;}}}else{var af=0;for(var ai2=0;ai2<ARITEMS.length;ai2++){if(ARITEMS[ai2].id===pl.id){ARITEMS[ai2]={id:pl.id,nom:pl.nom,kun:pl.kun,soat:pl.soat};af=1;break;}}if(!af)ARITEMS.push({id:pl.id,nom:pl.nom,kun:pl.kun,soat:pl.soat});}}
   else if(ev.kind==='arout'){ARENTALS[pl.rid]={rid:pl.rid,itemId:pl.itemId,nom:pl.nom,mijoz:pl.mijoz,kun:pl.kun,soat:pl.soat,tsOut:pl.ts,zalog:pl.zalog||0,closed:false};}
   else if(ev.kind==='arin'){if(ARENTALS[pl.rid]){ARENTALS[pl.rid].closed=true;ARENTALS[pl.rid].tsIn=pl.ts;ARENTALS[pl.rid].haqi=pl.haqi;ARENTALS[pl.rid].method=pl.method;}}
@@ -3436,7 +3454,7 @@ function _afterState(){
   else if(b.indexOf('v-kirim')>=0)renderKirim();
   else if(b.indexOf('v-mijoz')>=0)renderMijoz();
   else if(b.indexOf('v-ishhaqi')>=0)renderIshHaqi();
-  else if(b.indexOf('v-sotuv')>=0){renderCart();updateDayTotal();}
+  else if(b.indexOf('v-sotuv')>=0){renderCart();updateDayTotal();if(typeof renderDrafts==='function')renderDrafts();}
   _bkReminder();
 }
 var _bkChecked=false;
