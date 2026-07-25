@@ -30,7 +30,8 @@ var DEPLOY = {
   BUCKET:       "tovar-rasm",
   CATALOG_PASS: "kroff",
   ADMIN_PIN:    "1992",
-  SHOP_NAME:    "KROFF"
+  SHOP_NAME:    "KROFF",
+  SHOP_PHONE:   "+998 93 681 68 67"
 };
 </script>
 <script>
@@ -1048,51 +1049,118 @@ function setPay(m,btn){PAY=m;BOL='';var ps=document.querySelectorAll('.pays .pay
 /* ===== Chek chiqarish (58mm) ===== */
 var SHOP={
   name:(function(){try{return localStorage.getItem('kroff_shop')||DEPLOY.SHOP_NAME;}catch(e){return DEPLOY.SHOP_NAME;}})(),
+  phone:(function(){try{return localStorage.getItem('kroff_tel')||DEPLOY.SHOP_PHONE||'';}catch(e){return DEPLOY.SHOP_PHONE||'';}})(),
   social:['f  kroff.uz     \u25CE anvarbozorov515','\u27A4 optomqurilish     \u2295 @optomqurilish']
 };
 function _money(n){return grp(Math.round(Math.abs(n)));}
 function _dash(label,val){return '<div class="r-dot"><span>'+label+'</span><span class="r-dl"></span><b>'+val+'</b></div>';}
 function _custPhone(name){try{var c=getCust();for(var i=0;i<c.length;i++){if(c[i].nom===name)return c[i].phone||'';}}catch(e){}return '';}
+function _rcWrap(t,n){
+  t=String(t||'');var w=t.split(' '),o=[],c='';
+  for(var i=0;i<w.length;i++){
+    var x=w[i];
+    while(x.length>n){ if(c){o.push(c);c='';} o.push(x.slice(0,n)); x=x.slice(n); }
+    var t2=c?(c+' '+x):x;
+    if(t2.length<=n)c=t2; else {if(c)o.push(c);c=x;}
+  }
+  if(c)o.push(c);
+  return o.length?o:[''];
+}
 function _rcLines(sale){
   if(!sale)return [];
   var d=new Date(sale.ts||sale.day);
-  var dd=('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear()+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);
+  var dd=('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear();
+  var tm=('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+':'+('0'+d.getSeconds()).slice(-2);
   var recNo=String(sale.id).replace(/\D/g,'').slice(-12);
-  var payMap={naqd:'Naqd',karta:'Karta',payme1:'Payme 1',payme2:'Payme 2',bank:'Hisob raqam',qarz:'Qarzga'};
+  var isR=!!sale.isReturn, tot=Math.abs(sale.total);
+  var payMap={naqd:'Naqd',karta:'Karta',payme1:'Payme',payme2:'Payme',bank:'Hisob raqam',qarz:'Qarzga'};
+  var payL=payMap[sale.pay]||(typeof payLbl==='function'?payLbl(sale.pay):(sale.pay||'-'));
   var L=[];
-  L.push({t:(typeof SHOP!=='undefined'&&SHOP.name?('Store '+SHOP.name):'KROFF'),c:1,b:1});
-  L.push({t:'Chek #'+recNo});
-  L.push({t:'Sana: '+dd});
-  L.push({t:'Sotuvchi: '+(sale.seller||'-')});
+  L.push({t:(SHOP&&SHOP.name?SHOP.name:'KROFF'),c:1,b:1,big:1});
   L.push({sep:1});
-  (sale.items||[]).forEach(function(it){
-    L.push({t:it.nom});
-    L.push({t:grp(it.qty)+' x '+grp(it.narx)+' = '+grp(Math.round(it.qty*it.narx)),r:1});
+  L.push({t:'Sotuv: #'+recNo+(isR?' (QAYTARISH)':''),b:1});
+  L.push({t:'Sana: '+dd+', '+tm});
+  L.push({t:'Sotuvchi: '+(sale.seller||'-'),b:1});
+  L.push({t:'Kassir: '+(sale.seller||'-'),b:1});
+  if(SHOP&&SHOP.phone)L.push({t:'Tel: '+SHOP.phone,b:1});
+  if(sale.bolim&&typeof bolimNom==='function')L.push({t:'Bo\u2018lim: '+bolimNom(sale.bolim),b:1});
+  if(sale.customer)L.push({t:'Mijoz: '+sale.customer,b:1});
+  L.push({sep:1});
+  (sale.items||[]).forEach(function(it,ix){
+    var q=Math.abs(it.qty), pr=(it.narx0!=null?it.narx0:it.narx), line=Math.abs(pr*it.qty);
+    _rcWrap((ix+1)+'. '+it.nom,36).forEach(function(w){L.push({t:w,b:1});});
+    L.push({l:q+' x '+_money(pr), v:_money(line)+' UZS'});
   });
   L.push({sep:1});
-  if(sale.disc>0){L.push({t:'Oraliq: '+grp(sale.sub||0),r:1});L.push({t:'Chegirma: -'+grp(sale.disc),r:1});}
-  L.push({t:'JAMI: '+grp(Math.abs(sale.total))+' so\u2018m',b:1,r:1});
-  L.push({t:'To\u2018lov: '+(payMap[sale.pay]||sale.pay||'-')});
-  if(sale.customer)L.push({t:'Mijoz: '+sale.customer});
-  if(sale.debt>0)L.push({t:'Qarz: '+grp(sale.debt),r:1});
-  if(sale.change>0)L.push({t:'Qaytim: '+grp(sale.change),r:1});
+  L.push({l:'Oraliq jami', v:_money(sale.sub!=null?sale.sub:tot)+' UZS'});
+  if(sale.disc)L.push({l:'Chegirma', v:'\u2212'+_money(sale.disc)+' UZS'});
+  if(sale.dost)L.push({l:'Dostavka', v:sale.dost.haq?(_money(sale.dost.haq)+' UZS'):'Bepul'});
+  L.push({l:'JAMI', v:_money(tot)+' UZS', b:1});
+  if(sale.pay==='qarz'){
+    if(sale.given){var _pm={naqd:'Naqd',karta:'Karta',payme1:'Payme1',payme2:'Payme2'}[sale.paidMethod]||'To\u2018langan';L.push({l:'Berilgan ('+_pm+')',v:_money(sale.given)+' UZS'});}
+    L.push({l:'Qarzga', v:_money(sale.debt!=null?sale.debt:(tot-(sale.given||0)))+' UZS'});
+  }else{
+    L.push({l:payL, v:_money(tot)+' UZS'});
+    if(sale.given){L.push({l:'Berilgan',v:_money(sale.given)+' UZS'});L.push({l:'Qaytim',v:_money(sale.change||0)+' UZS'});}
+  }
   L.push({sep:1});
+  ((SHOP&&SHOP.social)||[]).forEach(function(x){L.push({t:x,c:1});});
+  L.push({bar:recNo});
   L.push({t:'Rahmat!',c:1});
   return L;
 }
-function _rcTextPlain(sale){var L=_rcLines(sale),o=[];L.forEach(function(x){o.push(x.sep?'------------------------':x.t);});return o.join('\n');}
+function _rcTextPlain(sale){
+  var L=_rcLines(sale),W=36,o=[];
+  L.forEach(function(x){
+    if(x.sep){o.push(new Array(W+1).join('-'));return;}
+    if(x.bar){o.push('#'+x.bar);return;}
+    if(x.l!=null){
+      var lf=String(x.l),rg=String(x.v),f=W-lf.length-rg.length;if(f<1)f=1;
+      o.push(lf+new Array(f+1).join('.')+rg);return;
+    }
+    var t=String(x.t||'');
+    if(x.c){var pd=Math.max(0,Math.floor((W-t.length)/2));t=new Array(pd+1).join(' ')+t;}
+    o.push(t);
+  });
+  return o.join('\n');
+}
 function _rcCanvasURL(sale){
-  var L=_rcLines(sale),W=380,lh=22,pad=18,H=pad*2+L.length*lh+6,sc=2;
+  var L=_rcLines(sale),W=420,lh=21,pad=18,sc=2,barH=72;
+  var H=pad*2+8;
+  L.forEach(function(x){H+=(x.bar?barH:lh);});
   var cv=document.createElement('canvas');cv.width=W*sc;cv.height=H*sc;
   var ctx=cv.getContext('2d');ctx.scale(sc,sc);
   ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);ctx.fillStyle='#000';
-  var y=pad+13;
+  var y=pad+14;
   L.forEach(function(x){
-    if(x.sep){ctx.strokeStyle='#bbb';ctx.beginPath();ctx.moveTo(pad,y-7);ctx.lineTo(W-pad,y-7);ctx.stroke();y+=lh;return;}
-    ctx.font=(x.b?'bold ':'')+'15px "Courier New",monospace';
-    if(x.c){ctx.textAlign='center';ctx.fillText(x.t,W/2,y);}
-    else if(x.r){ctx.textAlign='right';ctx.fillText(x.t,W-pad,y);}
-    else{ctx.textAlign='left';ctx.fillText(x.t,pad,y);}
+    if(x.sep){
+      ctx.save();ctx.strokeStyle='#000';ctx.lineWidth=1;ctx.setLineDash([2,3]);
+      ctx.beginPath();ctx.moveTo(pad,y-8);ctx.lineTo(W-pad,y-8);ctx.stroke();ctx.restore();
+      y+=lh;return;
+    }
+    if(x.bar){
+      try{
+        var bc=document.createElement('canvas');
+        JsBarcode(bc,String(x.bar),{format:'CODE128',width:2,height:44,margin:0,displayValue:true,fontSize:13});
+        var bw=Math.min(W-2*pad,bc.width),bh=bc.height*(bw/bc.width);
+        ctx.drawImage(bc,(W-bw)/2,y-8,bw,bh);
+      }catch(e){}
+      y+=barH;return;
+    }
+    ctx.font=(x.b?'bold ':'')+(x.big?'19px':'15px')+' "Courier New",monospace';
+    if(x.l!=null){
+      var lf=String(x.l),rg=String(x.v);
+      ctx.textAlign='left';ctx.fillText(lf,pad,y);
+      ctx.textAlign='right';ctx.fillText(rg,W-pad,y);
+      var x1=pad+ctx.measureText(lf).width+5,x2=W-pad-ctx.measureText(rg).width-5;
+      if(x2>x1){ctx.save();ctx.strokeStyle='#000';ctx.lineWidth=1;ctx.setLineDash([1,3]);
+        ctx.beginPath();ctx.moveTo(x1,y-4);ctx.lineTo(x2,y-4);ctx.stroke();ctx.restore();}
+      y+=lh;return;
+    }
+    var t=String(x.t||'');
+    if(x.c){ctx.textAlign='center';ctx.fillText(t,W/2,y);}
+    else if(x.r){ctx.textAlign='right';ctx.fillText(t,W-pad,y);}
+    else{ctx.textAlign='left';ctx.fillText(t,pad,y);}
     y+=lh;
   });
   return cv.toDataURL('image/png');
@@ -1134,12 +1202,9 @@ function printReceipt(sale){
   h+='<div>Sana: '+dd+', '+tm+'</div>';
   h+='<div class="r-b">Sotuvchi: '+esc(sale.seller||'-')+'</div>';
   h+='<div class="r-b">Kassir: '+esc(sale.seller||'-')+'</div>';
+  if(SHOP.phone)h+='<div class="r-b">Tel: '+esc(SHOP.phone)+'</div>';
   if(sale.bolim)h+='<div class="r-b">Bo\u2018lim: '+esc(bolimNom(sale.bolim))+'</div>';
-  if(sale.customer){
-    h+='<div class="r-b">Mijoz: '+esc(sale.customer)+'</div>';
-    var ph=_custPhone(sale.customer);
-    if(ph)h+='<div class="r-b">Kontaktlar: '+esc(ph)+'</div>';
-  }
+  if(sale.customer)h+='<div class="r-b">Mijoz: '+esc(sale.customer)+'</div>';
   h+='<div class="r-line"></div>';
   (sale.items||[]).forEach(function(it,ix){
     var q=Math.abs(it.qty), pr=(it.narx0!=null?it.narx0:it.narx), line=Math.abs(pr*it.qty);
