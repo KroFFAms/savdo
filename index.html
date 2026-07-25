@@ -417,6 +417,8 @@ var DEPLOY = {
       font-family:"Courier New",ui-monospace,monospace;font-size:12px;line-height:1.35}
     @page{size:58mm auto;margin:0}
   }
+  #receiptArea .r-logo{text-align:center;margin:0 0 2mm}
+  #receiptArea .r-logo img{width:46mm;max-width:100%;height:auto;display:inline-block}
   #receiptArea .r-c{text-align:center}
   #receiptArea .r-b{font-weight:700}
   #receiptArea .r-line{border-top:1px dashed #000;margin:4px 0}
@@ -1059,6 +1061,8 @@ var BOL='';
 function setBolPay(id,btn){PAY='qarz';BOL=id;var ps=document.querySelectorAll('.pays .pay');for(var i=0;i<ps.length;i++)ps[i].classList.remove('active');if(btn)btn.classList.add('active');var cr=document.getElementById('custRow');if(cr)cr.style.display='none';var bR=document.getElementById('bolimRow');if(bR)bR.style.display='none';var chR=document.getElementById('cashRow');if(chR)chR.style.display='flex';var pR=document.getElementById('paidRow');if(pR)pR.style.display='flex';var cl=document.getElementById('changeLbl');if(cl)cl.textContent='Qarzga:';var mR=document.getElementById('muddatRow');if(mR)mR.style.display='flex';calcChange();}
 function setPay(m,btn){PAY=m;BOL='';var ps=document.querySelectorAll('.pays .pay');for(var i=0;i<ps.length;i++)ps[i].classList.remove('active');btn.classList.add('active');var cr=document.getElementById('custRow');if(cr){cr.style.display='flex';}var bR=document.getElementById('bolimRow');if(bR)bR.style.display='none';var chR=document.getElementById('cashRow');if(chR)chR.style.display=(m==='naqd'||m==='qarz')?'flex':'none';var pR=document.getElementById('paidRow');if(pR)pR.style.display=(m==='qarz')?'flex':'none';var cl=document.getElementById('changeLbl');if(cl)cl.textContent=(m==='qarz')?'Qarzga:':'Qaytim:';var mR=document.getElementById('muddatRow');if(mR)mR.style.display=(m==='qarz')?'flex':'none';calcChange();}
 /* ===== Chek chiqarish (58mm) ===== */
+var SHOP_LOGO='data:image/png;base64,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';
+var _LOGOIMG=(function(){try{var i=new Image();i.src=SHOP_LOGO;return i;}catch(e){return null;}})();
 var SHOP={
   name:(function(){try{return localStorage.getItem('kroff_shop')||DEPLOY.SHOP_NAME;}catch(e){return DEPLOY.SHOP_NAME;}})(),
   phone:(function(){try{return localStorage.getItem('kroff_tel')||DEPLOY.SHOP_PHONE||'';}catch(e){return DEPLOY.SHOP_PHONE||'';}})(),
@@ -1088,7 +1092,7 @@ function _rcLines(sale){
   var payMap={naqd:'Naqd',karta:'Karta',payme1:'Payme',payme2:'Payme',bank:'Hisob raqam',qarz:'Qarzga'};
   var payL=payMap[sale.pay]||(typeof payLbl==='function'?payLbl(sale.pay):(sale.pay||'-'));
   var L=[];
-  L.push({t:(SHOP&&SHOP.name?SHOP.name:'KROFF'),c:1,b:1,big:1});
+  L.push({logo:1,t:(SHOP&&SHOP.name?SHOP.name:'KROFF')});
   L.push({sep:1});
   L.push({t:'Sotuv: #'+recNo+(isR?' (QAYTARISH)':''),b:1});
   L.push({t:'Sana: '+dd+', '+tm});
@@ -1126,6 +1130,7 @@ function _rcTextPlain(sale){
   L.forEach(function(x){
     if(x.sep){o.push(new Array(W+1).join('-'));return;}
     if(x.bar){o.push('#'+x.bar);return;}
+    if(x.logo){var n=String(x.t||''),pd=Math.max(0,Math.floor((W-n.length)/2));o.push(new Array(pd+1).join(' ')+n);return;}
     if(x.l!=null){
       var lf=String(x.l),rg=String(x.v),f=W-lf.length-rg.length;if(f<1)f=1;
       o.push(lf+new Array(f+1).join('.')+rg);return;
@@ -1138,8 +1143,9 @@ function _rcTextPlain(sale){
 }
 function _rcCanvasURL(sale){
   var L=_rcLines(sale),W=420,lh=21,pad=18,sc=2,barH=72;
+  var logoH=60, hasLogo=!!(_LOGOIMG&&_LOGOIMG.complete&&_LOGOIMG.naturalWidth);
   var H=pad*2+8;
-  L.forEach(function(x){H+=(x.bar?barH:lh);});
+  L.forEach(function(x){H+=(x.bar?barH:(x.logo?(hasLogo?logoH:lh+8):lh));});
   var cv=document.createElement('canvas');cv.width=W*sc;cv.height=H*sc;
   var ctx=cv.getContext('2d');ctx.scale(sc,sc);
   ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);ctx.fillStyle='#000';
@@ -1149,6 +1155,17 @@ function _rcCanvasURL(sale){
       ctx.save();ctx.strokeStyle='#000';ctx.lineWidth=1;ctx.setLineDash([2,3]);
       ctx.beginPath();ctx.moveTo(pad,y-8);ctx.lineTo(W-pad,y-8);ctx.stroke();ctx.restore();
       y+=lh;return;
+    }
+    if(x.logo){
+      if(hasLogo){
+        var lw=Math.min(W-2*pad-20,300), lh2=_LOGOIMG.naturalHeight*(lw/_LOGOIMG.naturalWidth);
+        try{ctx.drawImage(_LOGOIMG,(W-lw)/2,y-12,lw,lh2);}catch(e){}
+        y+=logoH;
+      }else{
+        ctx.font='bold 20px "Courier New",monospace';ctx.textAlign='center';
+        ctx.fillText(String(x.t||''),W/2,y);y+=lh+8;
+      }
+      return;
     }
     if(x.bar){
       try{
@@ -1208,6 +1225,7 @@ function printReceipt(sale){
   var payMap={naqd:'Naqd',karta:'Karta',payme1:'Payme',payme2:'Payme',qarz:'Qarzga'};
   var payL=payMap[sale.pay]||payLbl(sale.pay);
   var h='';
+  h+='<div class="r-logo"><img src="'+SHOP_LOGO+'" alt="'+esc(SHOP.name||'')+'"></div>';
   h+='<div class="r-line"></div>';
   h+='<div class="r-b">Sotuv: #'+recNo+(isR?' (QAYTARISH)':'')+'</div>';
   h+='<div class="r-b">Store '+esc(SHOP.name)+'</div>';
