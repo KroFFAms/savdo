@@ -455,6 +455,18 @@ var DEPLOY = {
   #receiptArea .lbl-price{font-weight:800;font-size:22px;margin:3px 0}
   #receiptArea .lbl-code{font-size:11px;margin-top:2px}
   #receiptArea svg#lblBar{max-width:50mm;height:auto}
+  /* ===== 40x30 mm yorliq ===== */
+  #receiptArea .lbl40{width:40mm;height:30mm;box-sizing:border-box;padding:1mm 1.2mm;
+    text-align:center;color:#000;background:#fff;overflow:hidden;
+    font-family:Arial,"Helvetica Neue",Helvetica,sans-serif;
+    display:flex;flex-direction:column;justify-content:space-between;align-items:stretch}
+  #receiptArea .l40-shop{font-size:6pt;font-weight:700;letter-spacing:.12em;line-height:1}
+  #receiptArea .l40-nom{font-weight:600;line-height:1.12;max-height:7.4mm;overflow:hidden;word-break:break-word}
+  #receiptArea .l40-bar{line-height:0;margin:0}
+  #receiptArea .l40-bar svg{width:34mm;height:6.6mm;display:block;margin:0 auto}
+  #receiptArea .l40-code{font-size:5.5pt;letter-spacing:.08em;line-height:1}
+  #receiptArea .l40-price{font-weight:800;line-height:1.02;white-space:nowrap}
+  #receiptArea .l40-price small{font-size:.5em;font-weight:700;letter-spacing:.02em}
 .onl-ov{position:fixed;inset:0;background:rgba(10,20,40,.5);z-index:120;display:none;align-items:flex-end;justify-content:center}
 .onl-ov.open{display:flex}
 .onl-box{background:#fff;width:100%;max-width:640px;max-height:88vh;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:hidden}
@@ -1230,21 +1242,45 @@ function printReceipt(sale){
   document.getElementById('receiptArea').innerHTML=h;
   try{JsBarcode('#rcBar',recNo,{format:'CODE128',width:2,height:46,margin:0,displayValue:true,fontSize:13});}catch(e){}
   var _rp=document.getElementById('rcPaper');if(_rp){_rp.innerHTML=h.replace('id="rcBar"','id="rcBar2"');try{JsBarcode('#rcBar2',recNo,{format:'CODE128',width:2,height:46,margin:0,displayValue:true,fontSize:13});}catch(e){}}
+  _setPage('chek');
   var _rm=document.getElementById('rcModal');if(_rm)_rm.style.display='block';
 }
 function closeRcModal(){var m=document.getElementById('rcModal');if(m)m.style.display='none';}
 function printNow(){window.print();}
 function printLabelIdx(i){var p=(window.LASTRES||[])[i]; if(p)printLabel(p); else toast('Tovar topilmadi');}
+function _setPage(mode){
+  var st=document.getElementById('pageStyle');
+  if(!st){st=document.createElement('style');st.id='pageStyle';document.head.appendChild(st);}
+  if(mode==='label'){
+    st.textContent='@media print{@page{size:40mm 30mm;margin:0}'+
+      '#receiptArea{width:40mm!important;padding:0!important;font-size:8pt!important;line-height:1.1!important;'+
+      'font-family:Arial,Helvetica,sans-serif!important}}';
+  }else{
+    st.textContent='@media print{@page{size:58mm auto;margin:0}'+
+      '#receiptArea{width:58mm!important;padding:2mm 1.5mm!important}}';
+  }
+}
 function printLabel(p){
-  var h='<div class="lbl">';
-  h+='<div class="lbl-shop">'+esc(SHOP.name)+'</div>';
-  h+='<div class="lbl-nom">'+esc(p.nom)+'</div>';
-  h+='<div class="lbl-price">'+grp(p.sotuv)+' so\u2018m</div>';
-  if(p.barcode)h+='<div class="lbl-bar"><svg id="lblBar"></svg></div><div class="lbl-code">'+esc(p.barcode)+'</div>';
+  if(!p){toast('Tovar topilmadi');return;}
+  var nom=String(p.nom||''), bc=p.barcode?String(p.barcode):'';
+  var nf = nom.length<=20?'7pt' : (nom.length<=34?'6.2pt' : (nom.length<=50?'5.6pt':'5pt'));
+  var narx=grp(p.sotuv||0);
+  var pf = narx.length<=7?'13.5pt' : (narx.length<=9?'12pt':'10.5pt');
+  var h='<div class="lbl40">';
+  h+='<div class="l40-shop">'+esc(SHOP.name||'')+'</div>';
+  h+='<div class="l40-nom" style="font-size:'+nf+'">'+esc(nom)+'</div>';
+  if(bc){
+    h+='<div class="l40-bar"><svg id="lblBar"></svg></div>';
+    h+='<div class="l40-code">'+esc(bc)+'</div>';
+  }else if(p.artikul){
+    h+='<div class="l40-code">'+esc(String(p.artikul))+'</div>';
+  }
+  h+='<div class="l40-price" style="font-size:'+pf+'">'+narx+' <small>so\u2018m</small></div>';
   h+='</div>';
   document.getElementById('receiptArea').innerHTML=h;
-  try{if(p.barcode)JsBarcode('#lblBar',String(p.barcode),{format:'CODE128',width:2,height:40,margin:0,displayValue:false});}catch(e){}
-  setTimeout(function(){window.print();},80);
+  if(bc){try{JsBarcode('#lblBar',bc,{format:'CODE128',width:1,height:40,margin:0,displayValue:false});}catch(e){}}
+  _setPage('label');
+  setTimeout(function(){window.print();setTimeout(function(){_setPage('chek');},400);},120);
 }
 function exportXlsx(){
   if(typeof XLSX==='undefined'){toast('Excel kutubxonasi yuklanmadi');return;}
@@ -1271,6 +1307,7 @@ function printReorder(){
   low.forEach(function(p,i){h+='<div class="r-b" style="margin-top:4px">'+(i+1)+'. '+esc(p.nom)+'</div>'+_dash('Qoldiq: '+grp(p.qoldiq||0)+' '+(p.olchov||''),'_______');});
   h+='<div class="r-line"></div><div class="r-c">Jami: '+low.length+' xil tovar</div><div class="r-c">&nbsp;</div>';
   document.getElementById('receiptArea').innerHTML=h;
+  _setPage('chek');
   setTimeout(function(){window.print();},80);
 }
 function printSaleById(id){salesLoad(function(all){for(var i=0;i<all.length;i++){if(all[i].id===id){printReceipt(all[i]);return;}}toast('Chek topilmadi');});}
