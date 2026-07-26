@@ -28,7 +28,7 @@ var DEPLOY = {
   SB_KEY:       "sb_publishable_xEPsFgv-ACNKeAFJt2MMiA_Q3Vbte4F",
   SB_EV:        "savdo_ev",
   BUCKET:       "tovar-rasm",
-  CATALOG_PASS: "kroff",
+  CATALOG_PASS: "",
   ADMIN_PIN:    "1992",
   SHOP_NAME:    "KROFF"
 };
@@ -2924,11 +2924,13 @@ function delProdImg(id){
   if(typeof boshSearch==='function')boshSearch();
 }
 function _catCfg(){var c={};try{c=JSON.parse(localStorage.getItem('kroff_catcfg'))||{};}catch(e){}return c;}
+function CATPASS(){var c=_catCfg();return (c.pass||DEPLOY.CATALOG_PASS||'');}
 function catCfg(){var c=_catCfg();
   var ph=prompt('\ud83d\udcde Katalog uchun telefon (masalan +998901234567):',c.phone||'');if(ph===null)return;
   var tg=prompt('\u2708\ufe0f Telegram username (@ belgisiz):',c.tg||'');if(tg===null)return;
   var nm=prompt('\ud83c\udfea Do\u2019kon nomi:',c.name||'KROFF');if(nm===null)return;
-  var cfg={phone:ph.trim(),tg:(tg.trim().replace(/^@/,'')),name:(nm.trim()||'KROFF')};
+  var pw=prompt('\ud83d\udd11 Katalog paroli (onlayn buyurtma va yuklash uchun):',c.pass||'');if(pw===null)return;
+  var cfg={phone:ph.trim(),tg:(tg.trim().replace(/^@/,'')),name:(nm.trim()||'KROFF'),pass:(pw.trim())};
   localStorage.setItem('kroff_catcfg',JSON.stringify(cfg));
   toast('\u2705 Saqlandi. Endi "Katalogga yuklash" bosing.');}
 function catalogPush(){
@@ -3598,11 +3600,12 @@ function _rpcErr(r,t,fn){
   if(r.status===404||/does not exist|not find/i.test(t||''))
     return '\u26a0\ufe0f Supabase\u2019da xavfsizlik SQL\u2019i hali ishga tushirilmagan.\n\n\u00ab'+fn+'\u00bb funksiyasi topilmadi. xavfsizlik.sql ning 1 va 2-qismini SQL Editor\u2019da ishga tushiring.';
   if(/ruxsat/i.test(t||'')||r.status===401||r.status===403)
-    return '\ud83d\udd11 Parol mos emas.\n\nSupabase\u2019dagi kroff_pass_ok ichidagi parol bilan bu fayldagi DEPLOY.CATALOG_PASS bir xil bo\u2018lishi kerak.';
+    return '\ud83d\udd11 Parol mos emas.\n\n\u2699\ufe0f Katalog sozlamasi\u2019dagi parol Supabase\u2019dagi kroff_pass_ok paroli bilan bir xil bo\u2018lishi kerak.';
   return 'Xato: HTTP '+r.status+' '+String(t||'').slice(0,140);
 }
 function onlFetch(){
-  fetch(SB_URL+'/rest/v1/rpc/kroff_orders_active',{method:'POST',headers:_sbHdr(),body:JSON.stringify({p_pass:DEPLOY.CATALOG_PASS})})
+  if(!CATPASS()){document.getElementById('onlBody').innerHTML='<div class="onl-empty" style="white-space:pre-line;text-align:left;padding:14px;line-height:1.5">\ud83d\udd11 Katalog paroli kiritilmagan.\n\n\u2699\ufe0f Katalog sozlamasi\u2019ni oching va parolni kiriting (bir marta).</div>';return;}
+  fetch(SB_URL+'/rest/v1/rpc/kroff_orders_active',{method:'POST',headers:_sbHdr(),body:JSON.stringify({p_pass:CATPASS()})})
     .then(function(r){if(r.ok)return r.json();return r.text().then(function(t){throw new Error(_rpcErr(r,t,'kroff_orders_active'));});})
     .then(function(rows){_onlOrders=rows||[];onlRender();})
     .catch(function(e){document.getElementById('onlBody').innerHTML='<div class="onl-empty" style="white-space:pre-line;text-align:left;padding:14px;line-height:1.5">'+String(e&&e.message||'Yuklab bo\u2018lmadi').replace(/</g,'&lt;')+'</div>';});
@@ -3630,7 +3633,7 @@ function onlRender(){
   b.innerHTML=h;
 }
 function esc2(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
-function onlPatch(id,body){return fetch(SB_URL+'/rest/v1/rpc/kroff_order_status',{method:'POST',headers:_sbHdr(),body:JSON.stringify({p_pass:DEPLOY.CATALOG_PASS,p_id:id,p_status:(body&&body.status)||'yangi'})}).then(function(r){if(r.ok)return r;return r.text().then(function(t){throw new Error(_rpcErr(r,t,'kroff_order_status'));});});}
+function onlPatch(id,body){return fetch(SB_URL+'/rest/v1/rpc/kroff_order_status',{method:'POST',headers:_sbHdr(),body:JSON.stringify({p_pass:CATPASS(),p_id:id,p_status:(body&&body.status)||'yangi'})}).then(function(r){if(r.ok)return r;return r.text().then(function(t){throw new Error(_rpcErr(r,t,'kroff_order_status'));});});}
 function onlSaleItems(o,neg){return (o.items||[]).map(function(it){var p=findProd(it.id);return {id:it.id,nom:it.nom||(p&&p.nom)||'',narx:+it.price||+it.narx||0,narx0:+it.price||+it.narx||0,xarid:(p&&p.xarid)||0,qty:(neg?-Math.abs(+it.qty||0):(+it.qty||0))};});}
 function onlConfirm(id){var o=onlFind(id);if(!o)return;if(!confirm('Buyurtma tasdiqlansinmi? Qoldiq kamayadi.\n\n\u2757 Esda tuting: bu buyurtmani KASSA APPARATIDAN ham o\u2018tkazing \u2014 fiskal chek mol bilan birga ketishi shart.'))return;
   var now=new Date(),items=onlSaleItems(o,false),tot=items.reduce(function(a,it){return a+it.narx*it.qty;},0);
@@ -3649,7 +3652,8 @@ function onlCancel(id){var o=onlFind(id);if(!o)return;if(!confirm('Buyurtma beko
   onlPatch(id,{status:'bekor',updated_at:new Date().toISOString()}).then(function(){toast('❌ Bekor qilindi');onlFetch();}).catch(function(){toast('Saqlanmadi');});
 }
 function onlPoll(){
-  fetch(SB_URL+'/rest/v1/rpc/kroff_orders_new_count',{method:'POST',headers:_sbHdr(),body:JSON.stringify({p_pass:DEPLOY.CATALOG_PASS})})
+  if(!CATPASS())return;
+  fetch(SB_URL+'/rest/v1/rpc/kroff_orders_new_count',{method:'POST',headers:_sbHdr(),body:JSON.stringify({p_pass:CATPASS()})})
     .then(function(r){return r.ok?r.json():0;})
     .then(function(n){n=+n||0;
       if(_onlInit&&n>_onlLastN)toast('🛍️ Yangi onlayn buyurtma!');
@@ -3680,7 +3684,7 @@ function publishCatalog(manual){
       oldP.forEach(function(o){var k=(o.barcode||catnk(o.nom));if((+o.chegirma>0)||(+o.eski_narx>0)||o.mxik)keep[k]={chegirma:+o.chegirma||0,eski_narx:+o.eski_narx||0,mxik:o.mxik||''};});
       prods.forEach(function(p){var k=(p.barcode||catnk(p.nom));if(keep[k]){if(keep[k].chegirma)p.chegirma=keep[k].chegirma;if(keep[k].eski_narx)p.eski_narx=keep[k].eski_narx;if(keep[k].mxik)p.mxik=keep[k].mxik;}});
       _catLastPub=Date.now();
-      return fetch(SB_URL+'/rest/v1/rpc/kroff_catalog_publish',{method:'POST',headers:_sbHdr(),body:JSON.stringify({p_pass:DEPLOY.CATALOG_PASS,p_products:prods})});
+      return fetch(SB_URL+'/rest/v1/rpc/kroff_catalog_publish',{method:'POST',headers:_sbHdr(),body:JSON.stringify({p_pass:CATPASS(),p_products:prods})});
     })
     .then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error('HTTP '+r.status+' '+t.slice(0,80));});if(manual)toast('\u2705 Katalogga chiqarildi ('+prods.length+' tovar)');})
     .catch(function(e){if(manual)toast('\u26a0\ufe0f Katalog: '+e.message);});
