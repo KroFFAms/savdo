@@ -519,6 +519,7 @@ var DEPLOY = {
     <div class="sv-bar"><select id="seller" class="seller"></select><button class="btn btn-ghost sm" onclick="editSellers()" title="Sotuvchilar">⚙️</button><button id="optomBtn" class="optbtn" onclick="toggleOptom()" title="Optom/Dona narx">Dona</button><button id="retBtn" class="btn btn-ghost sm" onclick="openReturn()" title="Qaytarish" style="display:none">↩️ Qaytar</button><button class="btn btn-ghost sm" onclick="holdSale()" title="Kutishga olish">⏸ Kutish</button><span style="flex:1"></span><div class="dtot">Bugun: <b id="dayTotal">0</b></div></div>
     <div id="draftBar" class="draftbar" style="display:none"></div><div class="sv-search" id="svSearchWrap"><div class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input id="sq" type="search" inputmode="search" placeholder="Sotuv — tovar qidiring…" autocomplete="off"></div><div class="bc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5v14M7 5v14M11 5v14M15 5v14M19 5v14M21 5v14"/></svg><input id="sbc" type="text" inputmode="numeric" placeholder="Skaner" autocomplete="off"></div><div class="sqty"><input id="sqQty" type="text" inputmode="decimal" placeholder="Soni" autocomplete="off"></div></div>
     <div style="padding:2px 16px 6px" id="svScanWrap"><button class="btn" style="width:100%" onclick="openScan()">📷 Kamera bilan skanerlash</button></div>
+    <div id="repeatBar" style="padding:0 16px 4px"></div>
     <div id="quickBar" class="quickbar"></div>
     <div id="sv-results" class="sv-results"></div>
     <div id="cart" class="cart"></div><div id="toPayBar" style="display:none;padding:8px 16px"><button class="btn" style="width:100%;font-size:16px;font-weight:800;padding:14px" onclick="setSvPhase('pay')">To'lovga o'tish →</button></div>
@@ -911,7 +912,7 @@ function switchView(v,btn){
   var nv=document.querySelectorAll('.bottomnav .nav');for(var jn=0;jn<nv.length;jn++){if(nv[jn].getAttribute('data-v')===v)nv[jn].classList.add('active');else nv[jn].classList.remove('active');}
   menuOpen(false);
   document.body.className=(v==='tovarlar')?'':'v-'+v;
-  if(v==='sotuv'){SVPHASE='cart';renderSellers();renderCart();if(typeof _applyPhase==='function')_applyPhase();updateDayTotal();if(typeof renderQuick==='function')renderQuick();if(typeof renderDrafts==='function')renderDrafts();}
+  if(v==='sotuv'){SVPHASE='cart';renderSellers();renderCart();if(typeof _applyPhase==='function')_applyPhase();updateDayTotal();if(typeof renderQuick==='function')renderQuick();if(typeof renderRepeat==='function')renderRepeat();if(typeof renderDrafts==='function')renderDrafts();}
   if(v==='hisobot')renderHisobot();
   if(v==='kirim'){renderKirim();kSearch();}
   if(v==='mijoz')renderMijoz();
@@ -1042,7 +1043,7 @@ function renderCart(){
       '<div class="cline">'+grp(c.narx*c.qty)+'</div>'+
       '<button class="cedit" onclick="cartPrice(\''+c.id+'\')" title="Narxni o\u2018zgartirish">\u270e</button>'+
       '<button class="cx" onclick="cartDel(\''+c.id+'\')">\u2715</button></div>';});
-  el.innerHTML=h;document.getElementById('cartTotal').textContent=grp(cartSum());var _tpb=document.getElementById('toPayBar');if(SVPHASE==='pay'){foot.style.display='block';if(_tpb)_tpb.style.display='none';}else{foot.style.display='none';if(_tpb)_tpb.style.display='block';}cartRecalc();
+  el.innerHTML=h;document.getElementById('cartTotal').textContent=grp(cartSum());var _tpb=document.getElementById('toPayBar');if(SVPHASE==='pay'){foot.style.display='block';if(_tpb)_tpb.style.display='none';}else{foot.style.display='none';if(_tpb)_tpb.style.display='block';}cartRecalc();if(typeof renderRepeat==='function')renderRepeat();
 }
 function onBolimSel(){var b=document.getElementById('bolimSel'),cr=document.getElementById('custRow');if(b&&cr){cr.style.opacity=b.value?'0.4':'1';}}
 var BOL='';
@@ -2273,6 +2274,41 @@ function resumeDraft(id){
   renderCart();renderDrafts();toast('\u25b6\ufe0f Davom: '+dr.label);
 }
 function delDraft(id){if(!confirm('Qoralama o\u2018chirilsinmi?'))return;commitEvent('draftdel',{id:id});renderDrafts();}
+function _curCustName(){var _cs=document.getElementById("custSel");var v=(_cs&&_cs.value)?_cs.value:"";if(!v){var _si=document.getElementById("custSearch");v=_si?(_si.value||"").trim():"";}return v;}
+function renderRepeat(){
+  var bar=document.getElementById("repeatBar");if(!bar)return;
+  if(CART.length){bar.innerHTML="";return;} // savat bo'sh bo'lgandagina ko'rsatamiz
+  var cust=_curCustName();
+  if(typeof salesLoad!=="function"){bar.innerHTML="";return;}
+  salesLoad(function(all){
+    var rows=(all||[]).filter(function(x){return !x.isReturn && (x.items&&x.items.length);});
+    if(cust)rows=rows.filter(function(x){return (x.customer||"")===cust;});
+    if(!rows.length){bar.innerHTML="";return;}
+    rows.sort(function(a,b){return new Date(b.ts||b.day)-new Date(a.ts||a.day);});
+    var last=rows[0];
+    var nItems=(last.items||[]).length;
+    var lbl=cust?("\ud83e\uddfe "+esc(cust)+" \u2014 yana shu ("+nItems+" tovar)"):("\ud83e\uddfe Oxirgi chek \u2014 yana shu ("+nItems+" tovar)");
+    bar.innerHTML='<button class="btn btn-ghost sm" style="width:100%;text-align:left" onclick="repeatLast()">'+lbl+'</button>';
+    window._REPEAT_SALE=last;
+  });
+}
+function repeatLast(){
+  var last=window._REPEAT_SALE;if(!last||!last.items){toast("Oxirgi chek topilmadi");return;}
+  var added=0,skip=0;
+  last.items.forEach(function(it){
+    var p=findProd(it.id);
+    if(!p||p.arxiv){skip++;return;}
+    var q=Math.abs(it.qty||1);
+    if((p.qoldiq||0)<=0){skip++;return;}
+    if(q>p.qoldiq)q=p.qoldiq;
+    var c=null;for(var i=0;i<CART.length;i++)if(CART[i].id===it.id){c=CART[i];break;}
+    if(c)c.qty=Math.min((c.qty+q),p.qoldiq);
+    else CART.push({id:it.id,nom:p.nom,narx:p.sotuv,xarid:p.xarid||0,qty:q,max:p.qoldiq,olchov:p.olchov});
+    added++;
+  });
+  renderCart();renderRepeat();
+  toast(added?("\u2705 "+added+" tovar qo\u2018shildi"+(skip?(" ("+skip+" tasi yo\u2018q/tugagan)"):"")):"Tovarlar mavjud emas",skip&&!added?1:0);
+}
 function renderQuick(){
   var bar=document.getElementById('quickBar');if(!bar)return;
   if(typeof salesLoad!=='function'){bar.innerHTML='';return;}
@@ -2284,6 +2320,7 @@ function renderQuick(){
       h+='<button class="qbtn" data-add="'+esc(String(p.id))+'"><span class="qb-n">'+esc(p.nom)+'</span><span class="qb-p">'+grp(p.sotuv)+'</span></button>';n++;}
     bar.innerHTML=n?('<div class="qbar-h">\u26a1 Tez tovarlar</div><div class="qbar-g">'+h+'</div>'):'';
   });
+  renderRepeat();
 }
 function initSotuv(){
   var sq=document.getElementById('sq');if(sq)sq.addEventListener('input',function(){clearTimeout(_svt);_svt=setTimeout(svSearch,120);});
@@ -2481,7 +2518,7 @@ function custSearchFn(){
   window.CUSTRES=out;
   if(el)el.innerHTML=out.length?out.map(function(x,ix){return '<button class="svr" onclick="custPickIdx('+ix+')"><span class="svr-n">'+esc(x.nom)+'</span><span class="svr-r">'+(x.debt>0?'qarzi '+grp(x.debt):(x.phone?esc(x.phone):''))+'</span></button>';}).join(''):'<div class="svr-empty">Mijoz yo\u2018q ('+getCust().length+' ta bazada) \u2014 \u2795 bilan qo\u2018shing</div>';
 }
-function custPickIdx(i){var x=(window.CUSTRES||[])[i];if(!x)return;var hid=document.getElementById('custSel');if(hid)hid.value=x.nom;var inp=document.getElementById('custSearch');if(inp)inp.value=x.nom;var el=document.getElementById('custResults');if(el)el.innerHTML='';}
+function custPickIdx(i){var x=(window.CUSTRES||[])[i];if(!x)return;var hid=document.getElementById('custSel');if(hid)hid.value=x.nom;var inp=document.getElementById('custSearch');if(inp)inp.value=x.nom;var el=document.getElementById('custResults');if(el)el.innerHTML='';if(typeof renderRepeat==='function')renderRepeat();}
 var MTAB='barcha';var MSEARCH='';
 function setMTab(t,btn){MTAB=t;var b=document.querySelectorAll('#view-mijoz .htab .ht');for(var i=0;i<b.length;i++)b[i].classList.remove('active');btn.classList.add('active');renderMijoz();}
 function _cleanPhone(p){return String(p||'').replace(/[^0-9+]/g,'');}
@@ -3682,8 +3719,8 @@ function publishCatalog(manual){
       var data=(rows&&rows[0]&&rows[0].data)||{};
       var oldP=Array.isArray(data)?data:(data.products||[]);
       var keep={};
-      oldP.forEach(function(o){var k=(o.barcode||catnk(o.nom));if((+o.chegirma>0)||(+o.eski_narx>0)||o.mxik)keep[k]={chegirma:+o.chegirma||0,eski_narx:+o.eski_narx||0,mxik:o.mxik||''};});
-      prods.forEach(function(p){var k=(p.barcode||catnk(p.nom));if(keep[k]){if(keep[k].chegirma)p.chegirma=keep[k].chegirma;if(keep[k].eski_narx)p.eski_narx=keep[k].eski_narx;if(keep[k].mxik)p.mxik=keep[k].mxik;}});
+      oldP.forEach(function(o){var k=(o.barcode||catnk(o.nom));if((+o.chegirma>0)||(+o.eski_narx>0)||o.mxik||o.aksiya_gacha)keep[k]={chegirma:+o.chegirma||0,eski_narx:+o.eski_narx||0,mxik:o.mxik||'',aksiya_gacha:o.aksiya_gacha||''};});
+      prods.forEach(function(p){var k=(p.barcode||catnk(p.nom));if(keep[k]){if(keep[k].chegirma)p.chegirma=keep[k].chegirma;if(keep[k].eski_narx)p.eski_narx=keep[k].eski_narx;if(keep[k].mxik)p.mxik=keep[k].mxik;if(keep[k].aksiya_gacha)p.aksiya_gacha=keep[k].aksiya_gacha;}});
       _catLastPub=Date.now();
       return fetch(SB_URL+'/rest/v1/rpc/kroff_catalog_publish',{method:'POST',headers:_sbHdr(),body:JSON.stringify({p_pass:CATPASS(),p_products:prods})});
     })
