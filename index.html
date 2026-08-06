@@ -529,7 +529,7 @@ var DEPLOY = {
     <div class="cart-foot" id="cartFoot" style="display:none"><button class="btn btn-ghost sm" onclick="setSvPhase('cart')" style="margin-bottom:8px">← Savatga qaytish</button>
       <div class="ct-row"><span>Jami</span><b id="cartTotal">0</b></div>
       <div class="ct-row2"><input id="discInp" type="text" inputmode="numeric" placeholder="Chegirma (so'm yoki 10%)" oninput="cartRecalc()"><span id="discShow" class="disc-x"></span></div><div class="ct-row2" style="gap:8px"><button class="optbtn" id="dostBtn" onclick="dostToggle()" style="margin-left:0">🚚 Dostavka</button><span id="dostShow" style="font-size:12px;color:var(--muted);font-weight:700"></span></div><div id="dostBox" style="display:none;background:#FFF8F2;border:1px solid #f0dcc8;border-radius:10px;padding:10px;margin:6px 0"><input id="dostHaq" class="kf-inp" inputmode="numeric" placeholder="Mijozdan haq (bo’sh = bepul)" oninput="cartRecalc()"><input id="dostKim" class="kf-inp" list="dostKimL" placeholder="Yetkazib beruvchi (kim olib bordi)" autocomplete="off"><datalist id="dostKimL"></datalist><input id="dostTolov" class="kf-inp" inputmode="numeric" placeholder="Unga to’lov (xarajat)"><select id="dostAcc" class="seller" style="width:100%;max-width:none;margin:8px 0"><option value="naqd">💵 Naqd</option><option value="payme1">📱 Payme 1</option><option value="payme2">📱 Payme 2</option><option value="karta">💳 Karta</option><option value="bank">🏦 Hisob raqam</option></select><input id="dostManzil" class="kf-inp" placeholder="Manzil (ixtiyoriy)"><div style="font-size:11px;color:var(--muted);margin-top:6px">Haq chekka qo’shiladi · haydovchiga to’lov “Dostavka” xarajati bo’ladi</div></div>
-      <div class="ct-row ct-fin"><span>To'lov <button id="roundBtn" class="roundbtn" onclick="cycleRound()">≈ Yo'q</button></span><b id="finalTotal">0</b></div>
+      <div class="ct-row ct-fin"><span>To'lov <button id="roundBtn" class="roundbtn" onclick="cycleRound()">≈ Yo'q</button></span><b id="finalTotal">0</b></div><div id="bonusRow" style="display:none;justify-content:space-between;align-items:center;padding:6px 2px;font-size:13px;color:#1a7f37;font-weight:700"></div>
       <div class="pays"><button class="pay active" id="payMainBtn" onclick="openPayPick()" style="width:100%;text-align:center">💵 Naqd ▾</button></div><div class="pays" style="grid-template-columns:repeat(3,1fr)"><button class="pay" data-p="bol:tunukafon" onclick="setBolPay('tunukafon',this)">Tunukafon</button><button class="pay" data-p="bol:birja" onclick="setBolPay('birja',this)">Birja</button><button class="pay" data-p="bol:travertin" onclick="setBolPay('travertin',this)">Travertin</button></div><div id="custRow" class="custrow" style="display:flex;flex-direction:column;align-items:stretch;gap:6px"><div style="display:flex;gap:6px;align-items:center"><input id="custSearch" type="search" placeholder="Mijoz qidiring..." autocomplete="off" oninput="custSearchFn()" onfocus="custSearchFn()" style="flex:1;padding:9px 10px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-family:inherit"><button class="btn btn-ghost sm" onclick="addCust(true)">➕</button><input type="hidden" id="custSel"></div><div id="custResults" class="sv-results" style="max-height:190px;overflow:auto"></div></div>
       <div id="bolimRow" class="custrow" style="display:none"><select id="bolimSel" onchange="onBolimSel()"><option value="">— yoki bo'lim qarzi —</option><option value="tunukafon">Tunukafon</option><option value="birja">Birja</option><option value="travertin">Travertin</option></select></div>
       <div class="ct-row2" id="cashRow"><input id="cashInp" type="text" inputmode="numeric" placeholder="Berilgan pul" oninput="calcChange()"><span><b id="changeLbl">Qaytim:</b> <b id="changeShow">—</b></span></div>
@@ -1003,10 +1003,16 @@ function calcDisc(){if(!can('discount'))return 0;var el=document.getElementById(
   if(d<0)d=0;if(d>sub)d=sub;DISC=d;return d;}
 var ROUND=0;
 function cycleRound(){ROUND=ROUND===0?1000:(ROUND===1000?500:0);var b=document.getElementById('roundBtn');if(b)b.textContent='\u2248 '+(ROUND?grp(ROUND):'Yo\u2018q');cartRecalc();}
-function roundedTotal(){var t=cartSum()-calcDisc();if(ROUND>0)t=Math.round(t/ROUND)*ROUND;t+=_dostHaq();return Math.max(0,t);}
+function _selCustName(){var cs=document.getElementById('custSel');var n=cs?(cs.value||''):'';if(!n){var si=document.getElementById('custSearch');n=si?(''+si.value).trim():'';}return n;}
+function _selCustBonus(){var nm=_selCustName();if(!nm)return 0;var c=getCust();for(var i=0;i<c.length;i++)if(c[i].nom===nm)return c[i].bonus||0;return 0;}
+function _bonusApplied(cap){var u=Math.round(window._BONUSUSE||0);if(u<=0)return 0;var mb=_selCustBonus();if(u>mb)u=mb;if(cap!=null&&u>cap)u=cap;return u>0?u:0;}
+function _preBonusTotal(){var t=cartSum()-calcDisc();if(ROUND>0)t=Math.round(t/ROUND)*ROUND;t+=_dostHaq();return Math.max(0,t);}
+function _bonusUse(){var cb=_selCustBonus();if(cb<=0){toast('Bonus yo\u2018q');return;}var pre=_preBonusTotal();var def=Math.min(cb,pre);var v=_pf(prompt('Bonusdan qancha ishlatilsin? (mavjud '+grp(cb)+')',def));if(v==null)return;if(v<0)v=0;if(v>cb)v=cb;if(v>pre)v=pre;window._BONUSUSE=Math.round(v);cartRecalc();}
+function _bonusClear(){window._BONUSUSE=0;cartRecalc();}
+function roundedTotal(){var t=cartSum()-calcDisc();if(ROUND>0)t=Math.round(t/ROUND)*ROUND;t+=_dostHaq();t-=_bonusApplied(t);return Math.max(0,t);}
 function saleTotal(){return roundedTotal();}
 function cartRecalc(){var sub=cartSum(),d=calcDisc(),fin=roundedTotal(),e;
-  e=document.getElementById('finalTotal');if(e)e.textContent=grp(fin);
+  e=document.getElementById('finalTotal');if(e)e.textContent=grp(fin);var _br2=document.getElementById('bonusRow');if(_br2){var _cb2=_selCustBonus(),_bu2=_bonusApplied(_preBonusTotal());if(_bu2>0){_br2.style.display='flex';_br2.innerHTML='<span>🎁 Bonus: −'+grp(_bu2)+'</span><button onclick="_bonusClear()" style="border:none;background:#f1f3f5;border-radius:6px;padding:2px 8px;font-size:12px;color:#333">✕</button>';}else if(_cb2>0){_br2.style.display='flex';_br2.innerHTML='<span>🎁 Bonus mavjud: '+grp(_cb2)+'</span><button onclick="_bonusUse()" style="border:none;background:#1a7f37;color:#fff;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700">Ishlatish</button>';}else{_br2.style.display='none';_br2.innerHTML='';}}
   e=document.getElementById('discShow');if(e)e.textContent=d?('\u2212'+grp(d)):'';
   e=document.getElementById('dostShow');if(e)e.textContent=DOST.on?('\ud83d\ude9a +'+grp(_dostHaq())):'';
   calcChange();}
@@ -1237,7 +1243,7 @@ function completeSale(){
   if(!CART.length){toast('Savat bo\u2018sh');return;}
   var seller=document.getElementById('seller').value||'\u2014', sub=cartSum(), disc=calcDisc(), total=sub-disc, now=new Date();
   if(ROUND>0){var _r=Math.round(total/ROUND)*ROUND; if(_r!==total){disc+=(total-_r); total=_r;}}
-  var _dostF=_dostHaq(), _fBase=total; total+=_dostF;
+  var _dostF=_dostHaq(), _fBase=total; total+=_dostF;var _bonUsed=_bonusApplied(total);if(_bonUsed>0)total-=_bonUsed;
   var custName='',_qgiven=0,_bolim='';
   if(PAY==='qarz'){
     if(BOL){_bolim=BOL;}else{var bs=document.getElementById('bolimSel');_bolim=bs?bs.value:'';}
@@ -1248,16 +1254,16 @@ function completeSale(){
   var factor=sub>0?(_fBase/sub):1;
   var sale={id:'s'+now.getTime(),day:dayStr(now),ts:now.toISOString(),seller:seller,pay:PAY,total:total,
     items:CART.map(function(c){return {id:c.id,nom:c.nom,narx:Math.round(c.narx*factor),narx0:c.narx,xarid:c.xarid||0,qty:c.qty};})};
-  if(disc>0){sale.disc=disc;sale.sub=sub;}
+  if(disc>0){sale.disc=disc;sale.sub=sub;}if(typeof _bonUsed!=='undefined'&&_bonUsed>0)sale.bonusUsed=_bonUsed;
   if(DOST.on){var _dEl=function(id){var e=document.getElementById(id);return e?e.value:'';};
     sale.dost={haq:_dostF,kim:(_dEl('dostKim')||'').trim(),tolov:Math.round(_pf(_dEl('dostTolov'))||0),acc:_dEl('dostAcc')||'naqd',manzil:(_dEl('dostManzil')||'').trim()};}
   if(PAY==='naqd'){var gi=document.getElementById('cashInp');var giv=gi?(_pf(gi.value)||0):0;if(giv>0){sale.given=giv;sale.change=giv-total;}}
   if(PAY==='qarz'){if(_qgiven>0){sale.given=_qgiven;sale.paidMethod=PAIDM;}sale.debt=total-_qgiven;if(_bolim)sale.bolim=_bolim;var _du=document.getElementById('dueInp');if(_du&&_du.value)sale.due=_du.value;}
   if(PAY!=='qarz'){var _cs=document.getElementById('custSel');custName=(_cs&&_cs.value)?_cs.value:'';if(!custName){var _si=document.getElementById('custSearch');custName=_si?(_si.value||'').trim():'';}}
   if(custName)sale.customer=custName;
-  commitEvent('sale',sale);if(sale.customer&&!sale.isReturn){var _br=_bonusRate();if(_br>0){var _bp=Math.round((sale.total||0)*_br/100);if(_bp>0)commitEvent('bonus',{customer:sale.customer,amount:_bp,mode:'earn'});}}if(sale.pay==='qarz'&&sale.given>0)commitEvent('kassa',{dir:'in',acc:sale.paidMethod||'naqd',amount:sale.given,cat:'Savdo'});
+  commitEvent('sale',sale);if(sale.customer&&!sale.isReturn){var _br=_bonusRate();if(_br>0){var _bp=Math.round((sale.total||0)*_br/100);if(_bp>0)commitEvent('bonus',{customer:sale.customer,amount:_bp,mode:'earn'});}}if(sale.customer&&sale.bonusUsed>0)commitEvent('bonus',{customer:sale.customer,amount:sale.bonusUsed,mode:'spend'});if(sale.pay==='qarz'&&sale.given>0)commitEvent('kassa',{dir:'in',acc:sale.paidMethod||'naqd',amount:sale.given,cat:'Savdo'});
   if(sale.dost&&sale.dost.tolov>0){commitEvent('kassa',{dir:'out',acc:sale.dost.acc||'naqd',amount:sale.dost.tolov,cat:'Dostavka',note:'Dostavka'+(sale.dost.kim?(' \u00b7 '+sale.dost.kim):'')+(sale.customer?(' \u00b7 '+sale.customer):'')});_dostRemember(sale.dost.kim);}
-  CART=[];dostReset();renderCart();renderStats();updateDayTotal();
+  window._BONUSUSE=0;CART=[];dostReset();renderCart();renderStats();updateDayTotal();
   var di=document.getElementById('discInp');if(di)di.value='';var ci=document.getElementById('cashInp');if(ci)ci.value='';var bs2=document.getElementById('bolimSel');if(bs2)bs2.value='';var _du2=document.getElementById('dueInp');if(_du2)_du2.value='';
   var _cse=document.getElementById('custSearch');if(_cse)_cse.value='';var _csl=document.getElementById('custSel');if(_csl)_csl.value='';var _cre=document.getElementById('custResults');if(_cre)_cre.innerHTML='';
   if(BOL){var _nb=document.querySelector('.pays .pay[data-p="naqd"]');if(_nb)setPay('naqd',_nb);else BOL='';}
@@ -2114,8 +2120,7 @@ function renderH_cheklar(el,all){
   HCHQ='';
   var sel=all.filter(function(x){return inPeriod(x.day);});
   if(!sel.length){el.innerHTML=_hEmpty();return;}
-  var retSet={};sel.forEach(function(x){if(x.isReturn&&x.refId)retSet[x.refId]=1;});window._QB=sel;sel.forEach(function(_x,_i){_x._ci=_i;});
-  sel.sort(function(a,b){return (new Date(b.ts||b.day))-(new Date(a.ts||a.day));});
+  var retSet={};sel.forEach(function(x){if(x.isReturn&&x.refId)retSet[x.refId]=1;});sel.sort(function(a,b){return (new Date(b.ts||b.day))-(new Date(a.ts||a.day));});window._QB=sel;sel.forEach(function(_x,_i){_x._ci=_i;});
   var total=0,units=0,bp={naqd:0,karta:0,payme1:0,payme2:0,qarz:0};
   sel.forEach(function(x){total+=x.total;if(x.pay==='qarz'&&x.given){bp[x.paidMethod||'naqd']=(bp[x.paidMethod||'naqd']||0)+x.given;bp.qarz=(bp.qarz||0)+(x.total-x.given);}else bp[x.pay]=(bp[x.pay]||0)+x.total;(x.items||[]).forEach(function(it){units+=it.qty;});});
   var h='<div class="bstat"><div class="bv">'+grp(total)+'</div><div class="bl">'+_periodLabel()+' \u00b7 '+sel.length+' ta chek \u00b7 '+grp(Math.round(units))+' dona</div></div>';
@@ -2772,7 +2777,7 @@ function custSearchFn(){
   window.CUSTRES=out;
   if(el)el.innerHTML=out.length?out.map(function(x,ix){return '<button class="svr" onclick="custPickIdx('+ix+')"><span class="svr-n">'+esc(x.nom)+'</span><span class="svr-r">'+(x.debt>0?'qarzi '+grp(x.debt):(x.phone?esc(x.phone):''))+'</span></button>';}).join(''):'<div class="svr-empty">Mijoz yo\u2018q ('+getCust().length+' ta bazada) \u2014 \u2795 bilan qo\u2018shing</div>';
 }
-function custPickIdx(i){var x=(window.CUSTRES||[])[i];if(!x)return;var hid=document.getElementById('custSel');if(hid)hid.value=x.nom;var inp=document.getElementById('custSearch');if(inp)inp.value=x.nom;var el=document.getElementById('custResults');if(el)el.innerHTML='';if(typeof renderRepeat==='function')renderRepeat();}
+function custPickIdx(i){var x=(window.CUSTRES||[])[i];if(!x)return;window._BONUSUSE=0;var hid=document.getElementById('custSel');if(hid)hid.value=x.nom;var inp=document.getElementById('custSearch');if(inp)inp.value=x.nom;var el=document.getElementById('custResults');if(el)el.innerHTML='';if(typeof renderRepeat==='function')renderRepeat();}
 var MTAB='barcha';var MSEARCH='';
 function setMTab(t,btn){MTAB=t;var b=document.querySelectorAll('#view-mijoz .htab .ht');for(var i=0;i<b.length;i++)b[i].classList.remove('active');btn.classList.add('active');renderMijoz();}
 function _cleanPhone(p){return String(p||'').replace(/[^0-9+]/g,'');}
