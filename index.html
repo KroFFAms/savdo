@@ -2801,7 +2801,7 @@ function _askAcc(){var v=(prompt('To\u2018lov usuli? (naqd / karta / payme1 / pa
   if(v==='payme1'||v==='pay1'||v==='p1'||v==='payme')return 'payme1';
   if(v==='payme2'||v==='pay2'||v==='p2')return 'payme2';
   return 'naqd';}
-function _askUnit(){var v=(prompt('O\u2018lchov birligi? (dona / kg / metr)','dona')||'').trim().toLowerCase();
+function _askUnit(){var v=(prompt('O\u2018lchov birligi? (dona/kg/tonna/litr/metr/m2/rulon/quti/pachka/meshok/komplekt)','dona')||'').trim().toLowerCase();var _ok=['dona','kg','tonna','litr','metr','m2','rulon','quti','pachka','meshok','komplekt'];if(_ok.indexOf(v)>=0)return v;
   if(v==='kg'||v==='\u043a\u0433')return 'kg';
   if(v==='metr'||v==='m'||v==='\u043c'||v==='\u043c\u0435\u0442\u0440')return 'metr';
   return 'dona';}
@@ -2835,7 +2835,7 @@ function prodForm(id){
   var cats={};PRODUCTS.forEach(function(x){if(x.kategoriya)cats[x.kategoriya]=1;});
   var catList=Object.keys(cats).sort();var curCat=p?(p.kategoriya||''):'';
   var catOpts=catList.map(function(c){return '<option value="'+esc(c)+'"'+(c===curCat?' selected':'')+'>'+esc(c)+'</option>';}).join('');
-  var units=[['dona','Dona'],['kg','Kg'],['metr','Metr']];var curU=p?(p.olchov||'dona'):'dona';
+  var units=[['dona','Dona'],['kg','Kg'],['tonna','Tonna'],['litr','Litr'],['metr','Metr'],['m2','m²'],['rulon','Rulon'],['quti','Quti'],['pachka','Pachka'],['meshok','Meshok/Qop'],['komplekt','Komplekt']];var curU=p?(p.olchov||'dona'):'dona';
   var uOpts=units.map(function(u){return '<option value="'+u[0]+'"'+(u[0]===curU?' selected':'')+'>'+u[1]+'</option>';}).join('');
   var imgUrl=(p&&p.img)?p.img:'';
   var d=document.createElement('div');d.id='prodOv';
