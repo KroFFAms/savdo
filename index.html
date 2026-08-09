@@ -476,6 +476,24 @@ var DEPLOY = {
 .onl-btns{display:flex;gap:8px;flex-wrap:wrap}
 .onl-btn{border:none;border-radius:9px;padding:9px 14px;font-size:12.5px;font-weight:800;cursor:pointer}
 .onl-ok{background:#1a8f3c;color:#fff}.onl-next{background:#005BFF;color:#fff}.onl-no{background:#f2f4f7;color:#a32d2d}
+
+/* ===== KPI dashboard (ProAudit uslubi) ===== */
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:10px;margin:2px 0 12px}
+.kpi{background:#fff;border:1px solid #E6EAF1;border-radius:16px;padding:13px 14px 12px;box-shadow:0 1px 2px rgba(20,35,60,.05);min-width:0}
+.kpi-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.kpi-l{flex:1;font-size:10.5px;letter-spacing:.7px;text-transform:uppercase;color:#8A97AC;font-weight:700;line-height:1.25}
+.kpi-ic{width:28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex:0 0 28px}
+.kpi-v{font-size:27px;font-weight:800;line-height:1.05;color:#16233C;letter-spacing:-.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi-u{font-size:13px;font-weight:700;color:#8A97AC;margin-left:3px}
+.kpi-b{display:flex;align-items:center;gap:7px;margin-top:7px;flex-wrap:wrap}
+.kpi-d{font-size:11.5px;font-weight:800;border-radius:999px;padding:2px 7px;white-space:nowrap}
+.kpi-d.up{color:#0E7A55;background:#E6F5EE}
+.kpi-d.dn{color:#C0392B;background:#FCEBE9}
+.kpi-d.nu{color:#6B7A93;background:#EEF1F6}
+.kpi-s{font-size:11.5px;color:#8A97AC;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kpi.tap{cursor:pointer}
+.kpi.tap:active{transform:scale(.985)}
+.kper{font-size:11.5px;color:#8A97AC;margin:0 2px 8px;font-weight:600}
 </style>
 </head>
 <body>
@@ -1809,6 +1827,76 @@ function renderH_foydatovar(el,all){
   });
 }
 function _hEmpty(){return '<div class="empty"><div class="big">\ud83d\udcc8</div><h2>Ma\u2018lumot yo\u2018q</h2><p>Sotuv qilinganda shu yerda ko\u2018rinadi.</p></div>';}
+
+/* ===== KPI dashboard yordamchilari ===== */
+function _kNum(v){v=Math.round(v||0);var a=Math.abs(v);
+  if(a>=1000000000)return [(v/1000000000).toFixed(2).replace(/\.00$/,''),'mlrd'];
+  if(a>=1000000)return [(v/1000000).toFixed(2).replace(/\.00$/,''),'mln'];
+  if(a>=1000)return [grp(v),''];
+  return [grp(v),''];}
+function _kPrevDays(){
+  /* joriy davrga teng uzunlikdagi oldingi davr chegarasi: [from,to] */
+  var t=new Date(),f,to;
+  function s(d){return dayStr(d);}
+  if(HPER==='bugun'){var y=new Date(t);y.setDate(t.getDate()-1);return [s(y),s(y)];}
+  if(HPER==='oy'){var a=new Date(t.getFullYear(),t.getMonth()-1,1),b=new Date(t.getFullYear(),t.getMonth(),0);return [s(a),s(b)];}
+  if(HPER==='yil'){return [(t.getFullYear()-1)+'-01-01',(t.getFullYear()-1)+'-12-31'];}
+  if(HPER==='range'){
+    if(!HFROM||!HTO)return null;
+    var d1=new Date(HFROM),d2=new Date(HTO),len=Math.round((d2-d1)/86400000)+1;
+    var pb=new Date(d1);pb.setDate(d1.getDate()-1);var pa=new Date(pb);pa.setDate(pb.getDate()-(len-1));
+    return [s(pa),s(pb)];}
+  /* hafta: oldingi 7 kun */
+  var b7=new Date(t);b7.setDate(t.getDate()-7);var a7=new Date(t);a7.setDate(t.getDate()-13);
+  return [s(a7),s(b7)];}
+function _kDelta(cur,prev,invert){
+  if(prev===null||prev===undefined)return '<span class="kpi-d nu">—</span>';
+  if(!prev){return cur>0?'<span class="kpi-d nu">yangi</span>':'<span class="kpi-d nu">—</span>';}
+  var p=(cur-prev)/Math.abs(prev)*100;
+  var good=invert?(p<0):(p>0);
+  var cls=Math.abs(p)<0.05?'nu':(good?'up':'dn');
+  var ar=p>0?'↑':(p<0?'↓':'•');
+  return '<span class="kpi-d '+cls+'">'+ar+' '+Math.abs(p).toFixed(1)+'%</span>';}
+function _kCard(lbl,val,unit,delta,sub,ic,icbg,go){
+  return '<div class="kpi'+(go?' tap':'')+'"'+(go?' onclick="'+go+'"':'')+'>'+
+    '<div class="kpi-top"><span class="kpi-l">'+lbl+'</span><span class="kpi-ic" style="background:'+icbg+'">'+ic+'</span></div>'+
+    '<div class="kpi-v">'+val+(unit?'<span class="kpi-u">'+unit+'</span>':'')+'</div>'+
+    '<div class="kpi-b">'+(delta||'')+'<span class="kpi-s">'+(sub||'')+'</span></div></div>';}
+function _kAgg(list){
+  var o={rev:0,cost:0,n:0,units:0,qarz:0,ret:0,retN:0,days:{}};
+  list.forEach(function(x){
+    if(x.isReturn){o.ret+=Math.abs(x.total||0);o.retN++;}
+    o.rev+=x.total||0;o.n++;o.days[x.day]=1;
+    if(x.pay==='qarz')o.qarz+=x.total||0;
+    (x.items||[]).forEach(function(it){o.cost+=(it.xarid||0)*it.qty;o.units+=Math.abs(it.qty||0);});});
+  o.foyda=o.rev-o.cost;o.avg=o.n?Math.round(o.rev/o.n):0;o.dayN=Object.keys(o.days).length||1;
+  return o;}
+function _kpiGrid(all,sel){
+  var C=_kAgg(sel),P=null,pr=_kPrevDays();
+  if(pr){var plist=all.filter(function(x){return x.day>=pr[0]&&x.day<=pr[1];});P=_kAgg(plist);if(!plist.length)P.empty=1;}
+  function pv(k){return P?(P.empty?0:P[k]):null;}
+  /* ombor va qarz */
+  var stockVal=0,posN=0,outN=0,lowN=0;
+  if(window.PRODUCTS)PRODUCTS.forEach(function(p){if(p.arxiv)return;posN++;var q=p.qoldiq||0;stockVal+=q*(p.xarid||0);if(q<=0)outN++;else if(q<=3)lowN++;});
+  var debtT=0,debtC=0;try{getCust().forEach(function(c){if((c.debt||0)>0){debtT+=c.debt;debtC++;}});}catch(e){}
+  var marja=C.rev?Math.round(C.foyda/C.rev*1000)/10:0;
+  var kunlik=Math.round(C.rev/C.dayN);
+  var bestD='',bestV=0,dsum={};sel.forEach(function(x){dsum[x.day]=(dsum[x.day]||0)+x.total;});
+  for(var d in dsum){if(dsum[d]>bestV){bestV=dsum[d];bestD=d;}}
+  var bd=bestD?bestD.slice(8)+'.'+bestD.slice(5,7):'—';
+
+  var v,h='<div class="kper">'+_periodLabel()+' · oldingi davr bilan solishtirilgan</div><div class="kgrid">';
+  v=_kNum(C.rev);   h+=_kCard('Umumiy tushum',v[0],v[1],_kDelta(C.rev,pv('rev')),C.n+' ta chek','💰','#EAF2FB',"setHTab('cheklar')");
+  v=_kNum(C.foyda); h+=_kCard('Sof foyda',v[0],v[1],_kDelta(C.foyda,pv('foyda')),'marja '+marja+'%','📈','#E8F5EE',"setHTab('pnl')");
+  v=_kNum(C.avg);   h+=_kCard("O‘rtacha chek",v[0],v[1],_kDelta(C.avg,pv('avg')),grp(Math.round(C.units))+' dona tovar','🧾','#F3EDFB',"setHTab('umumiy')");
+  v=_kNum(C.n);     h+=_kCard('Savdolar soni',grp(C.n),'ta',_kDelta(C.n,pv('n')),'kuniga ~'+grp(Math.round(C.n/C.dayN))+' ta','🛒','#FFF3E4',"setHTab('sotuvchi')");
+  v=_kNum(kunlik);  h+=_kCard('Kunlik o‘rtacha',v[0],v[1],'<span class="kpi-d nu">'+C.dayN+' kun</span>','eng yaxshi kun '+bd,'📅','#EAF2FB',"setHTab('kunlik')");
+  v=_kNum(C.qarz);  h+=_kCard('Qarzga berildi',v[0],v[1],_kDelta(C.qarz,pv('qarz'),1),'jami qarz '+_kNum(debtT)[0]+' '+_kNum(debtT)[1]+' · '+debtC+' mijoz','💳','#FDECEC',"gotoQarzdor()");
+  v=_kNum(stockVal);h+=_kCard('Ombor qiymati',v[0],v[1],'<span class="kpi-d nu">tannarx</span>',posN+' pozitsiya · tugagan '+outN,'📦','#EEF1F6',"setHTab('qoldiq')");
+  v=_kNum(C.ret);   h+=_kCard('Vozvrat',v[0],v[1],_kDelta(C.ret,pv('ret'),1),C.retN+' ta qaytarish · kam '+lowN,'↩️','#FFF3E4',"setHTab('vozvrat')");
+  h+='</div>';
+  return h;}
+
 function renderH_dashboard(el,all){
   var sel=all.filter(function(x){return inPeriod(x.day);});
   if(!sel.length){el.innerHTML=_hEmpty();return;}
@@ -1824,12 +1912,7 @@ function renderH_dashboard(el,all){
   if(_bd>=7)h+='<div onclick="doBackup()" style="cursor:pointer;background:#FDECEC;border:1px solid #E0A9A9;color:#a32d2d;border-radius:11px;padding:10px 12px;margin-bottom:10px;font-weight:700;font-size:13.5px">\ud83d\udcbe '+(_lb?('Oxirgi zaxira '+_bd+' kun oldin'):'Hali zaxira olinmagan')+' \u2014 bosib zaxira oling \u203a</div>';}catch(e){}}
   {var _od=0,_odC=0;try{var _dm={};all.forEach(function(x){if(x.pay==='qarz'&&x.due&&x.customer){if(!_dm[x.customer]||x.due<_dm[x.customer])_dm[x.customer]=x.due;}});var _tod=dayStr(new Date());getCust().forEach(function(cx){if((cx.debt||0)>0&&_dm[cx.nom]&&_dm[cx.nom]<_tod){_od+=cx.debt;_odC++;}});}catch(e){}
   if(_od>0)h+='<div onclick="gotoQarzdor()" style="cursor:pointer;background:#FDECEA;border:1px solid #E8A9A0;color:#a32d2d;border-radius:11px;padding:10px 12px;margin-bottom:10px;font-weight:700;font-size:13.5px">\u26a0\ufe0f Muddati o\u2019tgan qarz: '+grp(_od)+' \u00b7 '+_odC+' mijoz \u2014 ko\u2019rish \u203a</div>';}
-  h+='<div class="dcards">';
-  h+=_dcard('Savdo',grp(rev),'#1F4E79','\ud83d\udcb0');
-  h+=_dcard('Foyda',grp(foyda),'#375623','\ud83d\udcc8');
-  h+=_dcard('Tannarx',grp(cost),'#C65911','\ud83d\udce6');
-  h+=_dcard('O\u2018rtacha chek',grp(avg),'#7030A0','\ud83e\uddfe');
-  h+='</div>';
+  h+=_kpiGrid(all,sel);
   var pcols={naqd:'#375623',karta:'#1F4E79',payme1:'#2E75B6',payme2:'#7030A0',qarz:'#a32d2d'};
   var plbl={naqd:'Naqd',karta:'Karta',payme1:'Payme1',payme2:'Payme2',qarz:'Qarz'};
   var segs=[];['naqd','karta','payme1','payme2','qarz'].forEach(function(k){if(bp[k]>0)segs.push({label:plbl[k],value:bp[k],color:pcols[k]});});
