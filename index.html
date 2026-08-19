@@ -31,7 +31,8 @@ var DEPLOY = {
   CATALOG_PASS: "",
   ADMIN_PIN:    "1992",
   SHOP_NAME:    "KROFF",
-  SERVER_HISOBOT: true   // hisobot ma'lumotini serverdan olish (false = eski usul)
+  SERVER_HISOBOT: true,  // hisobot ma'lumotini serverdan olish (false = eski usul)
+  REALTIME: true         // jonli yangilanish (false = faqat 5 soniyalik tekshiruv)
 };
 </script>
 <script>
@@ -1036,6 +1037,66 @@ function bazaRefresh(jim){
     });
   });
 }
+/* ================= JONLI YANGILANISH (Realtime) =================
+   Server yangi hodisa kelganda WebSocket orqali xabar beradi va ilova
+   darrov sinxron qiladi. Xabarning o'zida ma'lumot ishlatilmaydi \u2014
+   faqat "yangilik bor" signali, keyin odatdagi cloudPull ishlaydi.
+   Ulanish uzilsa 5 soniyalik tekshiruv baribir ishlab turadi. */
+var _rtWS=null, _rtRef=0, _rtHB=null, _rtTry=0, _rtOK=false, _rtT=null, _rtDead=false;
+
+function rtStart(){
+  if(!DEPLOY.REALTIME || _rtDead) return;
+  if(_rtWS && (_rtWS.readyState===0 || _rtWS.readyState===1)) return;
+  if(navigator.onLine===false) return;
+  var url = SB_URL.replace(/^http/,'ws') + '/realtime/v1/websocket?apikey=' +
+            encodeURIComponent(SB_KEY) + '&vsn=1.0.0';
+  try{ _rtWS = new WebSocket(url); }catch(e){ rtRetry(); return; }
+
+  _rtWS.onopen=function(){
+    _rtTry=0;
+    _rtSend('realtime:kroff','phx_join',{config:{
+      broadcast:{self:false}, presence:{key:''},
+      postgres_changes:[{event:'INSERT',schema:'public',table:SB_EV}]
+    }});
+    clearInterval(_rtHB);
+    _rtHB=setInterval(function(){ _rtSend('phoenix','heartbeat',{}); }, 25000);
+  };
+
+  _rtWS.onmessage=function(e){
+    var m; try{ m=JSON.parse(e.data); }catch(err){ return; }
+    if(m.event==='phx_reply' && m.payload && m.payload.status==='ok' && m.topic==='realtime:kroff'){
+      _rtOK=true; sbStatus('\u26a1 Jonli',true); return;
+    }
+    if(m.event==='phx_reply' && m.payload && m.payload.status==='error'){
+      /* jadval kuzatuvga qo'shilmagan bo'lishi mumkin \u2014 qayta urinmaymiz */
+      _rtDead=true; _rtOK=false; try{_rtWS.close();}catch(x){}
+      sbStatus('\u2601\ufe0f Sinxron',true); return;
+    }
+    if(m.event==='postgres_changes'){ rtPoke(); }
+  };
+
+  _rtWS.onclose=function(){ _rtOK=false; clearInterval(_rtHB); rtRetry(); };
+  _rtWS.onerror=function(){ try{_rtWS.close();}catch(x){} };
+}
+function _rtSend(topic,ev,payload){
+  if(!_rtWS || _rtWS.readyState!==1) return;
+  try{ _rtWS.send(JSON.stringify({topic:topic,event:ev,payload:payload,ref:String(++_rtRef)})); }catch(e){}
+}
+/* Bir necha xabar ketma-ket kelsa \u2014 bitta sinxron */
+function rtPoke(){
+  clearTimeout(_rtT);
+  _rtT=setTimeout(function(){
+    if(navigator.onLine!==false) cloudPull(function(){});
+  }, 300);
+}
+function rtRetry(){
+  if(!DEPLOY.REALTIME || _rtDead) return;
+  _rtTry++;
+  var wait=Math.min(30000, 1000*Math.pow(2, Math.min(_rtTry,5)));   // 2,4,8,16,30 s
+  setTimeout(rtStart, wait);
+}
+function rtLive(){ return !!(_rtOK && _rtWS && _rtWS.readyState===1); }
+
 function openDB(cb){
   var r=indexedDB.open(DBNAME,4);
   r.onupgradeneeded=function(e){var d=e.target.result;
@@ -4615,7 +4676,7 @@ function _bkReminder(){if(_bkChecked)return;_bkChecked=true;
   }catch(e){}
 }
 
-function cloudPushSoon(){if(!_syncOn)return;clearTimeout(_pushT);_pushT=setTimeout(cloudSync,1200);scheduleCatPublish();}
+function cloudPushSoon(){if(!_syncOn)return;clearTimeout(_pushT);_pushT=setTimeout(cloudSync,400);scheduleCatPublish();}
 function sbStatus(t,ok){var el=document.getElementById('syncChip');if(!el)return;el.textContent=t;el.style.background=(ok===false)?'rgba(255,170,170,.28)':(ok?'rgba(170,235,180,.28)':'rgba(255,255,255,.14)');}
 function cloudPush(cb){
   if(_UNSYNC){ _pushList(_UNSYNC.slice(),cb); return; }
@@ -5219,7 +5280,28 @@ openDB(function(){
       if(_ck){routeAuth(_ck);_authDirty=true;}   // keshdan darrov, tekshiruv sinxronda
       else resolveAuth(routeAuth);}
     if(navigator.onLine!==false) cloudSync(function(){try{if(localStorage.getItem('kroff_authmode')!=='pin'){_authDirty=true;maybeAuth();}}catch(e){}});
-    setInterval(function(){ if(navigator.onLine!==false) cloudPull(function(){try{if(localStorage.getItem('kroff_authmode')!=='pin')maybeAuth();}catch(e){}}); }, 15000);
+    rtStart();
+    /* Jonli ulanish bor bo'lsa tekshiruv 30 soniyaga siyraklashadi — u faqat
+       zaxira bo'lib qoladi. Ulanish uzilsa yana 5 soniyaga qaytadi. */
+    var _tick=0;
+    setInterval(function(){
+      if(navigator.onLine===false) return;
+      _tick++;
+      if(rtLive() && (_tick%6)!==0) return;      // jonli: 30 soniyada bir
+      cloudPull(function(){try{if(localStorage.getItem('kroff_authmode')!=='pin')maybeAuth();}catch(e){}});
+    }, 5000);
+    /* Telefon qo'lga olinganda — darrov yangilash. Sotuvchi ekranni ochganda
+       15 soniya kutib o'tirmaydi, qoldiq shu zahoti to'g'ri ko'rinadi. */
+    var _lastWake=0;
+    function _wakePull(){
+      var now=Date.now();
+      if(now-_lastWake<2000) return;      // ketma-ket bosilishdan himoya
+      _lastWake=now;
+      if(navigator.onLine!==false) cloudPull(function(){});
+    }
+    document.addEventListener('visibilitychange',function(){ if(!document.hidden){ _wakePull(); rtStart(); } });
+    window.addEventListener('focus',function(){ _wakePull(); rtStart(); });
+    window.addEventListener('online',function(){ _wakePull(); rtStart(); });
   });
   });
 });
