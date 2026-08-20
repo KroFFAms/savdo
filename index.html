@@ -830,7 +830,7 @@ var DEPLOY = {
       <button class="btn-sell" onclick="completeSale()">✅ Sotildi</button>
     </div>
   </div>
-  <div id="view-hisobot" class="view"><select id="htabSel" onchange="setHTabSel(this.value)" class="seller" style="width:100%;max-width:none;margin:0 0 10px;font-weight:700"><optgroup label="Umumiy"><option value="dashboard" selected>Dashboard</option><option value="kunlik">Kunlik</option><option value="oylik">Oylik</option></optgroup><optgroup label="Moliya"><option value="moliya">💼 Moliya</option><option value="pnl">Foyda/Zarar</option><option value="chiqim">Chiqim</option><option value="cheklar">Cheklar</option><option value="tolovturi">To‘lov turi bo‘yicha</option><option value="naklad">Nakladnoylar</option><option value="smena">Smena</option></optgroup><optgroup label="Tovar"><option value="tovarlar">Tovarlar</option><option value="foydatovar">Tovar foydasi</option><option value="abc">ABC</option><option value="tahlil">📊 Tahlil</option><option value="qoldiq">Qoldiq</option><option value="hujjatsiz">⚠️ Hujjatsiz kirim</option></optgroup><optgroup label="Mijoz / Ta'minot"><option value="custrep">Mijozlar</option><option value="custtype">Yangi/Qaytgan</option><option value="taminot">Ta'minotchi</option><option value="qarztolov">Qarz to'lovi</option><option value="qarzmud">Muddati o'tgan</option><option value="qarzberilgan">Qarzga berilgan</option></optgroup><optgroup label="Sotuv"><option value="sotuvchi">Sotuvchilar</option><option value="soatlik">Soatlik</option><option value="vozvrat">Vozvrat</option><option value="audit">Audit</option></optgroup></select><div id="hRangeRow" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:2px 2px 0">
+  <div id="view-hisobot" class="view"><select id="htabSel" onchange="setHTabSel(this.value)" class="seller" style="width:100%;max-width:none;margin:0 0 10px;font-weight:700"><optgroup label="Umumiy"><option value="dashboard" selected>Dashboard</option><option value="kunlik">Kunlik</option><option value="oylik">Oylik</option></optgroup><optgroup label="Moliya"><option value="moliya">💼 Moliya</option><option value="pnl">Foyda/Zarar</option><option value="chiqim">Chiqim</option><option value="cheklar">Cheklar</option><option value="tolovturi">To‘lov turi bo‘yicha</option><option value="naklad">Nakladnoylar</option><option value="smena">Smena</option></optgroup><optgroup label="Tovar"><option value="tovarlar">Tovarlar</option><option value="foydatovar">Tovar foydasi</option><option value="abc">ABC</option><option value="tahlil">📊 Tahlil</option><option value="qoldiq">Qoldiq</option><option value="hujjatsiz">⚠️ Hujjatsiz kirim</option></optgroup><optgroup label="Mijoz / Ta'minot"><option value="qarz">🧾 Qarzlar</option><option value="custtype">Yangi/Qaytgan</option><option value="taminot">Ta'minotchi</option></optgroup><optgroup label="Sotuv"><option value="sotuvchi">Sotuvchilar</option><option value="vozvrat">Vozvrat</option><option value="audit">Audit</option></optgroup></select><div id="hRangeRow" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:2px 2px 0">
 <input id="hFrom" type="date" onchange="applyRange()" style="flex:1;min-width:135px;padding:9px 10px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-weight:600;font-family:inherit">
 <span style="color:var(--muted);font-size:13px">—</span>
 <input id="hTo" type="date" onchange="applyRange()" style="flex:1;min-width:135px;padding:9px 10px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-weight:600;font-family:inherit">
@@ -1821,6 +1821,16 @@ function splitRecalc(){
     else if(qrz>0||pick.length)H.innerHTML='To\u2018lov to\u2018liq taqsimlandi \u2014 qarz yozildi.';
     else H.innerHTML='To\u2018liq to\u2018langan \u2014 qarz qolmaydi.';}
   var mR=document.getElementById('muddatRow');if(mR)mR.style.display=(qrz>0||pick.length)?'flex':'none';}
+/* Qarzga savdo qilishda mijoz ismi majburiy.
+   Bo'sh, juda qisqa yoki faqat raqamdan iborat ism qabul qilinmaydi \u2014
+   aks holda qarz kimniki ekani keyin bilinmay qoladi. */
+function _custNomTekshir(nom){
+  var n=(nom||'').trim();
+  if(!n) return 'Qarz yozish uchun MIJOZ ISMINI kiriting yoki bo\u2018lim tanlang';
+  if(n.length<3) return 'Mijoz ismi juda qisqa \u2014 to\u2018liq yozing';
+  if(/^[0-9\s.+()-]+$/.test(n)) return 'Faqat raqam emas \u2014 mijoz ismini yozing';
+  return '';
+}
 function _bolNomSafe(id){try{return bolimNom(id);}catch(e){return id;}}
 function _splitBiggest(m){var b='naqd',v=-1;for(var k in m){if(m[k]>v){v=m[k];b=k;}}return b;}
 
@@ -1838,7 +1848,10 @@ function completeSale(){_QK_IDS=null;_RPT_CACHE=null;
   if(PAY==='qarz'&&!SPLIT.on){
     if(BOL){_bolim=BOL;}else{var bs=document.getElementById('bolimSel');_bolim=bs?bs.value:'';}
     if(_bolim){custName='';}
-    else{var cs=document.getElementById('custSel');custName=cs?cs.value:'';if(!custName){var si=document.getElementById('custSearch');custName=si?(si.value||'').trim():'';}if(!custName){toast('Qarz uchun mijoz yoki bo\u2018lim tanlang');return;}}
+    else{var cs=document.getElementById('custSel');custName=cs?cs.value:'';if(!custName){var si=document.getElementById('custSearch');custName=si?(si.value||'').trim():'';}
+      var _v0=_custNomTekshir(custName);
+      if(_v0){ toast(_v0); var _f0=document.getElementById('custSearch'); if(_f0){try{_f0.focus();}catch(e){}} return; }
+      custName=custName.trim();}
     var gq=document.getElementById('cashInp');_qgiven=gq?(_pf(gq.value)||0):0;if(_qgiven<0)_qgiven=0;if(_qgiven>total)_qgiven=total;
   }
   if(SPLIT.on){
@@ -1859,7 +1872,9 @@ function completeSale(){_QK_IDS=null;_RPT_CACHE=null;
       else if(BOL){_bolim=BOL;}else{var _bs2=document.getElementById('bolimSel');_bolim=_bs2?_bs2.value:'';}
       if(!_bolim){var _cs2=document.getElementById('custSel');custName=_cs2?_cs2.value:'';
         if(!custName){var _si2=document.getElementById('custSearch');custName=_si2?(_si2.value||'').trim():'';}
-        if(!custName){toast('Qarz yozish uchun mijoz yoki bo\u2018lim tanlang');return;}}
+        var _v=_custNomTekshir(custName);
+        if(_v){ toast(_v); var _f=document.getElementById('custSearch'); if(_f){try{_f.focus();}catch(e){}} return; }
+        custName=custName.trim();}
     }
   }
   var factor=sub>0?(_fBase/sub):1;
@@ -1993,7 +2008,7 @@ function _reportRows(tab){
 function _fname(n){return (n||'hisobot').replace(/[^0-9A-Za-z _-]/g,'').trim()||'hisobot';}
 function exportEachReport(){
   if(typeof XLSX==='undefined'){toast('Excel kutubxonasi yuklanmadi');return;}
-  var tabs=[['umumiy','Umumiy'],['kunlik','Kunlik'],['oylik','Oylik'],['moliya','Moliya'],['magkun','Magazin kunlik'],['pnl','Foyda-Zarar'],['chiqim','Chiqim'],['cheklar','Cheklar'],['naklad','Nakladnoylar'],['smena','Smena'],['tovarlar','Tovarlar'],['foydatovar','Tovar foydasi'],['abc','ABC'],['qoldiq','Qoldiq'],['hujjatsiz','Hujjatsiz kirim'],['custrep','Mijozlar'],['custtype','Yangi-Qaytgan'],['taminot','Taminotchi'],['qarztolov','Qarz tolovi'],['qarzmud','Muddati otgan'],['sotuvchi','Sotuvchilar'],['soatlik','Soatlik'],['vozvrat','Vozvrat'],['audit','Audit']];
+  var tabs=[['umumiy','Umumiy'],['kunlik','Kunlik'],['oylik','Oylik'],['moliya','Moliya'],['magkun','Magazin kunlik'],['pnl','Foyda-Zarar'],['chiqim','Chiqim'],['cheklar','Cheklar'],['naklad','Nakladnoylar'],['smena','Smena'],['tovarlar','Tovarlar'],['foydatovar','Tovar foydasi'],['abc','ABC'],['qoldiq','Qoldiq'],['hujjatsiz','Hujjatsiz kirim'],['custtype','Yangi-Qaytgan'],['taminot','Taminotchi'],['qarz','Qarzlar'],['sotuvchi','Sotuvchilar'],['vozvrat','Vozvrat'],['audit','Audit']];
   var origTab=HTAB,idx=0,added=0,dt=dayStr(new Date());
   toast('\u23f3 Har biri alohida fayl tayyorlanmoqda\u2026');
   function step(){
@@ -2010,7 +2025,7 @@ function exportEachReport(){
 }
 function exportAllReports(){
   if(typeof XLSX==='undefined'){toast('Excel kutubxonasi yuklanmadi');return;}
-  var tabs=[['umumiy','Umumiy'],['kunlik','Kunlik'],['oylik','Oylik'],['moliya','Moliya'],['magkun','Magazin kunlik'],['pnl','Foyda-Zarar'],['chiqim','Chiqim'],['cheklar','Cheklar'],['naklad','Nakladnoylar'],['smena','Smena'],['tovarlar','Tovarlar'],['foydatovar','Tovar foydasi'],['abc','ABC'],['qoldiq','Qoldiq'],['hujjatsiz','Hujjatsiz kirim'],['custrep','Mijozlar'],['custtype','Yangi-Qaytgan'],['taminot','Taminotchi'],['qarztolov','Qarz tolovi'],['qarzmud','Muddati otgan'],['sotuvchi','Sotuvchilar'],['soatlik','Soatlik'],['vozvrat','Vozvrat'],['audit','Audit']];
+  var tabs=[['umumiy','Umumiy'],['kunlik','Kunlik'],['oylik','Oylik'],['moliya','Moliya'],['magkun','Magazin kunlik'],['pnl','Foyda-Zarar'],['chiqim','Chiqim'],['cheklar','Cheklar'],['naklad','Nakladnoylar'],['smena','Smena'],['tovarlar','Tovarlar'],['foydatovar','Tovar foydasi'],['abc','ABC'],['qoldiq','Qoldiq'],['hujjatsiz','Hujjatsiz kirim'],['custtype','Yangi-Qaytgan'],['taminot','Taminotchi'],['qarz','Qarzlar'],['sotuvchi','Sotuvchilar'],['vozvrat','Vozvrat'],['audit','Audit']];
   var wb=XLSX.utils.book_new(),origTab=HTAB,idx=0,added=0,used={};
   toast('\u23f3 Hisobotlar yig\u2018ilmoqda\u2026');
   function nm(n){n=(n||'sheet').replace(/[^0-9A-Za-z _-]/g,'').trim().slice(0,28)||'sheet';var b=n,k=2;while(used[n]){n=(b+' '+k).slice(0,28);k++;}used[n]=1;return n;}
@@ -2026,7 +2041,7 @@ function exportAllReports(){
   }
   step();
 }
-function _hName(t){var m={dashboard:'Dashboard',umumiy:'Umumiy',kunlik:'Kunlik',oylik:'Oylik',moliya:'Moliya',magkun:'Magazin kunlik',pnl:'Foyda/Zarar',chiqim:'Chiqim',cheklar:'Cheklar',naklad:'Nakladnoylar',smena:'Smena',tovarlar:'Tovarlar',foydatovar:'Tovar foydasi',abc:'ABC',tahlil:'Tahlil',qoldiq:'Qoldiq',hujjatsiz:'Hujjatsiz kirim',custrep:'Mijozlar',custtype:'Yangi/Qaytgan',taminot:'Taminotchi',qarztolov:'Qarz tolovi',qarzmud:'Muddati otgan',sotuvchi:'Sotuvchilar',soatlik:'Soatlik',vozvrat:'Vozvrat',audit:'Audit',tolovturi:'To\u2018lov turi'};return m[t]||'Hisobot';}
+function _hName(t){var m={dashboard:'Dashboard',umumiy:'Umumiy',kunlik:'Kunlik',oylik:'Oylik',moliya:'Moliya',magkun:'Magazin kunlik',pnl:'Foyda/Zarar',chiqim:'Chiqim',cheklar:'Cheklar',naklad:'Nakladnoylar',smena:'Smena',tovarlar:'Tovarlar',foydatovar:'Tovar foydasi',abc:'ABC',tahlil:'Tahlil',qoldiq:'Qoldiq',hujjatsiz:'Hujjatsiz kirim',qarz:'Qarzlar',custrep:'Mijozlar',custtype:'Yangi/Qaytgan',taminot:'Taminotchi',qarztolov:'Qarz tolovi',qarzmud:'Muddati otgan',sotuvchi:'Sotuvchilar',soatlik:'Soatlik',vozvrat:'Vozvrat',audit:'Audit',tolovturi:'To\u2018lov turi'};return m[t]||'Hisobot';}
 /* ===== To'liq savdo Excel \u2014 har sotilgan tovar alohida satr =====
    Sana, chek, sotuvchi, mijoz, to'lov turi, tovar, miqdor, tan narx,
    sotuv narx, chegirma, tushum, foyda, foyda %, va hozirgi qoldiq. */
@@ -2468,6 +2483,7 @@ function _hisobotSales(cb){
 }
 function renderHisobot(){
   var el=document.getElementById('bugunBody');
+  _dashBar();          /* dashboard yoki "← Orqaga" satri — doim yangilanadi */
   if(HTAB==='qoldiq'){renderH_qoldiq(el);return;}
   if(HTAB==='oylik'){renderH_oylik(el);return;}
   if(HTAB==='pnl'){renderH_pnl(el);return;}
@@ -2482,6 +2498,7 @@ function renderHisobot(){
     else if(HTAB==='foydatovar')renderH_foydatovar(el,all);
     else if(HTAB==='audit')renderH_audit(el,all);
     else if(HTAB==='abc')renderH_abc(el,all);
+    else if(HTAB==='qarz')renderH_qarz(el,all);
     else if(HTAB==='custrep')renderH_custrep(el,all);
     else if(HTAB==='vozvrat')renderH_vozvrat(el,all);
     else if(HTAB==='custtype')renderH_custtype(el,all);
@@ -2491,9 +2508,9 @@ function renderHisobot(){
     else if(HTAB==='qarztolov')renderH_qarztolov(el);
     else if(HTAB==='cheklar')renderH_cheklar(el,all);
     else if(HTAB==='smena')renderH_smena(el,all);
-    else if(HTAB==='umumiy')el.innerHTML='';
+    else if(HTAB==='umumiy')renderH_umumiy(el,all);
     else if(HTAB==='moliya')renderH_moliya(el,all);
-    else if(HTAB==='magkun')el.innerHTML='';
+    else if(HTAB==='magkun')renderH_magkun(el,all);
     else el.innerHTML='';
     _dashTop(all);
   });
@@ -2506,10 +2523,13 @@ function renderHisobot(){
    bor edi. "Magazin kunlik" jadvali esa yagona yangi ma'lumot — u
    dashboard ostiga qo'shildi. Magkun ma'lumotni fonda yuklaydi, shuning
    uchun o'z konteyneriga o'zi chizadi. */
-function _dashTop(all){
+/* Hisobot ochilganda dashboard o'rniga qaytish satri qo'yiladi.
+   Bu funksiya renderHisobot boshida DARROV chaqiriladi, chunki ba'zi
+   hisobotlar (Qoldiq, Oylik, PnL...) ma'lumot kutmasdan chiziladi va
+   ilgari eski dashboard ekranda qolib ketardi. */
+function _dashBar(){
   var t=document.getElementById('dashTop'); if(!t) return;
   t.style.display='';
-  /* Biror hisobot ochilgan bo'lsa — dashboard o'rniga qaytish satri */
   if(HTAB!=='dashboard'){
     t.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'+
       '<button onclick="setHTab(\'dashboard\')" style="cursor:pointer;display:flex;align-items:center;gap:7px;'+
@@ -2517,8 +2537,12 @@ function _dashTop(all){
         'font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 2px 6px rgba(31,78,121,.25)">'+
         '<span style="font-size:17px;line-height:1">\u2190</span> Orqaga</button>'+
       '<b style="flex:1;font-size:15px;color:#1F4E79">'+esc(_hName(HTAB))+'</b></div>';
-    return;
   }
+}
+function _dashTop(all){
+  var t=document.getElementById('dashTop'); if(!t) return;
+  if(HTAB!=='dashboard'){ _dashBar(); return; }
+  t.style.display='';
   t.innerHTML=
     '<div style="display:flex;align-items:center;gap:8px;margin:0 0 8px">'+
       '<b style="font-size:14px;color:#1F4E79">\ud83d\udcca Dashboard</b>'+
@@ -2801,17 +2825,13 @@ var _REPS=[
    {id:'qoldiq',    i:'\ud83c\udfea', n:'Qoldiq'},
    {id:'hujjatsiz', i:'\u26a0\ufe0f', n:'Hujjatsiz kirim'}]},
  {g:"Mijoz / Ta\u2019minot", r:[
-   {id:'custrep',     i:'\ud83d\udc65', n:'Mijozlar'},
+   {id:'qarz',        i:'\ud83e\uddfe', n:'Qarzlar'},
    {id:'custtype',    i:'\ud83d\udd04', n:'Yangi / Qaytgan'},
-   {id:'taminot',     i:'\ud83d\ude9a', n:'Ta\u2019minotchi'},
-   {id:'qarztolov',   i:'\ud83d\udcb5', n:'Qarz to\u2018lovi'},
-   {id:'qarzmud',     i:'\u23f0', n:'Muddati o\u2018tgan'},
-   {id:'qarzberilgan',i:'\ud83d\udcdd', n:'Qarzga berilgan'}]},
+   {id:'taminot',     i:'\ud83d\ude9a', n:'Ta\u2019minotchi'}]},
  {g:"Sotuv",   r:[
    {id:'kunlik',   i:'\ud83d\udcc5', n:'Kunlik'},
    {id:'oylik',    i:'\ud83d\uddd3\ufe0f', n:'Oylik'},
    {id:'sotuvchi', i:'\ud83e\uddd1\u200d\ud83d\udcbc', n:'Sotuvchilar'},
-   {id:'soatlik',  i:'\ud83d\udd52', n:'Soatlik'},
    {id:'vozvrat',  i:'\u21a9\ufe0f', n:'Vozvrat'},
    {id:'audit',    i:'\ud83d\udd0d', n:'Audit'}]}
 ];
@@ -2833,7 +2853,7 @@ function _repVal(id,all,sel){
       var v=0; (PRODUCTS||[]).forEach(function(p){ if(!p.arxiv) v+=(p.qoldiq||0)*(p.xarid||0); });
       return mln(v);
     }
-    if(id==='custrep'||id==='qarzberilgan'){
+    if(id==='qarz'){
       var d=0; getCust().forEach(function(c2){ if((c2.debt||0)>0) d+=c2.debt; });
       return grp(d);
     }
@@ -3257,6 +3277,25 @@ function renderH_abc(el,all){
   h+='<div class="htbl"><div class="htr t3 hth"><span>Tovar</span><span>ABC</span><span>Savdo</span><span>%</span></div>';
   arr.slice(0,200).forEach(function(r){h+='<div class="htr t3"><span class="tnm">'+esc(r.nom)+'</span><span style="color:'+col[r.cls]+';font-weight:700">'+r.cls+'</span><span>'+grp(r.rev)+'</span><span>'+r.pct.toFixed(1)+'%</span></div>';});
   h+='</div>';el.innerHTML=h;
+}
+/* ===== QARZLAR \u2014 bitta hisobot =====
+   Ilgari to'rtta alohida edi: Mijozlar, Qarz to'lovi, Muddati o'tgan,
+   Qarzga berilgan. Endi bittasi, ichida to'rtta bo'lim ketma-ket. */
+function renderH_qarz(el,all){
+  el.innerHTML='<div id="qz1"></div><div id="qz2"></div><div id="qz3"></div><div id="qz4"></div>';
+  function sec(id,nom,fn,rang){
+    var box=document.getElementById(id); if(!box) return;
+    var inner=document.createElement('div');
+    box.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin:16px 0 8px">'+
+      '<b style="font-size:13.5px;color:'+(rang||'#1F4E79')+'">'+nom+'</b>'+
+      '<span style="flex:1;height:1px;background:#e6ebf2"></span></div>';
+    box.appendChild(inner);
+    try{ fn(inner,all); }catch(e){ inner.innerHTML='<div class="cart-empty">Ma\u2018lumot yo\u2018q</div>'; }
+  }
+  sec('qz1','\u26a0\ufe0f Muddati o\u2018tgan qarzlar',  renderH_qarzmud, '#a32d2d');
+  sec('qz2','\ud83d\udcdd Qarzga berilgan (davr)',       renderH_qarzberilgan);
+  sec('qz3','\ud83d\udcb5 Qarz to\u2018lovlari (davr)',  renderH_qarztolov);
+  sec('qz4','\ud83d\udc65 Mijozlar kesimi',              renderH_custrep);
 }
 function renderH_custrep(el,all){
   var sel=all.filter(function(x){return inPeriod(x.day);});
