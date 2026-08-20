@@ -1852,7 +1852,7 @@ var HTAB='dashboard';
 function setHTabSel(v){setHTab(v);}
 /* Olib tashlangan hisobotlar tanlangan bo'lsa — dashboardga qaytaramiz */
 if(HTAB==='umumiy'||HTAB==='magkun')HTAB='dashboard';
-function setHTab(t,btn){HTAB=t;var b=document.querySelectorAll('.htab .ht');for(var i=0;i<b.length;i++)b[i].classList.remove('active');if(btn)btn.classList.add('active');var _hs=document.getElementById('htabSel');if(_hs)_hs.value=t;var hp=document.getElementById('hperRow');if(hp)hp.style.display='flex';var hr=document.getElementById('hRangeRow');if(hr)hr.style.display=(t==='qoldiq')?'none':'flex';var _eb=document.getElementById('hExpBtn');if(_eb)_eb.textContent='📥 '+_hName(t)+' — Excel';renderHisobot();
+function setHTab(t,btn){HTAB=t;var b=document.querySelectorAll('.htab .ht');for(var i=0;i<b.length;i++)b[i].classList.remove('active');if(btn)btn.classList.add('active');var _hs=document.getElementById('htabSel');if(_hs)_hs.value=t;var hp=document.getElementById('hperRow');if(hp)hp.style.display='flex';var hr=document.getElementById('hRangeRow');if(hr)hr.style.display=(t==='qoldiq')?'none':'flex';var _eb=document.getElementById('hExpBtn');if(_eb)_eb.textContent='📥 '+_hName(t)+' — Excel';_hPush(t);renderHisobot();
   try{ var _v=document.getElementById('view-hisobot'); if(_v&&_v.scrollIntoView)_v.scrollIntoView({block:'start'}); window.scrollTo(0,0); }catch(e){} }
 /* Tez tanlash yorlig'i sanalarni to'ldiradi — hisobot doim sana oralig'i
    bo'yicha tortiladi. Sanani qo'lda o'zgartirsa yorliq o'chadi. */
@@ -1874,6 +1874,24 @@ function _perMark(p){
     else b[i].classList.remove('active');
   }
 }
+/* Hisobot ochilganda brauzer tarixiga yozamiz — telefonning "orqaga"
+   tugmasi Dashboardga qaytaradi, ilovadan chiqib ketmaydi. */
+var _hNav=false;
+function _hPush(t){
+  try{
+    if(t==='dashboard'){ return; }
+    history.pushState({hisobot:t},'','#h-'+t);
+    _hNav=true;
+  }catch(e){}
+}
+window.addEventListener('popstate',function(){
+  try{
+    if(typeof HTAB!=='undefined' && HTAB!=='dashboard' && _hNav){
+      _hNav=false;
+      setHTab('dashboard');
+    }
+  }catch(e){}
+});
 function setHPer(p,btn){
   var r=_perRange(p);
   HPER='range'; HFROM=r.from; HTO=r.to; HPQ=p;
@@ -2439,11 +2457,12 @@ function _dashTop(all){
   t.style.display='';
   /* Biror hisobot ochilgan bo'lsa — dashboard o'rniga qaytish satri */
   if(HTAB!=='dashboard'){
-    t.innerHTML='<div onclick="setHTab(\'dashboard\')" style="cursor:pointer;display:flex;align-items:center;gap:9px;'+
-      'background:#EEF4FB;border:1px solid #B9D3EC;border-radius:11px;padding:11px 13px;margin-bottom:12px">'+
-      '<span style="font-size:16px">\u2039</span>'+
-      '<b style="flex:1;font-size:14px;color:#1F4E79">'+esc(_hName(HTAB))+'</b>'+
-      '<span style="font-size:12px;color:#5b8fc9">\ud83d\udcca Dashboard</span></div>';
+    t.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'+
+      '<button onclick="setHTab(\'dashboard\')" style="cursor:pointer;display:flex;align-items:center;gap:7px;'+
+        'background:#1F4E79;color:#fff;border:none;border-radius:11px;padding:11px 15px;'+
+        'font-size:14px;font-weight:700;font-family:inherit;box-shadow:0 2px 6px rgba(31,78,121,.25)">'+
+        '<span style="font-size:17px;line-height:1">\u2190</span> Orqaga</button>'+
+      '<b style="flex:1;font-size:15px;color:#1F4E79">'+esc(_hName(HTAB))+'</b></div>';
     return;
   }
   t.innerHTML=
