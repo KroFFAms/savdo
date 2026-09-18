@@ -830,7 +830,7 @@ var DEPLOY = {
       <button class="btn-sell" onclick="completeSale()">✅ Sotildi</button>
     </div>
   </div>
-  <div id="view-hisobot" class="view"><select id="htabSel" onchange="setHTabSel(this.value)" class="seller" style="width:100%;max-width:none;margin:0 0 10px;font-weight:700"><optgroup label="Umumiy"><option value="dashboard" selected>Dashboard</option><option value="kunlik">Kunlik</option><option value="oylik">Oylik</option></optgroup><optgroup label="Moliya"><option value="moliya">💼 Moliya</option><option value="pnl">Foyda/Zarar</option><option value="chiqim">Chiqim</option><option value="cheklar">Cheklar</option><option value="tolovturi">To‘lov turi bo‘yicha</option><option value="naklad">Nakladnoylar</option><option value="smena">Smena</option></optgroup><optgroup label="Tovar"><option value="tovarlar">Tovarlar</option><option value="foydatovar">Tovar foydasi</option><option value="abc">ABC</option><option value="tahlil">📊 Tahlil</option><option value="qoldiq">Qoldiq</option><option value="hujjatsiz">⚠️ Hujjatsiz kirim</option></optgroup><optgroup label="Mijoz / Ta'minot"><option value="qarz">🧾 Qarzlar</option><option value="custtype">Yangi/Qaytgan</option><option value="taminot">Ta'minotchi</option></optgroup><optgroup label="Sotuv"><option value="sotuvchi">Sotuvchilar</option><option value="vozvrat">Vozvrat</option><option value="audit">Audit</option></optgroup></select><div id="hRangeRow" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:2px 2px 0">
+  <div id="view-hisobot" class="view"><select id="htabSel" onchange="setHTabSel(this.value)" class="seller" style="width:100%;max-width:none;margin:0 0 10px;font-weight:700"><optgroup label="Umumiy"><option value="dashboard" selected>Dashboard</option><option value="kunlik">Kunlik</option><option value="oylik">Oylik</option></optgroup><optgroup label="Moliya"><option value="moliya">💼 Moliya</option><option value="pnl">Foyda/Zarar</option><option value="chiqim">Chiqim</option><option value="cheklar">Cheklar</option><option value="tolovturi">To‘lov turi bo‘yicha</option><option value="naklad">Nakladnoylar</option><option value="smena">Smena</option></optgroup><optgroup label="Tovar"><option value="tovarlar">Tovarlar</option><option value="foydatovar">Tovar foydasi</option><option value="abc">ABC</option><option value="tahlil">📊 Tahlil</option><option value="qoldiq">Qoldiq</option><option value="hujjatsiz">⚠️ Hujjatsiz kirim</option></optgroup><optgroup label="Mijoz / Ta'minot"><option value="qarz">🧾 Qarzlar</option><option value="custtype">Yangi/Qaytgan</option><option value="taminot">Ta'minotchi</option><option value="pulok">⚖️ Pul oqimi</option></optgroup><optgroup label="Sotuv"><option value="sotuvchi">Sotuvchilar</option><option value="vozvrat">Vozvrat</option><option value="audit">Audit</option></optgroup></select><div id="hRangeRow" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:2px 2px 0">
 <input id="hFrom" type="date" onchange="applyRange()" style="flex:1;min-width:135px;padding:9px 10px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-weight:600;font-family:inherit">
 <span style="color:var(--muted);font-size:13px">—</span>
 <input id="hTo" type="date" onchange="applyRange()" style="flex:1;min-width:135px;padding:9px 10px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-weight:600;font-family:inherit">
@@ -2062,7 +2062,7 @@ function exportAllReports(){
   }
   step();
 }
-function _hName(t){var m={dashboard:'Dashboard',umumiy:'Umumiy',kunlik:'Kunlik',oylik:'Oylik',moliya:'Moliya',magkun:'Magazin kunlik',pnl:'Foyda/Zarar',chiqim:'Chiqim',cheklar:'Cheklar',naklad:'Nakladnoylar',smena:'Smena',tovarlar:'Tovarlar',foydatovar:'Tovar foydasi',abc:'ABC',tahlil:'Tahlil',qoldiq:'Qoldiq',hujjatsiz:'Hujjatsiz kirim',qarz:'Qarzlar',custrep:'Mijozlar',custtype:'Yangi/Qaytgan',taminot:'Taminotchi',qarztolov:'Qarz tolovi',qarzmud:'Muddati otgan',sotuvchi:'Sotuvchilar',soatlik:'Soatlik',vozvrat:'Vozvrat',audit:'Audit',tolovturi:'To\u2018lov turi'};return m[t]||'Hisobot';}
+function _hName(t){var m={pulok:'Pul oqimi',dashboard:'Dashboard',umumiy:'Umumiy',kunlik:'Kunlik',oylik:'Oylik',moliya:'Moliya',magkun:'Magazin kunlik',pnl:'Foyda/Zarar',chiqim:'Chiqim',cheklar:'Cheklar',naklad:'Nakladnoylar',smena:'Smena',tovarlar:'Tovarlar',foydatovar:'Tovar foydasi',abc:'ABC',tahlil:'Tahlil',qoldiq:'Qoldiq',hujjatsiz:'Hujjatsiz kirim',qarz:'Qarzlar',custrep:'Mijozlar',custtype:'Yangi/Qaytgan',taminot:'Taminotchi',qarztolov:'Qarz tolovi',qarzmud:'Muddati otgan',sotuvchi:'Sotuvchilar',soatlik:'Soatlik',vozvrat:'Vozvrat',audit:'Audit',tolovturi:'To\u2018lov turi'};return m[t]||'Hisobot';}
 /* ===== To'liq savdo Excel \u2014 har sotilgan tovar alohida satr =====
    Sana, chek, sotuvchi, mijoz, to'lov turi, tovar, miqdor, tan narx,
    sotuv narx, chegirma, tushum, foyda, foyda %, va hozirgi qoldiq. */
@@ -2531,6 +2531,7 @@ function renderHisobot(){
     else if(HTAB==='smena')renderH_smena(el,all);
     else if(HTAB==='umumiy')renderH_umumiy(el,all);
     else if(HTAB==='moliya')renderH_moliya(el,all);
+    else if(HTAB==='pulok')renderH_pulok(el,all);
     else if(HTAB==='magkun')renderH_magkun(el,all);
     else el.innerHTML='';
     _dashTop(all);
@@ -2589,6 +2590,121 @@ function _periodLabel(){
   if(HFROM&&HTO&&HFROM===HTO)return _dmyShort(HFROM);
   return _dmyShort(HFROM)+' \u2014 '+_dmyShort(HTO);
 }
+
+/* ===== PUL OQIMI: bizga qarzdorlar va biz qarzdor bo'lganlar, muddat bo'yicha =====
+   Yangi hisobot. Mavjud funksiyalarga tegilmagan. */
+function _pkDays(d){
+  if(!d)return null;
+  var t=new Date(); t.setHours(0,0,0,0);
+  var p=(''+d).split('-'); if(p.length!==3)return null;
+  var x=new Date(+p[0],+p[1]-1,+p[2]); x.setHours(0,0,0,0);
+  return Math.round((x-t)/86400000);
+}
+function _pkBucket(n){
+  if(n===null)return 4;          /* muddatsiz */
+  if(n<0)return 0;               /* o'tib ketgan */
+  if(n<=7)return 1;
+  if(n<=30)return 2;
+  return 3;
+}
+function renderH_pulok(el,all){
+  var BK=['⚠️ Muddati o‘tgan','7 kun ichida','8–30 kun','30 kundan keyin','Muddatsiz'];
+  var IN=[0,0,0,0,0], OUT=[0,0,0,0,0];
+
+  /* mijozning eng yaqin muddati — qarzga sotuvlardan */
+  var dueOf={};
+  (all||[]).forEach(function(x){
+    if(x.pay==='qarz'&&x.due&&x.customer){
+      if(!dueOf[x.customer]||x.due<dueOf[x.customer])dueOf[x.customer]=x.due;
+    }
+  });
+
+  var cs=[], sumIn=0;
+  getCust().forEach(function(c){
+    var d=Math.round(c.debt||0); if(d<=0)return;
+    var dd=dueOf[c.nom]||'';
+    var n=_pkDays(dd), b=_pkBucket(n);
+    IN[b]+=d; sumIn+=d;
+    cs.push({nom:c.nom,phone:c.phone||'',debt:d,due:dd,n:n,b:b});
+  });
+
+  var ss=[], sumOut=0;
+  getSup().forEach(function(s){
+    var d=Math.round(s.debt||0); if(d<=0)return;
+    var n=_pkDays(s.due||''), b=_pkBucket(n);
+    OUT[b]+=d; sumOut+=d;
+    ss.push({nom:s.nom,debt:d,due:s.due||'',n:n,b:b});
+  });
+
+  var net=sumIn-sumOut;
+  var h='<div class="cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px">'+
+    '<div class="card" style="background:#E8F5E9;border:1px solid #c8e6c9;border-radius:10px;padding:12px">'+
+      '<div style="font-size:11px;color:#4a6b4a;font-weight:700">BIZGA QARZDOR</div>'+
+      '<div style="font-size:20px;font-weight:800;color:#1a5c1a">'+grp(sumIn)+'</div>'+
+      '<div style="font-size:11px;color:#6b8a6b">'+cs.length+' ta mijoz</div></div>'+
+    '<div class="card" style="background:#FFF0EE;border:1px solid #f4c7c0;border-radius:10px;padding:12px">'+
+      '<div style="font-size:11px;color:#8a5a52;font-weight:700">BIZ QARZDORMIZ</div>'+
+      '<div style="font-size:20px;font-weight:800;color:#8B0000">'+grp(sumOut)+'</div>'+
+      '<div style="font-size:11px;color:#a07a72">'+ss.length+' ta ta‘minotchi</div></div>'+
+    '<div class="card" style="background:#EEF4FB;border:1px solid #c5d9ee;border-radius:10px;padding:12px">'+
+      '<div style="font-size:11px;color:#40587a;font-weight:700">FARQ</div>'+
+      '<div style="font-size:20px;font-weight:800;color:'+(net>=0?'#1a5c1a':'#8B0000')+'">'+grp(net)+'</div>'+
+      '<div style="font-size:11px;color:#6b7f9c">'+(net>=0?'bizga ko‘proq qarzdor':'biz ko‘proq qarzdormiz')+'</div></div>'+
+  '</div>';
+
+  h+='<div class="bhead">Muddat bo‘yicha</div>';
+  h+='<div class="htbl"><div class="htr hth t4"><span>Muddat</span><span>Keladi</span><span>Chiqadi</span><span>Farq</span></div>';
+  for(var i=0;i<5;i++){
+    if(!IN[i]&&!OUT[i])continue;
+    var f=IN[i]-OUT[i];
+    h+='<div class="htr t4"'+(i===0?' style="background:#FDECEA"':'')+'>'+
+       '<span style="white-space:normal">'+BK[i]+'</span>'+
+       '<span style="color:#1a5c1a;font-weight:600">'+(IN[i]?grp(IN[i]):'—')+'</span>'+
+       '<span style="color:#8B0000;font-weight:600">'+(OUT[i]?grp(OUT[i]):'—')+'</span>'+
+       '<span style="font-weight:700;color:'+(f>=0?'#1a5c1a':'#8B0000')+'">'+grp(f)+'</span></div>';
+  }
+  h+='<div class="htr t4" style="background:#f4f6f9;font-weight:800"><span>JAMI</span>'+
+     '<span>'+grp(sumIn)+'</span><span>'+grp(sumOut)+'</span><span>'+grp(net)+'</span></div></div>';
+
+  /* muddati o'tgan va yaqinlashayotgan mijozlar */
+  var csort=cs.filter(function(x){return x.n!==null&&x.n<=7;}).sort(function(a,b){return (a.n-b.n)||(b.debt-a.debt);});
+  h+='<div class="bhead">To‘lashi kerak bo‘lgan mijozlar ('+csort.length+')</div>';
+  if(!csort.length)h+='<div class="cart-empty">Muddati yetgan mijoz yo‘q</div>';
+  else{
+    h+='<div class="htbl"><div class="htr hth t4"><span>Mijoz</span><span>Telefon</span><span>Muddat</span><span>Qarz</span></div>';
+    csort.slice(0,40).forEach(function(r){
+      h+='<div class="htr t4"'+(r.n<0?' style="background:#FDECEA"':'')+'>'+
+         '<span style="white-space:normal;word-break:break-word">'+esc(r.nom)+'</span>'+
+         '<span class="dim" style="font-size:11px">'+esc(r.phone||'—')+'</span>'+
+         '<span style="font-size:11px;color:'+(r.n<0?'#a32d2d':'#5a6676')+';font-weight:700">'+_dmyShort(r.due)+(r.n<0?(' ('+(-r.n)+' kun)'):'')+'</span>'+
+         '<span style="font-weight:700">'+grp(r.debt)+'</span></div>';
+    });
+    h+='</div>';
+  }
+
+  /* to'lanishi kerak bo'lgan ta'minotchi qarzlari */
+  var ssort=ss.slice().sort(function(a,b){
+    if(a.n===null&&b.n===null)return b.debt-a.debt;
+    if(a.n===null)return 1; if(b.n===null)return -1;
+    return (a.n-b.n)||(b.debt-a.debt);
+  });
+  h+='<div class="bhead">Ta‘minotchilarga to‘lov ('+ssort.length+')</div>';
+  if(!ssort.length)h+='<div class="cart-empty">Ta‘minotchi qarzi yo‘q</div>';
+  else{
+    h+='<div class="htbl"><div class="htr hth t4"><span>Ta‘minotchi</span><span></span><span>Muddat</span><span>Qarz</span></div>';
+    ssort.slice(0,40).forEach(function(r){
+      h+='<div class="htr t4"'+((r.n!==null&&r.n<0)?' style="background:#FDECEA"':'')+'>'+
+         '<span style="white-space:normal;word-break:break-word">'+esc(r.nom)+'</span><span></span>'+
+         '<span style="font-size:11px;color:'+((r.n!==null&&r.n<0)?'#a32d2d':'#5a6676')+';font-weight:700">'+(r.due?_dmyShort(r.due):'—')+((r.n!==null&&r.n<0)?(' ('+(-r.n)+' kun)'):'')+'</span>'+
+         '<span style="font-weight:700">'+grp(r.debt)+'</span></div>';
+    });
+    h+='</div>';
+  }
+
+  h+='<div style="font-size:11px;color:#8a94a6;margin-top:10px">Muddat qarzga sotuvda kiritilgan sanadan olinadi. Muddati yozilmagan qarzlar «'+'Muddatsiz» qatorida.</div>';
+  el.innerHTML=h;
+}
+
 function renderH_qarztolov(el){
   evAll(function(evs){
     var nameById={};getCust().forEach(function(c){nameById[c.id]=c.nom;});
@@ -6241,7 +6357,7 @@ try{
     {id:'g_foyda', nom:'Foyda',              ico:'\u{1F4C8}', t:['pnl','foydatovar','abc']},
     {id:'g_tovar', nom:'Tovar',              ico:'\u{1F4E6}', t:['tovarlar','qoldiq','tahlil','hujjatsiz']},
     {id:'g_pul',   nom:'Pul',                ico:'\u{1F4B0}', t:['moliya','chiqim','cheklar','naklad']},
-    {id:'g_mijoz', nom:'Mijoz va ta‘minot', ico:'\u{1F464}', t:['qarz','custtype','taminot']},
+    {id:'g_mijoz', nom:'Mijoz va ta‘minot', ico:'\u{1F464}', t:['qarz','pulok','custtype','taminot']},
     {id:'g_xodim', nom:'Xodim',              ico:'\u{1F477}', t:['sotuvchi','smena']},
     {id:'g_tekshir',nom:'Tekshiruv',         ico:'\u{1F50E}', t:['vozvrat','audit']}
   ];
