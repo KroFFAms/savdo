@@ -779,7 +779,7 @@ var DEPLOY = {
     <h1>KROFF <span class="dot">·</span> Savdo</h1>
     <div class="syncchip" id="syncChip" onclick="manualSync()">☁️ …</div>
     <button class="menu-btn" onclick="toggleMenu(event)" aria-label="Menyu">☰</button>
-    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v71</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)"><span class="mi-i">📦</span>Tovarlar</button><button class="menu-item" data-admin="1" onclick="openOps()"><span class="mi-i">🧾</span>Amaliyotlar</button><button class="menu-item" data-admin="1" onclick="openRetSup()"><span class="mi-i">↩️</span>Ta‘minotga qaytarish</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)"><span class="mi-i">🛒</span>Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)"><span class="mi-i">📈</span>Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)"><span class="mi-i">🚚</span>Katalog</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)"><span class="mi-i">👤</span>Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)"><span class="mi-i">🔧</span>Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)"><span class="mi-i">💰</span>Kassa</button><button class="menu-item" data-v="ishhaqi" data-admin="1" onclick="switchView('ishhaqi',this)"><span class="mi-i">👷</span>Ish haqi</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)"><span class="mi-i">📋</span>Sanoq</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)"><span class="mi-i">⚙️</span>Sozlamalar</button><button class="menu-item" data-admin="1" onclick="manualSync()"><span class="mi-i">🔄</span>Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="publishCatalog(true);menuOpen(false)"><span class="mi-i">📤</span>Katalogga chiqarish</button><button class="menu-item" data-admin="1" onclick="openOnlOrders()"><span class="mi-i">🛍️</span>Onlayn buyurtmalar<span id="onlBadge" style="display:none;margin-left:auto;background:#e01438;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:800"></span></button><button class="menu-item" data-admin="1" onclick="editPins()"><span class="mi-i">🔑</span>Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)"><span class="mi-i">👥</span>Xodimlar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d"><span class="mi-i">🔒</span>Qulflash (chiqish)</button></div>
+    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v74</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)"><span class="mi-i">📦</span>Tovarlar</button><button class="menu-item" data-admin="1" onclick="openOps()"><span class="mi-i">🧾</span>Amaliyotlar</button><button class="menu-item" data-admin="1" onclick="openRetSup()"><span class="mi-i">↩️</span>Ta‘minotga qaytarish</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)"><span class="mi-i">🛒</span>Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)"><span class="mi-i">📈</span>Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)"><span class="mi-i">🚚</span>Katalog</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)"><span class="mi-i">👤</span>Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)"><span class="mi-i">🔧</span>Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)"><span class="mi-i">💰</span>Kassa</button><button class="menu-item" data-v="ishhaqi" data-admin="1" onclick="switchView('ishhaqi',this)"><span class="mi-i">👷</span>Ish haqi</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)"><span class="mi-i">📋</span>Sanoq</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)"><span class="mi-i">⚙️</span>Sozlamalar</button><button class="menu-item" data-admin="1" onclick="manualSync()"><span class="mi-i">🔄</span>Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="publishCatalog(true);menuOpen(false)"><span class="mi-i">📤</span>Katalogga chiqarish</button><button class="menu-item" data-admin="1" onclick="openOnlOrders()"><span class="mi-i">🛍️</span>Onlayn buyurtmalar<span id="onlBadge" style="display:none;margin-left:auto;background:#e01438;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:800"></span></button><button class="menu-item" data-admin="1" onclick="editPins()"><span class="mi-i">🔑</span>Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)"><span class="mi-i">👥</span>Xodimlar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d"><span class="mi-i">🔒</span>Qulflash (chiqish)</button></div>
     <div class="stats" id="stats">
       <div class="stat"><div class="v" id="s_tovar">0</div><div class="l">Tovar turi</div></div>
       <div class="stat"><div class="v" id="s_qty">0</div><div class="l">Qoldiq (dona)</div></div>
@@ -1058,7 +1058,7 @@ function bazaInit(cb){
     if(navigator.onLine===false){ PRODUCTS=loadBase(); _bazaBosh(); cb(); return; }
     sbStatus('\u2601\ufe0f Tovar bazasi olinyapti...');
     bazaFetch(function(list){
-      if(list && list.length){ PRODUCTS=list; srvQSet(list); bazaPut(list,Date.now(),cb); sbStatus('\u2601\ufe0f Sinxron',true); }
+      if(list){ PRODUCTS=list; srvQSet(list); bazaPut(list,Date.now(),cb); sbStatus('\u2601\ufe0f Sinxron',true); }
       else { PRODUCTS=loadBase(); _bazaBosh(); cb(); }
     });
   });
@@ -1068,7 +1068,11 @@ function bazaRefresh(jim){
   if(navigator.onLine===false){ if(!jim)toast('Internet yo\u2018q'); return; }
   if(!jim) sbStatus('\u2601\ufe0f Tovar bazasi yangilanyapti...');
   bazaFetch(function(list){
-    if(!list || !list.length){ if(!jim)toast('Baza olinmadi'); return; }
+    /* null = server javob bermadi (xato). [] = server bo'sh (to'g'ri holat). */
+    if(!list){ if(!jim)toast('Baza olinmadi'); return; }
+    if(!list.length && !jim &&
+       !confirm('Serverdagi tovar bazasi BO\u2018SH.\n\nQurilmadagi ro\u2018yxat ham bo\u2018shatilsinmi?'))
+      return;
     var eski={}; (PRODUCTS||[]).forEach(function(p){ eski[p.id]=p.qoldiq; });
     bazaPut(list,Date.now(),function(){
       PRODUCTS=list; srvQSet(list); rebuildBCX(); ensureIndex();
@@ -2500,7 +2504,8 @@ function _hisobotSales(cb){
       _SRV_CACHE[key]=out; _SRV_TS[key]=Date.now();
       sbStatus('\u2601\ufe0f Sinxron',true); cb(out);
     })
-    .catch(function(){ sbStatus('\u2601\ufe0f Hisobot: telefondan'); salesLoad(cb); });
+    .catch(function(e){ try{window._HIS_XATO=(e&&e.message)||'?';}catch(_){}
+      sbStatus('\u2601\ufe0f Hisobot: telefondan'); salesLoad(cb); });
 }
 function renderHisobot(){
   var el=document.getElementById('bugunBody');
@@ -5362,7 +5367,12 @@ function _pushList(un,cb){
       var sent={};un.forEach(function(e){sent[e.id]=1;e.synced=1;evPut(e,function(){});});
       if(_UNSYNC)_UNSYNC=_UNSYNC.filter(function(e){return !sent[e.id];});   // yuborilganlar navbatdan chiqadi
       cb&&cb(true);})
-    .catch(function(e){sbStatus('\u26a0\ufe0f Ulanmadi',false);cb&&cb(false);});
+    .catch(function(e){
+  var m=(e&&e.message)?String(e.message):'nomalum xato';
+  sbStatus('\u26a0\ufe0f '+m.slice(0,38),false);
+  try{ toast('\u26a0\ufe0f Yuborilmadi \u2014 '+m.slice(0,180)); }catch(_){}
+  try{ window._SYNC_XATO=m; console.error('PUSH XATO:',m); }catch(_){}
+  cb&&cb(false);});
 }
 function cloudPull(cb){
   var _since=Math.max(0,_maxEvTs-60000);
@@ -6396,11 +6406,14 @@ try{
   function lsGet(k){try{return localStorage.getItem(k)||'';}catch(e){return '';}}
   function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 
-  /* hisobot asboblarini bitta qatorga yig'amiz */
+  /* Eski yig'ish olib tashlandi: u belgini butun hisobot ekraniga
+     qo'yib yuborar va ekran hamma bo'limda ko'rinib qolar edi.
+     Endi sana/davr qatorlari kalendar bilan almashtirilgan, shuning
+     uchun yig'ish kerak emas. Eski belgi qolgan bo'lsa, tozalanadi. */
   function hrow(){
-    var hr=document.getElementById('hRangeRow');
-    if(hr&&hr.parentNode&&hr.parentNode.className.indexOf('hrow1')<0)
-      hr.parentNode.className+=' hrow1';
+    var v=document.getElementById('view-hisobot');
+    if(v&&v.className.indexOf('hrow1')>=0)
+      v.className=v.className.replace(/\s*hrow1/g,'');
   }
 
   /* "Orqaga" tugmasi keng ekranda keraksiz — chapda joy ko'rinib turibdi */
