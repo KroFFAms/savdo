@@ -779,7 +779,7 @@ var DEPLOY = {
     <h1>KROFF <span class="dot">·</span> Savdo</h1>
     <div class="syncchip" id="syncChip" onclick="manualSync()">☁️ …</div>
     <button class="menu-btn" onclick="toggleMenu(event)" aria-label="Menyu">☰</button>
-    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v68</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)"><span class="mi-i">📦</span>Tovarlar</button><button class="menu-item" data-admin="1" onclick="openOps()"><span class="mi-i">🧾</span>Amaliyotlar</button><button class="menu-item" data-admin="1" onclick="openRetSup()"><span class="mi-i">↩️</span>Ta‘minotga qaytarish</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)"><span class="mi-i">🛒</span>Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)"><span class="mi-i">📈</span>Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)"><span class="mi-i">🚚</span>Katalog</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)"><span class="mi-i">👤</span>Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)"><span class="mi-i">🔧</span>Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)"><span class="mi-i">💰</span>Kassa</button><button class="menu-item" data-v="ishhaqi" data-admin="1" onclick="switchView('ishhaqi',this)"><span class="mi-i">👷</span>Ish haqi</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)"><span class="mi-i">📋</span>Sanoq</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)"><span class="mi-i">⚙️</span>Sozlamalar</button><button class="menu-item" data-admin="1" onclick="manualSync()"><span class="mi-i">🔄</span>Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="publishCatalog(true);menuOpen(false)"><span class="mi-i">📤</span>Katalogga chiqarish</button><button class="menu-item" data-admin="1" onclick="openOnlOrders()"><span class="mi-i">🛍️</span>Onlayn buyurtmalar<span id="onlBadge" style="display:none;margin-left:auto;background:#e01438;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:800"></span></button><button class="menu-item" data-admin="1" onclick="editPins()"><span class="mi-i">🔑</span>Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)"><span class="mi-i">👥</span>Xodimlar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d"><span class="mi-i">🔒</span>Qulflash (chiqish)</button></div>
+    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v70</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)"><span class="mi-i">📦</span>Tovarlar</button><button class="menu-item" data-admin="1" onclick="openOps()"><span class="mi-i">🧾</span>Amaliyotlar</button><button class="menu-item" data-admin="1" onclick="openRetSup()"><span class="mi-i">↩️</span>Ta‘minotga qaytarish</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)"><span class="mi-i">🛒</span>Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)"><span class="mi-i">📈</span>Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)"><span class="mi-i">🚚</span>Katalog</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)"><span class="mi-i">👤</span>Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)"><span class="mi-i">🔧</span>Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)"><span class="mi-i">💰</span>Kassa</button><button class="menu-item" data-v="ishhaqi" data-admin="1" onclick="switchView('ishhaqi',this)"><span class="mi-i">👷</span>Ish haqi</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)"><span class="mi-i">📋</span>Sanoq</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)"><span class="mi-i">⚙️</span>Sozlamalar</button><button class="menu-item" data-admin="1" onclick="manualSync()"><span class="mi-i">🔄</span>Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="publishCatalog(true);menuOpen(false)"><span class="mi-i">📤</span>Katalogga chiqarish</button><button class="menu-item" data-admin="1" onclick="openOnlOrders()"><span class="mi-i">🛍️</span>Onlayn buyurtmalar<span id="onlBadge" style="display:none;margin-left:auto;background:#e01438;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:800"></span></button><button class="menu-item" data-admin="1" onclick="editPins()"><span class="mi-i">🔑</span>Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)"><span class="mi-i">👥</span>Xodimlar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d"><span class="mi-i">🔒</span>Qulflash (chiqish)</button></div>
     <div class="stats" id="stats">
       <div class="stat"><div class="v" id="s_tovar">0</div><div class="l">Tovar turi</div></div>
       <div class="stat"><div class="v" id="s_qty">0</div><div class="l">Qoldiq (dona)</div></div>
@@ -6015,6 +6015,43 @@ try{
 #sideNav .sb-ritem:hover{background:#eef1f5}
 #sideNav .sb-ritem.active{border-left-color:#C65911;background:#fdf1e7;color:#9a4510;font-weight:700}
 
+/* ===== KALENDAR ORQALI DAVR TANLASH ===== */
+#calBtn{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #dde2e8;border-radius:11px;
+  padding:11px 14px;font-size:15px;font-weight:700;color:#1F4E79;cursor:pointer;font-family:inherit;flex:1;min-width:0}
+#calToday{background:#EEF4FB;border:1px solid #c5d9ee;border-radius:11px;padding:11px 16px;font-size:14px;
+  font-weight:700;color:#1F4E79;cursor:pointer;font-family:inherit;white-space:nowrap}
+#calRow{display:flex;gap:8px;align-items:center;margin:0 0 12px}
+#hRangeRow,#hperRow{display:none!important}
+
+#calOv{position:fixed;inset:0;background:rgba(20,30,50,.5);z-index:240;display:flex;align-items:center;
+  justify-content:center;padding:14px}
+#calBox{background:#fff;border-radius:16px;width:100%;max-width:400px;max-height:92vh;overflow:auto;
+  box-shadow:0 14px 44px rgba(0,0,0,.28)}
+#calBox .c-head{background:#1F4E79;color:#fff;padding:13px 15px;display:flex;align-items:center;gap:10px;
+  position:sticky;top:0;z-index:2}
+#calBox .c-head b{flex:1;text-align:center;font-size:16px}
+#calBox .c-nav{background:rgba(255,255,255,.17);border:none;color:#fff;border-radius:9px;width:34px;height:34px;
+  font-size:17px;cursor:pointer}
+#calBox .c-dow{display:grid;grid-template-columns:repeat(7,1fr);padding:10px 10px 2px;font-size:11px;
+  color:#9aa5b4;font-weight:700;text-align:center}
+#calBox .c-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;padding:4px 10px 10px}
+#calBox .c-d{position:relative;aspect-ratio:1;border:none;background:none;border-radius:50%;cursor:pointer;
+  font-size:14px;font-weight:700;color:#3a4654;font-family:inherit;display:flex;align-items:center;
+  justify-content:center;padding:0}
+#calBox .c-d:disabled{color:#dfe4ea;cursor:default}
+#calBox .c-d .c-ring{position:absolute;inset:2px;border-radius:50%;border:2px solid #e6ebf1}
+#calBox .c-d .c-fill{position:absolute;inset:2px;border-radius:50%}
+#calBox .c-d span{position:relative;z-index:1}
+#calBox .c-d.sel{background:#1F4E79;color:#fff}
+#calBox .c-d.mid{background:#EEF4FB;color:#1F4E79;border-radius:0}
+#calBox .c-d.today span{text-decoration:underline}
+#calBox .c-foot{display:flex;gap:8px;flex-wrap:wrap;padding:10px 12px 14px;border-top:1px solid #eef1f4}
+#calBox .c-q{background:#f4f6f9;border:1px solid #e3e8ee;border-radius:9px;padding:9px 13px;font-size:13px;
+  font-weight:700;color:#42505f;cursor:pointer;font-family:inherit}
+#calBox .c-ok{flex:1;background:#1F4E79;border:none;color:#fff;border-radius:9px;padding:11px;font-size:14px;
+  font-weight:800;cursor:pointer;font-family:inherit}
+#calBox .c-sum{padding:8px 14px 0;font-size:12px;color:#6b7684}
+
 /* hisobot ekrani: kattaroq shrift */
 #view-hisobot{font-size:15px}
 #view-hisobot .bstat .bv{font-size:26px}
@@ -6593,6 +6630,137 @@ try{
     move(); lift();
     setTimeout(function(){move();lift();},600);
     setTimeout(function(){move();lift();},2000);
+  })();
+
+
+  /* ===== KALENDAR: sanadan sanagacha tanlash ===== */
+  (function(){
+    var hr=document.getElementById('hRangeRow');
+    if(!hr||!hr.parentNode)return;
+
+    var row=document.createElement('div'); row.id='calRow';
+    row.innerHTML='<button type="button" id="calBtn"><span style="font-size:17px">📅</span>'+
+                  '<span id="calLbl" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</span></button>'+
+                  '<button type="button" id="calToday">Bugun</button>';
+    hr.parentNode.insertBefore(row,hr);
+
+    function d2(n){return ('0'+n).slice(-2);}
+    function ds(y,m,d){return y+'-'+d2(m+1)+'-'+d2(d);}
+    function dmy(s){ if(!s)return '—'; var p=s.split('-'); return p[2]+'.'+p[1]+'.'+p[0]; }
+    function today(){ var t=new Date(); return ds(t.getFullYear(),t.getMonth(),t.getDate()); }
+
+    function label(){
+      var l=document.getElementById('calLbl'); if(!l)return;
+      var f=(typeof HFROM!=='undefined'&&HFROM)?HFROM:'', t=(typeof HTO!=='undefined'&&HTO)?HTO:'';
+      if(!f&&!t){l.textContent='Davrni tanlang';return;}
+      l.textContent=(f===t)?dmy(f):(dmy(f)+' — '+dmy(t));
+    }
+    setInterval(label,800); label();
+
+    function apply(f,t){
+      var a=document.getElementById('hFrom'), b=document.getElementById('hTo');
+      if(a)a.value=f; if(b)b.value=t;
+      if(typeof applyRange==='function')applyRange();
+      label();
+    }
+    document.getElementById('calToday').onclick=function(){ var d=today(); apply(d,d); };
+
+    /* --- kunlik savdo (imkoni bo'lsa) --- */
+    var DAYSUM=null;
+    function loadDays(cb){
+      if(DAYSUM){cb();return;}
+      try{
+        if(typeof salesLoad!=='function'){cb();return;}
+        salesLoad(function(sales){
+          var m={};
+          try{ (sales||[]).forEach(function(x){
+            var d=x.day||(x.ts?(''+x.ts).slice(0,10):''); if(!d)return;
+            m[d]=(m[d]||0)+(x.total||0);
+          }); }catch(e){}
+          DAYSUM=m; cb();
+        });
+      }catch(e){ cb(); }
+    }
+
+    var VY,VM,P1,P2,FRESH;
+    function build(){
+      var box=document.getElementById('calBox'); if(!box)return;
+      var MN=['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
+      var first=new Date(VY,VM,1), start=(first.getDay()+6)%7;   /* dushanbadan */
+      var days=new Date(VY,VM+1,0).getDate();
+      var mx=0,tot=0;
+      if(DAYSUM)for(var q=1;q<=days;q++){var v=DAYSUM[ds(VY,VM,q)]||0; if(v>mx)mx=v; tot+=v;}
+
+      var h='<div class="c-head"><button class="c-nav" id="cPrev">‹</button>'+
+            '<b>'+MN[VM]+' '+VY+'</b>'+
+            '<button class="c-nav" id="cNext">›</button></div>'+
+            '<div class="c-dow"><span>Du</span><span>Se</span><span>Cho</span><span>Pa</span><span>Ju</span><span>Sha</span><span>Ya</span></div>'+
+            '<div class="c-grid">';
+      for(var i=0;i<start;i++)h+='<button class="c-d" disabled></button>';
+      var td=today();
+      for(var d=1;d<=days;d++){
+        var s=ds(VY,VM,d);
+        var cls='c-d'+(s===td?' today':'');
+        if((P1&&s===P1)||(P2&&s===P2))cls+=' sel';
+        else if(P1&&P2&&s>P1&&s<P2)cls+=' mid';
+        var ring='';
+        if(DAYSUM&&mx>0){
+          var v=DAYSUM[s]||0, pc=Math.round(v/mx*100);
+          if(pc>0){
+            var col=pc>=66?'#1F4E79':(pc>=33?'#4d88c4':'#a9c8e6');
+            ring='<span class="c-fill" style="background:conic-gradient('+col+' '+pc+'%,#eef1f4 0)"></span>'+
+                 '<span class="c-fill" style="background:#fff;inset:6px"></span>';
+          }else ring='<span class="c-ring"></span>';
+        }
+        h+='<button class="'+cls+'" data-d="'+s+'">'+ring+'<span>'+d+'</span></button>';
+      }
+      h+='</div>';
+      if(DAYSUM&&tot>0)h+='<div class="c-sum">Bu oyda jami: <b>'+grp(Math.round(tot))+'</b> so‘m</div>';
+      h+='<div class="c-foot">'+
+         '<button class="c-q" data-q="bugun">Bugun</button>'+
+         '<button class="c-q" data-q="hafta">7 kun</button>'+
+         '<button class="c-q" data-q="oy">Shu oy</button>'+
+         '<button class="c-ok" id="cOk">Tanlash</button></div>';
+      box.innerHTML=h;
+
+      box.querySelector('#cPrev').onclick=function(){ VM--; if(VM<0){VM=11;VY--;} build(); };
+      box.querySelector('#cNext').onclick=function(){ VM++; if(VM>11){VM=0;VY++;} build(); };
+      var ds_=box.querySelectorAll('.c-d[data-d]');
+      for(var k=0;k<ds_.length;k++)(function(b){
+        b.onclick=function(){
+          var s=b.getAttribute('data-d');
+          if(FRESH||!P1||(P1&&P2)){P1=s;P2=null;FRESH=false;}
+          else{ if(s<P1){P2=P1;P1=s;} else P2=s; }
+          build();
+        };
+      })(ds_[k]);
+      var qs=box.querySelectorAll('.c-q');
+      for(var z=0;z<qs.length;z++)(function(b){
+        b.onclick=function(){
+          var p=b.getAttribute('data-q');
+          if(typeof _perRange==='function'){ var r=_perRange(p); P1=r.from; P2=r.to; if(P1===P2)P2=null; FRESH=false; build(); }
+        };
+      })(qs[z]);
+      box.querySelector('#cOk').onclick=function(){
+        if(!P1){close();return;}
+        apply(P1,P2||P1); close();
+      };
+    }
+    function close(){ var o=document.getElementById('calOv'); if(o)o.remove(); }
+    document.getElementById('calBtn').onclick=function(){
+      close();
+      var base=(typeof HFROM!=='undefined'&&HFROM)?HFROM:today();
+      var p=base.split('-'); VY=+p[0]; VM=+p[1]-1;
+      P1=(typeof HFROM!=='undefined')?HFROM:''; P2=(typeof HTO!=='undefined')?HTO:'';
+      if(P1&&P2&&P1===P2)P2=null;
+      FRESH=true;                     /* birinchi bosish — yangi tanlov */
+      var ov=document.createElement('div'); ov.id='calOv';
+      ov.onclick=function(e){ if(e.target===ov)close(); };
+      var bx=document.createElement('div'); bx.id='calBox';
+      ov.appendChild(bx); document.body.appendChild(ov);
+      build();
+      loadDays(function(){ if(document.getElementById('calBox'))build(); });
+    };
   })();
 
   /* ===== HISOBOT RO'YXATI — chap menyuga ===== */
