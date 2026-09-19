@@ -779,7 +779,7 @@ var DEPLOY = {
     <h1>KROFF <span class="dot">·</span> Savdo</h1>
     <div class="syncchip" id="syncChip" onclick="manualSync()">☁️ …</div>
     <button class="menu-btn" onclick="toggleMenu(event)" aria-label="Menyu">☰</button>
-    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v65</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)"><span class="mi-i">📦</span>Tovarlar</button><button class="menu-item" data-admin="1" onclick="openOps()"><span class="mi-i">🧾</span>Amaliyotlar</button><button class="menu-item" data-admin="1" onclick="openRetSup()"><span class="mi-i">↩️</span>Ta‘minotga qaytarish</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)"><span class="mi-i">🛒</span>Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)"><span class="mi-i">📈</span>Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)"><span class="mi-i">🚚</span>Katalog</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)"><span class="mi-i">👤</span>Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)"><span class="mi-i">🔧</span>Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)"><span class="mi-i">💰</span>Kassa</button><button class="menu-item" data-v="ishhaqi" data-admin="1" onclick="switchView('ishhaqi',this)"><span class="mi-i">👷</span>Ish haqi</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)"><span class="mi-i">📋</span>Sanoq</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)"><span class="mi-i">⚙️</span>Sozlamalar</button><button class="menu-item" data-admin="1" onclick="manualSync()"><span class="mi-i">🔄</span>Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="publishCatalog(true);menuOpen(false)"><span class="mi-i">📤</span>Katalogga chiqarish</button><button class="menu-item" data-admin="1" onclick="openOnlOrders()"><span class="mi-i">🛍️</span>Onlayn buyurtmalar<span id="onlBadge" style="display:none;margin-left:auto;background:#e01438;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:800"></span></button><button class="menu-item" data-admin="1" onclick="editPins()"><span class="mi-i">🔑</span>Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)"><span class="mi-i">👥</span>Xodimlar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d"><span class="mi-i">🔒</span>Qulflash (chiqish)</button></div>
+    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v66</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)"><span class="mi-i">📦</span>Tovarlar</button><button class="menu-item" data-admin="1" onclick="openOps()"><span class="mi-i">🧾</span>Amaliyotlar</button><button class="menu-item" data-admin="1" onclick="openRetSup()"><span class="mi-i">↩️</span>Ta‘minotga qaytarish</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)"><span class="mi-i">🛒</span>Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)"><span class="mi-i">📈</span>Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)"><span class="mi-i">🚚</span>Katalog</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)"><span class="mi-i">👤</span>Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)"><span class="mi-i">🔧</span>Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)"><span class="mi-i">💰</span>Kassa</button><button class="menu-item" data-v="ishhaqi" data-admin="1" onclick="switchView('ishhaqi',this)"><span class="mi-i">👷</span>Ish haqi</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)"><span class="mi-i">📋</span>Sanoq</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)"><span class="mi-i">⚙️</span>Sozlamalar</button><button class="menu-item" data-admin="1" onclick="manualSync()"><span class="mi-i">🔄</span>Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="publishCatalog(true);menuOpen(false)"><span class="mi-i">📤</span>Katalogga chiqarish</button><button class="menu-item" data-admin="1" onclick="openOnlOrders()"><span class="mi-i">🛍️</span>Onlayn buyurtmalar<span id="onlBadge" style="display:none;margin-left:auto;background:#e01438;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:800"></span></button><button class="menu-item" data-admin="1" onclick="editPins()"><span class="mi-i">🔑</span>Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)"><span class="mi-i">👥</span>Xodimlar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d"><span class="mi-i">🔒</span>Qulflash (chiqish)</button></div>
     <div class="stats" id="stats">
       <div class="stat"><div class="v" id="s_tovar">0</div><div class="l">Tovar turi</div></div>
       <div class="stat"><div class="v" id="s_qty">0</div><div class="l">Qoldiq (dona)</div></div>
@@ -6015,6 +6015,31 @@ try{
 #sideNav .sb-ritem:hover{background:#eef1f5}
 #sideNav .sb-ritem.active{border-left-color:#C65911;background:#fdf1e7;color:#9a4510;font-weight:700}
 
+/* telefonda hisobot menyusi — chapdan ochiladi */
+#rDrawBtn{display:none;align-items:center;gap:8px;width:100%;background:#fff;border:1px solid #dde2e8;
+  border-radius:10px;padding:10px 13px;font-size:14px;font-weight:700;color:#1F4E79;cursor:pointer;
+  font-family:inherit;margin:0 0 10px;text-align:left}
+#rDrawBack{position:fixed;inset:0;background:rgba(20,30,50,.45);z-index:180;opacity:0;pointer-events:none;transition:opacity .2s}
+#rDrawBack.on{opacity:1;pointer-events:auto}
+#rDraw{position:fixed;left:0;top:0;bottom:0;width:262px;max-width:84vw;background:#fff;z-index:181;
+  transform:translateX(-100%);transition:transform .22s;overflow-y:auto;box-shadow:4px 0 24px rgba(0,0,0,.18)}
+#rDraw.on{transform:translateX(0)}
+#rDraw .rd-head{background:#1F4E79;color:#fff;padding:14px 16px;font-size:15px;font-weight:700;
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:2}
+#rDraw .rd-x{background:rgba(255,255,255,.18);border:none;color:#fff;border-radius:8px;width:30px;height:30px;font-size:16px;cursor:pointer}
+#rDraw .rd-g{display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:none;border:none;
+  border-left:3px solid transparent;padding:11px 14px;font-size:14px;font-weight:700;color:#4a5568;
+  cursor:pointer;font-family:inherit}
+#rDraw .rd-g.on{border-left-color:#1F4E79;background:#EEF4FB;color:#1F4E79}
+#rDraw .rd-t{display:block;width:100%;text-align:left;background:none;border:none;border-left:3px solid transparent;
+  padding:8px 14px 8px 30px;font-size:12.5px;font-weight:600;color:#5a6676;cursor:pointer;font-family:inherit}
+#rDraw .rd-t.on{border-left-color:#C65911;background:#fdf1e7;color:#9a4510;font-weight:700}
+
+@media(max-width:899px){
+  #rGroups{display:none!important}
+  #rDrawBtn{display:flex}
+}
+
 /* telefonda: 8 ta ekran yuqorida chiziq bo'lib chiqadi */
 #rGroups{display:none;gap:6px;overflow-x:auto;padding:2px 0 8px;-webkit-overflow-scrolling:touch}
 #rGroups::-webkit-scrollbar{display:none}
@@ -6463,6 +6488,63 @@ try{
     }
     build(); mark();
     setInterval(function(){ if(!g.children.length)build(); mark(); },700);
+  })();
+
+
+  /* ===== TELEFON: hisobot menyusi chapdan ===== */
+  (function(){
+    var host=document.getElementById('rGroups');
+    if(!host)return;
+
+    var btn=document.createElement('button');
+    btn.type='button'; btn.id='rDrawBtn';
+    btn.innerHTML='<span style="font-size:17px">☰</span><span id="rDrawLbl">Hisobotlar</span>';
+    host.parentNode.insertBefore(btn,host);
+
+    var back=document.createElement('div'); back.id='rDrawBack';
+    var dr=document.createElement('div');  dr.id='rDraw';
+    document.body.appendChild(back); document.body.appendChild(dr);
+
+    function open(v){ if(v){dr.classList.add('on');back.classList.add('on');build();} else {dr.classList.remove('on');back.classList.remove('on');} }
+    btn.onclick=function(){ open(!dr.classList.contains('on')); };
+    back.onclick=function(){ open(false); };
+
+    function build(){
+      var cur=(typeof HTAB!=='undefined')?HTAB:(document.getElementById('htabSel')||{}).value;
+      var gg=grpOf(cur);
+      var h='<div class="rd-head"><span>Hisobotlar</span><button class="rd-x" type="button">✕</button></div>';
+      dr.innerHTML=h;
+      dr.querySelector('.rd-x').onclick=function(){ open(false); };
+      for(var i=0;i<RGROUPS.length;i++){
+        (function(G){
+          var ts=tabsOf(G); if(!ts.length)return;
+          var on=(gg&&gg.id===G.id);
+          var b=document.createElement('button');
+          b.type='button'; b.className='rd-g'+(on?' on':'');
+          b.innerHTML='<span style="font-size:15px;width:20px;text-align:center">'+G.ico+'</span><span>'+G.nom+'</span>';
+          b.onclick=function(){ goTab(ts[0]); setTimeout(function(){ build(); },80); };
+          dr.appendChild(b);
+          if(on&&ts.length>1){
+            for(var j=0;j<ts.length;j++){
+              (function(t){
+                var tb=document.createElement('button');
+                tb.type='button'; tb.className='rd-t'+((t===cur)?' on':'');
+                tb.textContent=tabName(t);
+                tb.onclick=function(){ goTab(t); open(false); setTimeout(label,80); };
+                dr.appendChild(tb);
+              })(ts[j]);
+            }
+          }
+        })(RGROUPS[i]);
+      }
+    }
+    function label(){
+      var cur=(typeof HTAB!=='undefined')?HTAB:(document.getElementById('htabSel')||{}).value;
+      var gg=grpOf(cur);
+      var l=document.getElementById('rDrawLbl');
+      if(l)l.textContent=gg?(gg.nom+((tabsOf(gg).length>1)?(' · '+tabName(cur)):'')):'Hisobotlar';
+    }
+    setInterval(label,700); label();
   })();
 
   /* ===== HISOBOT RO'YXATI — chap menyuga ===== */
