@@ -6015,6 +6015,17 @@ try{
 #sideNav .sb-ritem:hover{background:#eef1f5}
 #sideNav .sb-ritem.active{border-left-color:#C65911;background:#fdf1e7;color:#9a4510;font-weight:700}
 
+/* telefonda: 8 ta ekran yuqorida chiziq bo'lib chiqadi */
+#rGroups{display:none;gap:6px;overflow-x:auto;padding:2px 0 8px;-webkit-overflow-scrolling:touch}
+#rGroups::-webkit-scrollbar{display:none}
+#rGroups button{flex:0 0 auto;border:1px solid #dde2e8;background:#fff;color:#4a5568;border-radius:10px;
+  padding:8px 13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+#rGroups button.on{background:#1F4E79;border-color:#1F4E79;color:#fff}
+@media(max-width:899px){
+  #rGroups{display:flex}
+  #htabSel{display:none!important}
+}
+
 /* takroriy yo'llar yopildi: ☁️ belgisi bor, menyudagi "Yangilash" keraksiz */
 #menuDrop .menu-item[onclick*="manualSync"]{display:none!important}
 /* pastda "Menyu" tugmasi bor — sarlavhadagi ☰ keraksiz */
@@ -6297,6 +6308,7 @@ try{
   }
   setInterval(qarzMerge,900);
 
+
   /* ===== QULAYLIK: qidiruv, oxirgi hisobot, ingichka asboblar, boshlang'ich sahifa ===== */
   var LASTKEY='savdo_last_hisobot';
   function lsGet(k){try{return localStorage.getItem(k)||'';}catch(e){return '';}}
@@ -6416,6 +6428,41 @@ try{
     setInterval(draw,600);
     draw();
     window.__rTabsDraw=draw;
+  })();
+
+  /* ===== TELEFON: 8 ta ekran chiziq bo'lib yuqorida ===== */
+  (function(){
+    var body=document.getElementById('bugunBody');
+    var tabs=document.getElementById('rTabs');
+    if(!body)return;
+    var g=document.createElement('div');
+    g.id='rGroups';
+    (tabs||body).parentNode.insertBefore(g,(tabs||body));
+
+    function build(){
+      g.innerHTML='';
+      for(var i=0;i<RGROUPS.length;i++){
+        (function(G){
+          var ts=tabsOf(G); if(!ts.length)return;
+          var b=document.createElement('button');
+          b.type='button'; b.setAttribute('data-g',G.id);
+          b.textContent=G.ico+' '+G.nom;
+          b.onclick=function(){ goTab(ts[0]); setTimeout(mark,60); };
+          g.appendChild(b);
+        })(RGROUPS[i]);
+      }
+    }
+    function mark(){
+      var cur=(typeof HTAB!=='undefined')?HTAB:(document.getElementById('htabSel')||{}).value;
+      var gg=grpOf(cur);
+      var bs=g.querySelectorAll('button');
+      for(var i=0;i<bs.length;i++){
+        if(gg&&bs[i].getAttribute('data-g')===gg.id)bs[i].className='on';
+        else bs[i].className='';
+      }
+    }
+    build(); mark();
+    setInterval(function(){ if(!g.children.length)build(); mark(); },700);
   })();
 
   /* ===== HISOBOT RO'YXATI — chap menyuga ===== */
