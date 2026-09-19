@@ -779,7 +779,7 @@ var DEPLOY = {
     <h1>KROFF <span class="dot">·</span> Savdo</h1>
     <div class="syncchip" id="syncChip" onclick="manualSync()">☁️ …</div>
     <button class="menu-btn" onclick="toggleMenu(event)" aria-label="Menyu">☰</button>
-    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v70</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)"><span class="mi-i">📦</span>Tovarlar</button><button class="menu-item" data-admin="1" onclick="openOps()"><span class="mi-i">🧾</span>Amaliyotlar</button><button class="menu-item" data-admin="1" onclick="openRetSup()"><span class="mi-i">↩️</span>Ta‘minotga qaytarish</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)"><span class="mi-i">🛒</span>Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)"><span class="mi-i">📈</span>Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)"><span class="mi-i">🚚</span>Katalog</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)"><span class="mi-i">👤</span>Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)"><span class="mi-i">🔧</span>Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)"><span class="mi-i">💰</span>Kassa</button><button class="menu-item" data-v="ishhaqi" data-admin="1" onclick="switchView('ishhaqi',this)"><span class="mi-i">👷</span>Ish haqi</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)"><span class="mi-i">📋</span>Sanoq</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)"><span class="mi-i">⚙️</span>Sozlamalar</button><button class="menu-item" data-admin="1" onclick="manualSync()"><span class="mi-i">🔄</span>Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="publishCatalog(true);menuOpen(false)"><span class="mi-i">📤</span>Katalogga chiqarish</button><button class="menu-item" data-admin="1" onclick="openOnlOrders()"><span class="mi-i">🛍️</span>Onlayn buyurtmalar<span id="onlBadge" style="display:none;margin-left:auto;background:#e01438;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:800"></span></button><button class="menu-item" data-admin="1" onclick="editPins()"><span class="mi-i">🔑</span>Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)"><span class="mi-i">👥</span>Xodimlar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d"><span class="mi-i">🔒</span>Qulflash (chiqish)</button></div>
+    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v71</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)"><span class="mi-i">📦</span>Tovarlar</button><button class="menu-item" data-admin="1" onclick="openOps()"><span class="mi-i">🧾</span>Amaliyotlar</button><button class="menu-item" data-admin="1" onclick="openRetSup()"><span class="mi-i">↩️</span>Ta‘minotga qaytarish</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)"><span class="mi-i">🛒</span>Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)"><span class="mi-i">📈</span>Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)"><span class="mi-i">🚚</span>Katalog</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)"><span class="mi-i">👤</span>Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)"><span class="mi-i">🔧</span>Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)"><span class="mi-i">💰</span>Kassa</button><button class="menu-item" data-v="ishhaqi" data-admin="1" onclick="switchView('ishhaqi',this)"><span class="mi-i">👷</span>Ish haqi</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)"><span class="mi-i">📋</span>Sanoq</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)"><span class="mi-i">⚙️</span>Sozlamalar</button><button class="menu-item" data-admin="1" onclick="manualSync()"><span class="mi-i">🔄</span>Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="publishCatalog(true);menuOpen(false)"><span class="mi-i">📤</span>Katalogga chiqarish</button><button class="menu-item" data-admin="1" onclick="openOnlOrders()"><span class="mi-i">🛍️</span>Onlayn buyurtmalar<span id="onlBadge" style="display:none;margin-left:auto;background:#e01438;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:800"></span></button><button class="menu-item" data-admin="1" onclick="editPins()"><span class="mi-i">🔑</span>Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)"><span class="mi-i">👥</span>Xodimlar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d"><span class="mi-i">🔒</span>Qulflash (chiqish)</button></div>
     <div class="stats" id="stats">
       <div class="stat"><div class="v" id="s_tovar">0</div><div class="l">Tovar turi</div></div>
       <div class="stat"><div class="v" id="s_qty">0</div><div class="l">Qoldiq (dona)</div></div>
@@ -6761,6 +6761,104 @@ try{
       build();
       loadDays(function(){ if(document.getElementById('calBox'))build(); });
     };
+  })();
+
+
+  /* ===== MIJOZ TARIXINI EXCELGA CHIQARISH ===== */
+  window.custExportOne=function(){
+    if(typeof XLSX==='undefined'){toast('Excel kutubxonasi yuklanmadi');return;}
+    var id=(typeof _cmId!=='undefined')?_cmId:null;
+    if(!id){toast('Mijoz tanlanmagan');return;}
+    var cs=getCust(),cust=null;
+    for(var i=0;i<cs.length;i++)if(cs[i].id===id){cust=cs[i];break;}
+    if(!cust){toast('Mijoz topilmadi');return;}
+    toast('⏳ Tayyorlanmoqda…');
+
+    evAll(function(evs){
+      var pays=[];
+      evs.forEach(function(e){
+        if(e.kind==='pay'&&e.payload&&e.payload.typ==='cust'&&e.payload.id===id){
+          if(typeof VOID!=='undefined'&&VOID&&VOID[e.id])return;
+          pays.push({ts:e.ts,amount:e.payload.amount||0,method:e.payload.method||''});
+        }
+      });
+      salesLoad(function(all){
+        var rows=[],prod={};
+        (all||[]).forEach(function(x){
+          if(x.customer!==cust.nom)return;
+          rows.push({ts:new Date(x.ts||x.day).getTime(),typ:x.isReturn?'ret':'buy',
+                     amount:x.total||0,items:x.items||[],seller:x.seller||'',
+                     due:x.due||'',pay:x.pay||'',given:x.given||0});
+          if(!x.isReturn)(x.items||[]).forEach(function(it){
+            var k=it.nom||'—', o=prod[k]||(prod[k]={q:0,s:0});
+            o.q+=(it.qty||0); o.s+=(it.narx||0)*(it.qty||0);
+          });
+        });
+        pays.forEach(function(p){ rows.push({ts:p.ts,typ:'pay',amount:p.amount,method:p.method}); });
+        rows.sort(function(a,b){return a.ts-b.ts;});
+
+        var H=['Sana','Turi','To‘lov','Tovarlar','Summa','Berilgan','Qarz (qoldiq)','Muddat','Sotuvchi'];
+        var out=[H],bal=0,tBuy=0,tPay=0;
+        rows.forEach(function(r){
+          var d=new Date(r.ts);
+          var ds=('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear();
+          if(r.typ==='pay'){
+            bal=Math.max(0,bal-r.amount); tPay+=r.amount;
+            out.push([ds,'To‘lov',r.method||'',' ',-Math.round(r.amount),'',Math.round(bal),'','']);
+          }else{
+            var q=(r.pay==='qarz')?Math.max(0,(r.amount||0)-(r.given||0)):0;
+            bal+=q; if(r.typ==='buy')tBuy+=(r.amount||0); else tBuy-=(r.amount||0);
+            var it=(r.items||[]).map(function(z){return (z.nom||'')+' ×'+(z.qty||0);}).join(', ');
+            out.push([ds,(r.typ==='ret'?'Qaytarish':'Xarid'),(r.pay||''),it,
+                      Math.round(r.typ==='ret'?-(r.amount||0):(r.amount||0)),
+                      (r.given?Math.round(r.given):''),Math.round(bal),
+                      r.due?r.due.split('-').reverse().join('.'):'',r.seller||'']);
+          }
+        });
+        out.push([]);
+        out.push(['JAMI','','','',Math.round(tBuy),'',Math.round(bal),'','']);
+        out.push(['To‘langan','','','',Math.round(tPay),'','','','']);
+
+        try{
+          var ws=XLSX.utils.aoa_to_sheet(out);
+          ws['!cols']=[{wch:12},{wch:11},{wch:10},{wch:46},{wch:14},{wch:12},{wch:14},{wch:12},{wch:16}];
+          ws['!freeze']={xSplit:0,ySplit:1};
+          var wb=XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb,ws,'Tarix');
+
+          var r2=[['Tovar','Soni','Summa']],ks=Object.keys(prod);
+          ks.sort(function(a,b){return prod[b].s-prod[a].s;});
+          var tq=0,tsum=0;
+          ks.forEach(function(k){ tq+=prod[k].q; tsum+=prod[k].s;
+            r2.push([k,Math.round(prod[k].q*1000)/1000,Math.round(prod[k].s)]); });
+          r2.push([]); r2.push(['JAMI',Math.round(tq*1000)/1000,Math.round(tsum)]);
+          var ws2=XLSX.utils.aoa_to_sheet(r2);
+          ws2['!cols']=[{wch:46},{wch:10},{wch:15}];
+          XLSX.utils.book_append_sheet(wb,ws2,'Tovarlar');
+
+          var nm=(cust.nom||'mijoz').replace(/[\\/:*?"<>|]/g,'_').slice(0,40);
+          XLSX.writeFile(wb,'Mijoz_'+nm+'_'+dayStr(new Date())+'.xlsx');
+          toast('✅ Excel yuklandi: '+(out.length-4)+' satr');
+        }catch(e){ toast('Xato: '+e.message); }
+      });
+    });
+  };
+
+  /* tugmani mijoz oynasiga qo'shamiz */
+  (function(){
+    function add(){
+      var foot=document.querySelector('#custModal .cmfoot');
+      if(!foot||foot.getAttribute('data-xl'))return;
+      foot.setAttribute('data-xl','1');
+      var b=document.createElement('button');
+      b.className='btn btn-ghost'; b.type='button';
+      b.style.cssText='flex:0 0 auto;background:#EEF4FB;border-color:#B9D3EC;color:#1F4E79;font-weight:700';
+      b.textContent='📊 Excel';
+      b.title='Shu mijozning tarixini Excelga chiqarish';
+      b.onclick=function(){ custExportOne(); };
+      foot.insertBefore(b,foot.firstChild);
+    }
+    add(); setTimeout(add,900); setTimeout(add,2500);
   })();
 
   /* ===== HISOBOT RO'YXATI — chap menyuga ===== */
