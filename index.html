@@ -779,7 +779,7 @@ var DEPLOY = {
     <h1>KROFF <span class="dot">·</span> Savdo</h1>
     <div class="syncchip" id="syncChip" onclick="manualSync()">☁️ …</div>
     <button class="menu-btn" onclick="toggleMenu(event)" aria-label="Menyu">☰</button>
-    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v77</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)"><span class="mi-i">📦</span>Tovarlar</button><button class="menu-item" data-admin="1" onclick="openOps()"><span class="mi-i">🧾</span>Amaliyotlar</button><button class="menu-item" data-admin="1" onclick="openRetSup()"><span class="mi-i">↩️</span>Ta‘minotga qaytarish</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)"><span class="mi-i">🛒</span>Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)"><span class="mi-i">📈</span>Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)"><span class="mi-i">🚚</span>Katalog</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)"><span class="mi-i">👤</span>Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)"><span class="mi-i">🔧</span>Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)"><span class="mi-i">💰</span>Kassa</button><button class="menu-item" data-v="ishhaqi" data-admin="1" onclick="switchView('ishhaqi',this)"><span class="mi-i">👷</span>Ish haqi</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)"><span class="mi-i">📋</span>Sanoq</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)"><span class="mi-i">⚙️</span>Sozlamalar</button><button class="menu-item" data-admin="1" onclick="manualSync()"><span class="mi-i">🔄</span>Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="publishCatalog(true);menuOpen(false)"><span class="mi-i">📤</span>Katalogga chiqarish</button><button class="menu-item" data-admin="1" onclick="openOnlOrders()"><span class="mi-i">🛍️</span>Onlayn buyurtmalar<span id="onlBadge" style="display:none;margin-left:auto;background:#e01438;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:800"></span></button><button class="menu-item" data-admin="1" onclick="editPins()"><span class="mi-i">🔑</span>Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)"><span class="mi-i">👥</span>Xodimlar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d"><span class="mi-i">🔒</span>Qulflash (chiqish)</button></div>
+    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v79</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)"><span class="mi-i">📦</span>Tovarlar</button><button class="menu-item" data-admin="1" onclick="openOps()"><span class="mi-i">🧾</span>Amaliyotlar</button><button class="menu-item" data-admin="1" onclick="openRetSup()"><span class="mi-i">↩️</span>Ta‘minotga qaytarish</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)"><span class="mi-i">🛒</span>Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)"><span class="mi-i">📈</span>Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)"><span class="mi-i">🚚</span>Katalog</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)"><span class="mi-i">👤</span>Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)"><span class="mi-i">🔧</span>Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)"><span class="mi-i">💰</span>Kassa</button><button class="menu-item" data-v="ishhaqi" data-admin="1" onclick="switchView('ishhaqi',this)"><span class="mi-i">👷</span>Ish haqi</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)"><span class="mi-i">📋</span>Sanoq</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)"><span class="mi-i">⚙️</span>Sozlamalar</button><button class="menu-item" data-admin="1" onclick="manualSync()"><span class="mi-i">🔄</span>Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="publishCatalog(true);menuOpen(false)"><span class="mi-i">📤</span>Katalogga chiqarish</button><button class="menu-item" data-admin="1" onclick="openOnlOrders()"><span class="mi-i">🛍️</span>Onlayn buyurtmalar<span id="onlBadge" style="display:none;margin-left:auto;background:#e01438;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:800"></span></button><button class="menu-item" data-admin="1" onclick="editPins()"><span class="mi-i">🔑</span>Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)"><span class="mi-i">👥</span>Xodimlar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d"><span class="mi-i">🔒</span>Qulflash (chiqish)</button></div>
     <div class="stats" id="stats">
       <div class="stat"><div class="v" id="s_tovar">0</div><div class="l">Tovar turi</div></div>
       <div class="stat"><div class="v" id="s_qty">0</div><div class="l">Qoldiq (dona)</div></div>
@@ -5234,7 +5234,7 @@ function applyEvent(ev){
   }else if(ev.kind==='bonus'){var _bc=getCust();for(var _bi=0;_bi<_bc.length;_bi++){if(_bc[_bi].nom===pl.customer){_bc[_bi].bonus=Math.max(0,(_bc[_bi].bonus||0)+(pl.mode==='spend'?-(pl.amount||0):(pl.amount||0)));break;}}setCust(_bc);}else if(ev.kind==='qadj'){var pq=findProd(pl.id);if(pq)pq.qoldiq=Math.round((pq.qoldiq+(pl.delta||0))*1000)/1000;
   }else if(ev.kind==='supadj'){var saa=getSup();for(var sj=0;sj<saa.length;sj++){if(saa[sj].id===pl.id){saa[sj].debt=Math.max(0,(saa[sj].debt||0)+(pl.amount||0));break;}}setSup(saa);
   }else if(ev.kind==='supdue'){var sdd=getSup();for(var sq=0;sq<sdd.length;sq++){if(sdd[sq].id===pl.id){sdd[sq].due=pl.due||'';break;}}setSup(sdd);}else if(ev.kind==='sup'||ev.kind==='cust'){
-    var g=(ev.kind==='sup')?getSup():getCust(),ex=0;for(var m=0;m<g.length;m++){if(g[m].id===pl.id){g[m].nom=pl.nom;g[m].phone=pl.phone;ex=1;break;}}if(!ex)g.push({id:pl.id,nom:pl.nom,phone:pl.phone,debt:0});if(ev.kind==='sup')setSup(g);else setCust(g);
+    var g=(ev.kind==='sup')?getSup():getCust(),ex=0;for(var m=0;m<g.length;m++){if(g[m].id===pl.id){g[m].nom=pl.nom;g[m].phone=pl.phone;if(pl.limit!=null)g[m].limit=pl.limit;ex=1;break;}}if(!ex)g.push({id:pl.id,nom:pl.nom,phone:pl.phone,debt:0,limit:(pl.limit!=null?pl.limit:0)});if(ev.kind==='sup')setSup(g);else setCust(g);
   }else if(ev.kind==='custbulk'){
     var cu=getCust();(pl.list||[]).forEach(function(it){var cf=0;for(var ci=0;ci<cu.length;ci++){if(cu[ci].nom===it.nom){cu[ci].debt=it.debt||0;if(it.phone)cu[ci].phone=it.phone;cf=1;break;}}if(!cf)cu.push({id:uid('cust'),nom:it.nom,phone:it.phone||'',debt:it.debt||0});});setCust(cu);
   }else if(ev.kind==='supdel'||ev.kind==='custdel'){
@@ -6897,6 +6897,237 @@ try{
     }
     setInterval(tick,4000);
     setTimeout(tick,3000);
+  })();
+
+
+  /* ===== MIJOZ: forma, dublikat tekshiruvi, qarz limiti, yozilganiga kafolat =====
+     Sotuvchi uchun: yangi mijoz oddiy so'rov emas, forma orqali qo'shiladi;
+     qarzga sotishda mijozning qarzi va limiti ko'rinadi; savdo tugagach
+     qarz bulutga yetib borgani tasdiqlanadi. */
+  (function(){
+    function nrm(s){
+      s=String(s||'');
+      s=s.replace(/[ʻ‘’'`]/g,'');
+      return s.replace(/\s+/g,' ').trim().toLowerCase();
+    }
+    function num(x){ return Math.round(Number(x)||0); }
+    function money(x){ try{return grp(num(x));}catch(e){return String(num(x));} }
+
+    /* --- o'xshash mijozlarni topish --- */
+    function similar(nom){
+      var q=nrm(nom), out=[];
+      if(q.length<2)return out;
+      var c=[]; try{c=getCust()||[];}catch(e){}
+      for(var i=0;i<c.length;i++){
+        var n=nrm(c[i].nom);
+        if(n===q||n.indexOf(q)>=0||q.indexOf(n)>=0) out.push(c[i]);
+        if(out.length>=6)break;
+      }
+      return out;
+    }
+
+    /* --- yangi mijoz formasi (eski prompt o'rniga) --- */
+    window.addCust=function(fromSotuv){
+      var ov=document.getElementById('ncOv'); if(ov)ov.remove();
+      var d=document.createElement('div'); d.id='ncOv';
+      d.style.cssText='position:fixed;inset:0;background:rgba(20,30,50,.5);z-index:250;display:flex;'+
+        'align-items:center;justify-content:center;padding:14px';
+      d.onclick=function(e){ if(e.target===d)d.remove(); };
+      d.innerHTML='<div style="background:#fff;border-radius:16px;max-width:400px;width:100%;padding:18px;max-height:92vh;overflow:auto">'+
+        '<div style="font-size:17px;font-weight:800;margin-bottom:12px">➕ Yangi mijoz</div>'+
+        '<input id="ncNom" class="kf-inp" placeholder="Ism (to‘liq, ajratib yozing)" autocomplete="off">'+
+        '<div id="ncSim" style="margin:2px 0 8px"></div>'+
+        '<input id="ncPh" class="kf-inp" inputmode="tel" placeholder="Telefon (+998...)">'+
+        '<input id="ncLim" class="kf-inp" inputmode="numeric" placeholder="Qarz limiti (ixtiyoriy)">'+
+        '<input id="ncDebt" class="kf-inp" inputmode="numeric" placeholder="Eski qarzi (bo‘lmasa 0)">'+
+        '<div style="display:flex;gap:8px;margin-top:12px">'+
+          '<button type="button" id="ncX" style="flex:1;padding:12px;border:1px solid #d9dee5;background:#f6f8fa;'+
+            'border-radius:10px;font-weight:700;cursor:pointer;font-family:inherit">Bekor</button>'+
+          '<button type="button" id="ncOk" style="flex:2;padding:12px;border:0;background:#1F4E79;color:#fff;'+
+            'border-radius:10px;font-weight:800;cursor:pointer;font-family:inherit">💾 Saqlash</button>'+
+        '</div></div>';
+      document.body.appendChild(d);
+
+      var nom=d.querySelector('#ncNom'), sim=d.querySelector('#ncSim');
+      nom.oninput=function(){
+        var list=similar(nom.value);
+        if(!list.length){ sim.innerHTML=''; return; }
+        var h='<div style="background:#FFF8E6;border:1px solid #F0DFAE;border-radius:9px;padding:8px 10px;font-size:12px">'+
+              '<b>Shunga o‘xshash mijoz bor:</b>';
+        for(var i=0;i<list.length;i++)
+          h+='<div style="margin-top:3px;color:#6b5a2a">• '+esc(list[i].nom)+
+             (list[i].phone?(' · '+esc(list[i].phone)):'')+
+             ((list[i].debt>0)?(' · qarz '+money(list[i].debt)):'')+'</div>';
+        h+='<div style="margin-top:5px;color:#8a7a45">Boshqa odam bo‘lsa, ismini ajratib yozing — masalan kasbi yoki joyi bilan.</div></div>';
+        sim.innerHTML=h;
+      };
+      d.querySelector('#ncX').onclick=function(){ d.remove(); };
+      d.querySelector('#ncOk').onclick=function(){
+        var n=(nom.value||'').trim();
+        var p=(d.querySelector('#ncPh').value||'').trim();
+        var lim=num(_pf(d.querySelector('#ncLim').value));
+        var deb=num(_pf(d.querySelector('#ncDebt').value));
+        if(n.length<3){ alert('Ismni to‘liq yozing'); return; }
+        var exact=null, c=[]; try{c=getCust()||[];}catch(e){}
+        for(var i=0;i<c.length;i++) if(nrm(c[i].nom)===nrm(n)){ exact=c[i]; break; }
+        if(exact && !confirm('Aynan shu nomli mijoz allaqachon bor.\n\nYana bittasini qo‘shaymi?')) return;
+        var digits=p.replace(/\D/g,'');
+        if(digits.length && digits.length<9 && !confirm('Telefon raqami to‘liq emas. Shunday saqlansinmi?')) return;
+        if(!digits.length && !confirm('Telefon raqamisiz saqlansinmi?\n\nQarz eslatmasi yuborib bo‘lmaydi.')) return;
+
+        var id=uid('cust');
+        commitEvent('cust',{id:id,nom:n,phone:p,limit:lim});
+        if(deb>0) commitEvent('custbulk',{list:[{nom:n,phone:p,debt:deb}]});
+        d.remove();
+        if(fromSotuv){
+          var hid=document.getElementById('custSel'); if(hid)hid.value=n;
+          var inp=document.getElementById('custSearch'); if(inp)inp.value=n;
+          var el=document.getElementById('custResults'); if(el)el.innerHTML='';
+          custInfo();
+        }else if(typeof renderMijoz==='function') renderMijoz();
+        toast('✅ Mijoz qo‘shildi');
+      };
+      setTimeout(function(){ nom.focus(); },80);
+    };
+
+    /* --- tanlangan mijozning qarzi va limiti --- */
+    function curCust(){
+      var hid=document.getElementById('custSel');
+      var nm=hid?(hid.value||''):''; if(!nm)return null;
+      var c=[]; try{c=getCust()||[];}catch(e){}
+      for(var i=0;i<c.length;i++) if(c[i].nom===nm) return c[i];
+      return null;
+    }
+    function defLim(){
+      try{ return num(localStorage.getItem('qarz_limit_def')); }catch(e){ return 0; }
+    }
+    function limOf(x){ return num(x&&x.limit)||defLim(); }
+
+    function custInfo(){
+      var row=document.getElementById('custRow'); if(!row)return;
+      var box=document.getElementById('custInfoBox');
+      var x=curCust();
+      if(!x){ if(box)box.style.display='none'; return; }
+      if(!box){
+        box=document.createElement('div'); box.id='custInfoBox';
+        box.style.cssText='font-size:12.5px;font-weight:700;padding:7px 10px;border-radius:9px;margin-top:2px';
+        row.appendChild(box);
+      }
+      var d=num(x.debt), L=limOf(x);
+      var over=(L>0 && d>=L);
+      box.style.display='';
+      box.style.background = over?'#FDECEA':'#EEF4FB';
+      box.style.color      = over?'#a32d2d':'#1F4E79';
+      box.innerHTML = (over?'⚠️ ':'') + 'Qarzi: '+money(d) +
+        (L>0 ? (' · limit: '+money(L) + (over?' — OSHGAN':'')) : ' · limit qo‘yilmagan') +
+        (x.phone?('<div style="font-weight:500;color:#6b7684;margin-top:2px">'+esc(x.phone)+'</div>'):
+                 '<div style="font-weight:500;color:#a32d2d;margin-top:2px">telefon raqami yo‘q</div>');
+    }
+    window.custInfo=custInfo;
+
+    /* tanlanganda va qidiruvda yangilanib tursin */
+    if(typeof window.custPickIdx==='function'){
+      var _op=window.custPickIdx;
+      window.custPickIdx=function(i){ _op(i); setTimeout(custInfo,30); };
+    }
+    setInterval(custInfo,1500);
+
+    /* --- savdo tugashida: limit ogohlantirishi + yozilganiga tasdiq --- */
+    if(typeof window.completeSale==='function'){
+      var _ocs=window.completeSale;
+      window.completeSale=function(){
+        var x=curCust();
+        var qarzli=false;
+        try{
+          var pay=(typeof PAY!=='undefined')?PAY:'';
+          var spq=0; try{ spq=(typeof _splitQarz==='function')?_splitQarz():0; }catch(e){}
+          qarzli = (pay==='qarz') || (spq>0);
+        }catch(e){}
+        if(qarzli && x){
+          var L=limOf(x), d=num(x.debt), yangi=0;
+          try{ yangi=num(cartSum()); }catch(e){}
+          if(L>0 && (d+yangi)>L){
+            if(!confirm('⚠️ LIMITDAN OSHADI\n\n'+x.nom+
+                        '\nHozirgi qarzi: '+money(d)+
+                        '\nBu savdo: '+money(yangi)+
+                        '\nJami bo‘ladi: '+money(d+yangi)+
+                        '\nLimit: '+money(L)+
+                        '\n\nBaribir qarzga berilsinmi?')) return;
+            try{ commitEvent('limitover',{cust:x.nom,debt:d,add:yangi,limit:L,seller:_curSeller()}); }catch(e){}
+          }
+        }
+        var r=_ocs.apply(this,arguments);
+        if(qarzli) setTimeout(checkSaved,1200);
+        return r;
+      };
+    }
+
+    function checkSaved(){
+      var n=0;
+      try{ n=(typeof _UNSYNC!=='undefined'&&_UNSYNC)?_UNSYNC.length:0; }catch(e){}
+      if(n===0){ toast('✅ Qarz yozildi · bulutga yuborildi'); return; }
+      var t=0;
+      var iv=setInterval(function(){
+        var k=0; try{ k=(typeof _UNSYNC!=='undefined'&&_UNSYNC)?_UNSYNC.length:0; }catch(e){}
+        if(k===0){ clearInterval(iv); toast('✅ Qarz yozildi · bulutga yuborildi'); return; }
+        if(++t>8){ clearInterval(iv);
+          toast('⏳ Qarz yozildi · hali yuborilmadi ('+k+' ta navbatda) — internet kelganda o‘zi ketadi'); }
+      },1000);
+    }
+  })();
+
+
+  /* ===== EXCEL TUGMALARI: bittasi asosiy, qolgani "⋯" ostida ===== */
+  (function(){
+    function dmy(s){ if(!s)return ''; var p=String(s).split('-'); return p.length===3?(p[2]+'.'+p[1]):''; }
+    function per(){
+      var f=(typeof HFROM!=='undefined')?HFROM:'', t=(typeof HTO!=='undefined')?HTO:'';
+      if(!f&&!t)return '';
+      return (f===t)?dmy(f):(dmy(f)+'–'+dmy(t));
+    }
+    function build(){
+      var eb=document.getElementById('hExpBtn');
+      if(!eb||!eb.parentNode)return;
+      var row=eb.parentNode;
+      if(row.getAttribute('data-exp'))return;
+      row.setAttribute('data-exp','1');
+
+      var others=[];
+      var btns=row.getElementsByTagName('button');
+      for(var i=0;i<btns.length;i++) if(btns[i]!==eb) others.push(btns[i]);
+
+      /* asosiy tugma */
+      eb.style.background='#1F4E79'; eb.style.borderColor='#1F4E79';
+      eb.style.color='#fff'; eb.style.fontWeight='800';
+
+      /* qolganlari yashiriladi */
+      var box=document.createElement('div');
+      box.id='expMore';
+      box.style.cssText='display:none;gap:8px;flex-wrap:wrap;margin-top:8px;justify-content:flex-end';
+      row.appendChild(box);
+      for(var j=0;j<others.length;j++) box.appendChild(others[j]);
+
+      var t=document.createElement('button');
+      t.type='button'; t.id='expToggle';
+      t.style.cssText='border:1px solid #dde2e8;background:#fff;color:#5a6676;border-radius:9px;'+
+        'padding:8px 13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-left:8px';
+      t.textContent='⋯';
+      t.title='Boshqa eksportlar';
+      t.onclick=function(){
+        var on=(box.style.display!=='none');
+        box.style.display=on?'none':'flex';
+        t.textContent=on?'⋯':'✕';
+      };
+      eb.parentNode.insertBefore(t,eb.nextSibling);
+    }
+    function label(){
+      var eb=document.getElementById('hExpBtn'); if(!eb)return;
+      var nm=''; try{ nm=_hName(HTAB); }catch(e){}
+      var p=per();
+      eb.textContent='📥 '+(nm||'Hisobot')+' — Excel'+(p?(' · '+p):'');
+    }
+    setInterval(function(){ build(); label(); },900);
+    setTimeout(function(){ build(); label(); },700);
   })();
 
   /* ===== HISOBOT RO'YXATI — chap menyuga ===== */
