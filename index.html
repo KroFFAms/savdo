@@ -779,7 +779,7 @@ var DEPLOY = {
     <h1>KROFF <span class="dot">·</span> Savdo</h1>
     <div class="syncchip" id="syncChip" onclick="manualSync()">☁️ …</div>
     <button class="menu-btn" onclick="toggleMenu(event)" aria-label="Menyu">☰</button>
-    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v85</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)"><span class="mi-i">📦</span>Tovarlar</button><button class="menu-item" data-admin="1" onclick="openOps()"><span class="mi-i">🧾</span>Amaliyotlar</button><button class="menu-item" data-admin="1" onclick="openRetSup()"><span class="mi-i">↩️</span>Ta‘minotga qaytarish</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)"><span class="mi-i">🛒</span>Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)"><span class="mi-i">📈</span>Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)"><span class="mi-i">🚚</span>Katalog</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)"><span class="mi-i">👤</span>Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)"><span class="mi-i">🔧</span>Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)"><span class="mi-i">💰</span>Kassa</button><button class="menu-item" data-v="ishhaqi" data-admin="1" onclick="switchView('ishhaqi',this)"><span class="mi-i">👷</span>Ish haqi</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)"><span class="mi-i">📋</span>Sanoq</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)"><span class="mi-i">⚙️</span>Sozlamalar</button><button class="menu-item" data-admin="1" onclick="manualSync()"><span class="mi-i">🔄</span>Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="publishCatalog(true);menuOpen(false)"><span class="mi-i">📤</span>Katalogga chiqarish</button><button class="menu-item" data-admin="1" onclick="openOnlOrders()"><span class="mi-i">🛍️</span>Onlayn buyurtmalar<span id="onlBadge" style="display:none;margin-left:auto;background:#e01438;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:800"></span></button><button class="menu-item" data-admin="1" onclick="editPins()"><span class="mi-i">🔑</span>Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)"><span class="mi-i">👥</span>Xodimlar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d"><span class="mi-i">🔒</span>Qulflash (chiqish)</button></div>
+    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v88</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)"><span class="mi-i">📦</span>Tovarlar</button><button class="menu-item" data-admin="1" onclick="openOps()"><span class="mi-i">🧾</span>Amaliyotlar</button><button class="menu-item" data-admin="1" onclick="openRetSup()"><span class="mi-i">↩️</span>Ta‘minotga qaytarish</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)"><span class="mi-i">🛒</span>Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)"><span class="mi-i">📈</span>Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)"><span class="mi-i">🚚</span>Katalog</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)"><span class="mi-i">👤</span>Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)"><span class="mi-i">🔧</span>Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)"><span class="mi-i">💰</span>Kassa</button><button class="menu-item" data-v="ishhaqi" data-admin="1" onclick="switchView('ishhaqi',this)"><span class="mi-i">👷</span>Ish haqi</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)"><span class="mi-i">📋</span>Sanoq</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)"><span class="mi-i">⚙️</span>Sozlamalar</button><button class="menu-item" data-admin="1" onclick="manualSync()"><span class="mi-i">🔄</span>Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="publishCatalog(true);menuOpen(false)"><span class="mi-i">📤</span>Katalogga chiqarish</button><button class="menu-item" data-admin="1" onclick="openOnlOrders()"><span class="mi-i">🛍️</span>Onlayn buyurtmalar<span id="onlBadge" style="display:none;margin-left:auto;background:#e01438;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:800"></span></button><button class="menu-item" data-admin="1" onclick="editPins()"><span class="mi-i">🔑</span>Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)"><span class="mi-i">👥</span>Xodimlar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d"><span class="mi-i">🔒</span>Qulflash (chiqish)</button></div>
     <div class="stats" id="stats">
       <div class="stat"><div class="v" id="s_tovar">0</div><div class="l">Tovar turi</div></div>
       <div class="stat"><div class="v" id="s_qty">0</div><div class="l">Qoldiq (dona)</div></div>
@@ -5544,7 +5544,7 @@ function lockShow(sec){['reg','pend','deny','pin'].forEach(function(s){var el=do
 function renderPinPad(){var pad=document.getElementById('lockPad');if(!pad)return;var keys=['1','2','3','4','5','6','7','8','9','\u232b','0','\u2713'];pad.innerHTML=keys.map(function(k){return '<button class="pinkey'+(k==='\u2713'?' ok':(k==='\u232b'?' del':''))+'" onclick="pinPress(\''+k+'\')">'+k+'</button>';}).join('');}
 function renderPinDots(){var d=document.getElementById('lockDots');if(d)d.textContent=_pin?_pin.replace(/./g,'\u25cf'):'\u00b7\u00b7\u00b7\u00b7';}
 function pinPress(k){if(k==='\u232b'){_pin=_pin.slice(0,-1);}else if(k==='\u2713'){pinCheck();return;}else{if(_pin.length<10)_pin+=k;}renderPinDots();}
-function pinCheck(){var p=_pin;var s=document.getElementById('lockSub');if(!p){return;}if(s)s.textContent='Tekshirilyapti\u2026';fetch(SB_URL+'/rest/v1/rpc/admin_parol_tekshir',{method:'POST',headers:_sbHdr(),body:JSON.stringify({p_parol:p,p_dev:getDevId()})}).then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error(t||('HTTP '+r.status));});return r.json();}).then(function(ok){if(ok===true){try{localStorage.setItem('kroff_authmode','pin');}catch(e){}_pin='';setRole('admin',{});}else{if(s)s.textContent='\u274c Noto\u2018g\u2018ri parol';_pin='';renderPinDots();if(navigator.vibrate)navigator.vibrate(180);}}).catch(function(e){if(s)s.textContent='\u26a0\ufe0f Internet yo\u2018q \u2014 tekshirib bo\u2018lmadi';_pin='';renderPinDots();});}
+function pinCheck(){var p=_pin;var s=document.getElementById('lockSub');if(!p){return;}if(s)s.textContent='Tekshirilyapti\u2026';fetch(SB_URL+'/rest/v1/rpc/admin_parol_tekshir',{method:'POST',headers:_sbHdr(),body:JSON.stringify({p_parol:p,p_dev:getDevId()})}).then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error(t||('HTTP '+r.status));});return r.json();}).then(function(ok){if(ok===true){try{localStorage.setItem('kroff_authmode','pin');}catch(e){}_pin='';setRole('admin',{});}else{if(s)s.textContent='\u274c Noto\u2018g\u2018ri parol';_pin='';renderPinDots();if(navigator.vibrate)navigator.vibrate(180);}}).catch(function(e){var m=String((e&&e.message)||e||'').slice(0,90);if(s)s.textContent='\u26a0\ufe0f '+(m||'javob yo\u2018q');try{console.error('PAROL XATO:',e);}catch(_){}_pin='';renderPinDots();});}
 function devRegister(){var name=(document.getElementById('regName').value||'').trim(),phone=(document.getElementById('regPhone').value||'').trim();if(!name){toast('Ismingizni kiriting');return;}if(!phone){toast('Telefon raqamini kiriting');return;}commitEvent('devreq',{devid:getDevId(),name:name,phone:phone});lockShow('pend');cloudSync();}
 function recheckAuth(){toast('Tekshirilyapti\u2026');cloudPull(function(){resolveAuth(routeAuth);});}
 function resolveAuth(cb){var my=getDevId();evAll(function(evs){var req=null,auth=null,del=null;evs.forEach(function(e){if(!e.payload||e.payload.devid!==my)return;if(e.kind==='devreq'){if(!req||e.ts>req.ts)req={ts:e.ts,phone:e.payload.phone,name:e.payload.name};}else if(e.kind==='devauth'){if(!auth||e.ts>auth.ts)auth={ts:e.ts,role:e.payload.role,approved:e.payload.approved,perms:e.payload.perms||{}};}else if(e.kind==='devdel'){if(!del||e.ts>del.ts)del={ts:e.ts};}});
@@ -6473,6 +6473,7 @@ try{
     {id:'g_xodim', nom:'Xodim',              ico:'\u{1F477}', t:['sotuvchi','smena']},
     {id:'g_tekshir',nom:'Tekshiruv',         ico:'\u{1F50E}', t:['vozvrat','audit']}
   ];
+  window.__RGROUPS=RGROUPS;
   function tabBor(id){ return !!document.querySelector('#htabSel option[value="'+id+'"]'); }
   function tabsOf(g){
     var a=[]; for(var i=0;i<g.t.length;i++) if(tabBor(g.t[i])) a.push(g.t[i]);
@@ -7229,6 +7230,7 @@ try{
     }
 
     build();
+    window.__sbRepBuild=build;
     if(window.MutationObserver){
       var v=document.getElementById('view-hisobot');
       if(v)new MutationObserver(repSync).observe(v,{attributes:true,attributeFilter:['class']});
@@ -7246,7 +7248,7 @@ try{
 
 <script>
 /* ============================================================
-   v85 — UCHTA YANGI TAHLIL
+   v88 — UCHTA YANGI TAHLIL
    XYZ tahlili | Chegirma samarasi | Konsignatsiya
    Mavjud funksiyalarga tegilmagan: renderHisobot va _hName
    o'raladi (wrap), asl kod o'z holicha chaqiriladi.
@@ -7431,12 +7433,15 @@ try{
     opt(gTovar,'chegirma','\ud83c\udff7\ufe0f Chegirma samarasi');
     opt(gTam,'konsig','\ud83e\udd1d Konsignatsiya');
     try{
-      if(typeof RGROUPS!=='undefined'){
-        for(var k=0;k<RGROUPS.length;k++){
-          if(RGROUPS[k].id==='g_tovar'){RGROUPS[k].t.push('xyz','chegirma');}
-          if(RGROUPS[k].id==='g_mijoz'){RGROUPS[k].t.push('konsig');}
+      var RG=window.__RGROUPS;
+      if(RG){
+        for(var k=0;k<RG.length;k++){
+          if(RG[k].id==='g_tovar' && RG[k].t.indexOf('xyz')<0) RG[k].t.push('xyz','chegirma');
+          if(RG[k].id==='g_mijoz' && RG[k].t.indexOf('konsig')<0) RG[k].t.push('konsig');
         }
       }
+      if(typeof window.__rTabsDraw==='function') window.__rTabsDraw();
+      if(typeof window.__sbRepBuild==='function') window.__sbRepBuild();
     }catch(e){}
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addOpts);
@@ -7448,7 +7453,7 @@ try{
 
 <script>
 /* ============================================================
-   SHRIFT O'LCHAMI — v85 (yagona blok)
+   SHRIFT O'LCHAMI — v88 (yagona blok)
    Barcha CSS qoidalaridagi px shrift o'lchamini koeffitsiyentga
    ko'paytiradi. Boshqa hech narsaga tegmaydi.
    Tugma ikki joyda: chap panelda va Menyu ichida.
@@ -7459,11 +7464,12 @@ try{
   function walk(rules){
     for(var j=0;j<rules.length;j++){
       var r=rules[j];
-      if(r.cssRules){ try{ walk(r.cssRules); }catch(e){} continue; }
-      if(!r.style) continue;
-      var fs=r.style.fontSize;
-      if(fs && /px$/.test(fs))
-        base.push([r.style, parseFloat(fs), r.style.getPropertyPriority('font-size')]);
+      if(r.style){
+        var fs=r.style.fontSize;
+        if(fs && /px$/.test(fs))
+          base.push([r.style, parseFloat(fs), r.style.getPropertyPriority('font-size')]);
+      }
+      if(r.cssRules && r.cssRules.length){ try{ walk(r.cssRules); }catch(e){} }
     }
   }
   function collect(){
