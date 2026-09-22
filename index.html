@@ -779,7 +779,7 @@ var DEPLOY = {
     <h1>KROFF <span class="dot">·</span> Savdo</h1>
     <div class="syncchip" id="syncChip" onclick="manualSync()">☁️ …</div>
     <button class="menu-btn" onclick="toggleMenu(event)" aria-label="Menyu">☰</button>
-    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v83</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)"><span class="mi-i">📦</span>Tovarlar</button><button class="menu-item" data-admin="1" onclick="openOps()"><span class="mi-i">🧾</span>Amaliyotlar</button><button class="menu-item" data-admin="1" onclick="openRetSup()"><span class="mi-i">↩️</span>Ta‘minotga qaytarish</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)"><span class="mi-i">🛒</span>Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)"><span class="mi-i">📈</span>Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)"><span class="mi-i">🚚</span>Katalog</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)"><span class="mi-i">👤</span>Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)"><span class="mi-i">🔧</span>Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)"><span class="mi-i">💰</span>Kassa</button><button class="menu-item" data-v="ishhaqi" data-admin="1" onclick="switchView('ishhaqi',this)"><span class="mi-i">👷</span>Ish haqi</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)"><span class="mi-i">📋</span>Sanoq</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)"><span class="mi-i">⚙️</span>Sozlamalar</button><button class="menu-item" data-admin="1" onclick="manualSync()"><span class="mi-i">🔄</span>Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="publishCatalog(true);menuOpen(false)"><span class="mi-i">📤</span>Katalogga chiqarish</button><button class="menu-item" data-admin="1" onclick="openOnlOrders()"><span class="mi-i">🛍️</span>Onlayn buyurtmalar<span id="onlBadge" style="display:none;margin-left:auto;background:#e01438;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:800"></span></button><button class="menu-item" data-admin="1" onclick="editPins()"><span class="mi-i">🔑</span>Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)"><span class="mi-i">👥</span>Xodimlar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d"><span class="mi-i">🔒</span>Qulflash (chiqish)</button></div>
+    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v85</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)"><span class="mi-i">📦</span>Tovarlar</button><button class="menu-item" data-admin="1" onclick="openOps()"><span class="mi-i">🧾</span>Amaliyotlar</button><button class="menu-item" data-admin="1" onclick="openRetSup()"><span class="mi-i">↩️</span>Ta‘minotga qaytarish</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)"><span class="mi-i">🛒</span>Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)"><span class="mi-i">📈</span>Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)"><span class="mi-i">🚚</span>Katalog</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)"><span class="mi-i">👤</span>Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)"><span class="mi-i">🔧</span>Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)"><span class="mi-i">💰</span>Kassa</button><button class="menu-item" data-v="ishhaqi" data-admin="1" onclick="switchView('ishhaqi',this)"><span class="mi-i">👷</span>Ish haqi</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)"><span class="mi-i">📋</span>Sanoq</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)"><span class="mi-i">⚙️</span>Sozlamalar</button><button class="menu-item" data-admin="1" onclick="manualSync()"><span class="mi-i">🔄</span>Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="publishCatalog(true);menuOpen(false)"><span class="mi-i">📤</span>Katalogga chiqarish</button><button class="menu-item" data-admin="1" onclick="openOnlOrders()"><span class="mi-i">🛍️</span>Onlayn buyurtmalar<span id="onlBadge" style="display:none;margin-left:auto;background:#e01438;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:800"></span></button><button class="menu-item" data-admin="1" onclick="editPins()"><span class="mi-i">🔑</span>Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)"><span class="mi-i">👥</span>Xodimlar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d"><span class="mi-i">🔒</span>Qulflash (chiqish)</button></div>
     <div class="stats" id="stats">
       <div class="stat"><div class="v" id="s_tovar">0</div><div class="l">Tovar turi</div></div>
       <div class="stat"><div class="v" id="s_qty">0</div><div class="l">Qoldiq (dona)</div></div>
@@ -7101,25 +7101,13 @@ try{
       eb.style.background='#1F4E79'; eb.style.borderColor='#1F4E79';
       eb.style.color='#fff'; eb.style.fontWeight='800';
 
-      /* qolganlari yashiriladi */
-      var box=document.createElement('div');
-      box.id='expMore';
-      box.style.cssText='display:none;gap:8px;flex-wrap:wrap;margin-top:8px;justify-content:flex-end';
-      row.appendChild(box);
-      for(var j=0;j<others.length;j++) box.appendChild(others[j]);
-
-      var t=document.createElement('button');
-      t.type='button'; t.id='expToggle';
-      t.style.cssText='border:1px solid #dde2e8;background:#fff;color:#5a6676;border-radius:9px;'+
-        'padding:8px 13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-left:8px';
-      t.textContent='⋯';
-      t.title='Boshqa eksportlar';
-      t.onclick=function(){
-        var on=(box.style.display!=='none');
-        box.style.display=on?'none':'flex';
-        t.textContent=on?'⋯':'✕';
-      };
-      eb.parentNode.insertBefore(t,eb.nextSibling);
+      /* Qolgan eksportlar olib tashlandi — kalendar oralig'i
+         va hisobotning o'z tugmasi yetarli. */
+      for(var j=0;j<others.length;j++){
+        if(others[j].parentNode) others[j].parentNode.removeChild(others[j]);
+      }
+      var _ot=document.getElementById('expToggle');
+      if(_ot&&_ot.parentNode)_ot.parentNode.removeChild(_ot);
     }
     function label(){
       var eb=document.getElementById('hExpBtn'); if(!eb)return;
@@ -7254,65 +7242,11 @@ try{
 
 
 
-<script>
-/* SHRIFT O'LCHAMI — v83
-   Barcha CSS qoidalaridagi px shrift o'lchamlarini koeffitsiyentga
-   ko'paytiradi. Hech bir funksiyaga tegmaydi, faqat ko'rinishga.
-   Tanlov qurilmada eslab qolinadi. */
-(function(){
-  var KEY='kroff_fontk', STEPS=[1,1.1,1.2,1.35], base=null, btn=null;
-  function walk(rules){
-    for(var j=0;j<rules.length;j++){
-      var r=rules[j];
-      if(r.cssRules){ try{ walk(r.cssRules); }catch(e){} continue; }
-      if(!r.style) continue;
-      var fs=r.style.fontSize;
-      if(fs && /px$/.test(fs))
-        base.push([r.style, parseFloat(fs), r.style.getPropertyPriority('font-size')]);
-    }
-  }
-  function collect(){
-    if(base) return base;
-    base=[];
-    for(var i=0;i<document.styleSheets.length;i++){
-      var rules=null;
-      try{ rules=document.styleSheets[i].cssRules; }catch(e){}
-      if(rules){ try{ walk(rules); }catch(e){} }
-    }
-    return base;
-  }
-  function apply(k){
-    var b=collect();
-    for(var i=0;i<b.length;i++){
-      try{ b[i][0].setProperty('font-size',(Math.round(b[i][1]*k*10)/10)+'px', b[i][2]); }catch(e){}
-    }
-  }
-  function get(){ var v=1; try{ v=parseFloat(localStorage.getItem(KEY))||1; }catch(e){} return v; }
-  function label(){ if(btn) btn.textContent='\ud83d\udd20 Shrift '+Math.round(get()*100)+'%'; }
-  function set(k){ try{ localStorage.setItem(KEY,String(k)); }catch(e){} apply(k); label(); }
-  function init(){
-    apply(get());
-    var f=document.querySelector('#sideNav .sb-foot');
-    if(f && !document.getElementById('fontBtn')){
-      btn=document.createElement('button');
-      btn.id='fontBtn'; btn.type='button'; btn.className='sb-sync';
-      btn.style.marginTop='6px';
-      btn.onclick=function(){
-        var k=get(), i=0;
-        for(var n=0;n<STEPS.length;n++) if(Math.abs(STEPS[n]-k)<0.001) i=n;
-        set(STEPS[(i+1)%STEPS.length]);
-      };
-      f.appendChild(btn); label();
-    }
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
-  else setTimeout(init,0);
-})();
-</script>
+
 
 <script>
 /* ============================================================
-   v83 — UCHTA YANGI TAHLIL
+   v85 — UCHTA YANGI TAHLIL
    XYZ tahlili | Chegirma samarasi | Konsignatsiya
    Mavjud funksiyalarga tegilmagan: renderHisobot va _hName
    o'raladi (wrap), asl kod o'z holicha chaqiriladi.
@@ -7510,37 +7444,86 @@ try{
 })();
 </script>
 
+
+
 <script>
-/* v83 — shrift tugmasi telefon menyusiga ham qo'shiladi.
-   Chap panel faqat kengroq ekranda ko'rinadi, shuning uchun
-   telefonda u ko'rinmay qolgan edi. */
+/* ============================================================
+   SHRIFT O'LCHAMI — v85 (yagona blok)
+   Barcha CSS qoidalaridagi px shrift o'lchamini koeffitsiyentga
+   ko'paytiradi. Boshqa hech narsaga tegmaydi.
+   Tugma ikki joyda: chap panelda va Menyu ichida.
+   ============================================================ */
 (function(){
-  var KEY='kroff_fontk', STEPS=[1,1.1,1.2,1.35];
-  function get(){var v=1;try{v=parseFloat(localStorage.getItem(KEY))||1;}catch(e){}return v;}
-  function txt(){return '\ud83d\udd20 Shrift: '+Math.round(get()*100)+'%';}
-  function add(){
-    var md=document.getElementById('menuDrop');
-    if(!md||document.getElementById('fontMenuBtn'))return;
-    var b=document.createElement('button');
-    b.id='fontMenuBtn'; b.type='button'; b.className='menu-item';
-    b.innerHTML='<span class="mi-i">\ud83d\udd20</span><span id="fontMenuTxt">'+txt()+'</span>';
-    b.onclick=function(ev){
-      if(ev&&ev.stopPropagation)ev.stopPropagation();
-      var fb=document.getElementById('fontBtn');
-      if(fb){ fb.click(); }
-      else{
-        var k=get(),i=0;
-        for(var n=0;n<STEPS.length;n++) if(Math.abs(STEPS[n]-k)<0.001)i=n;
-        try{localStorage.setItem(KEY,String(STEPS[(i+1)%STEPS.length]));}catch(e){}
-        location.reload(); return;
-      }
-      var t=document.getElementById('fontMenuTxt'); if(t)t.textContent=txt();
-    };
-    var lock=md.querySelector('button[onclick*="lockApp"]');
-    if(lock)md.insertBefore(b,lock); else md.appendChild(b);
+  var KEY='kroff_fontk', STEPS=[1,1.1,1.25,1.4], base=null;
+
+  function walk(rules){
+    for(var j=0;j<rules.length;j++){
+      var r=rules[j];
+      if(r.cssRules){ try{ walk(r.cssRules); }catch(e){} continue; }
+      if(!r.style) continue;
+      var fs=r.style.fontSize;
+      if(fs && /px$/.test(fs))
+        base.push([r.style, parseFloat(fs), r.style.getPropertyPriority('font-size')]);
+    }
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',add);
-  else setTimeout(add,0);
+  function collect(){
+    if(base) return base;
+    base=[];
+    for(var i=0;i<document.styleSheets.length;i++){
+      var rules=null;
+      try{ rules=document.styleSheets[i].cssRules; }catch(e){}
+      if(rules){ try{ walk(rules); }catch(e){} }
+    }
+    return base;
+  }
+  function apply(k){
+    var b=collect(), n=0;
+    for(var i=0;i<b.length;i++){
+      try{ b[i][0].setProperty('font-size',(Math.round(b[i][1]*k*10)/10)+'px', b[i][2]); n++; }catch(e){}
+    }
+    return n;
+  }
+  function get(){ var v=1; try{ v=parseFloat(localStorage.getItem(KEY))||1; }catch(e){} return v; }
+  function txt(){ return '\ud83d\udd20 Shrift: '+Math.round(get()*100)+'%'; }
+  function labels(){
+    var a=document.getElementById('fontBtn');    if(a)a.textContent=txt();
+    var b2=document.getElementById('fontMenuTxt'); if(b2)b2.textContent=txt();
+  }
+  function cycle(){
+    var k=get(), i=0;
+    for(var n=0;n<STEPS.length;n++) if(Math.abs(STEPS[n]-k)<0.001) i=n;
+    var nk=STEPS[(i+1)%STEPS.length];
+    try{ localStorage.setItem(KEY,String(nk)); }catch(e){}
+    apply(nk); labels();
+    try{ toast('\ud83d\udd20 Shrift '+Math.round(nk*100)+'%'); }catch(e){}
+  }
+  window.KROFF_FONT={get:get,cycle:cycle,apply:apply};
+
+  function mk(){
+    apply(get());
+
+    var f=document.querySelector('#sideNav .sb-foot');
+    if(f && !document.getElementById('fontBtn')){
+      var a=document.createElement('button');
+      a.id='fontBtn'; a.type='button'; a.className='sb-sync';
+      a.style.marginTop='6px';
+      a.addEventListener('click',function(e){ e.preventDefault(); e.stopPropagation(); cycle(); });
+      f.appendChild(a);
+    }
+
+    var md=document.getElementById('menuDrop');
+    if(md && !document.getElementById('fontMenuBtn')){
+      var b=document.createElement('button');
+      b.id='fontMenuBtn'; b.type='button'; b.className='menu-item';
+      b.innerHTML='<span class="mi-i">\ud83d\udd20</span><span id="fontMenuTxt"></span>';
+      b.addEventListener('click',function(e){ e.preventDefault(); e.stopPropagation(); cycle(); }, true);
+      var lock=md.querySelector('button[onclick*="lockApp"]');
+      if(lock) md.insertBefore(b,lock); else md.appendChild(b);
+    }
+    labels();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',mk);
+  else setTimeout(mk,0);
 })();
 </script>
 </body>
