@@ -835,7 +835,7 @@ var DEPLOY = {
 <span style="color:var(--muted);font-size:13px">—</span>
 <input id="hTo" type="date" onchange="applyRange()" style="flex:1;min-width:135px;padding:9px 10px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-weight:600;font-family:inherit">
 </div>
-<div class="hper" id="hperRow" style="margin-top:6px"><button class="hp active" data-p="bugun" onclick="setHPer('bugun',this)">Bugun</button><button class="hp" data-p="hafta" onclick="setHPer('hafta',this)">7 kun</button><button class="hp" data-p="oy" onclick="setHPer('oy',this)">Shu oy</button><button class="hp" data-p="oyold" onclick="setHPer('oyold',this)">O‘tgan oy</button><button class="hp" data-p="yil" onclick="setHPer('yil',this)">Yil</button></div><div style="text-align:right;margin:6px 0 0"><button class="btn btn-ghost sm" onclick="savdoExport()" style="background:#EEF4FB;border-color:#B9D3EC;color:#1F4E79;font-weight:700">📊 To‘liq savdo (Excel)</button><button class="btn btn-ghost sm" id="hExpBtn" onclick="hisobotExport()">📤 Bu bo‘limni Excel</button><button class="btn btn-ghost sm" onclick="exportAllReports()">📚 Hamma hisobotlar (Excel)</button><button class="btn btn-ghost sm" onclick="exportEachReport()">📂 Har biri alohida fayl</button></div><div id="dashTop"></div><div id="bugunBody"></div></div><div id="view-kirim" class="view"><div class="sec-h">🗂️ Katalog <button class="btn btn-ghost sm" onclick="prodForm(null)">➕ Yangi tovar</button> <button class="btn btn-ghost sm" onclick="ykOpen()">🚛 Yo’l kira (tannarxga)</button></div><div class="kbox"><div style="display:flex;gap:8px;margin-bottom:8px"><select id="kSup" class="seller" style="max-width:none;flex:1;margin:0"></select><button class="btn btn-ghost sm" onclick="addSup()" title="Yangi ta'minotchi">➕</button></div><div class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input id="kq" type="search" placeholder="Tovar qidiring…" autocomplete="off"></div><div id="k-results" class="sv-results"></div></div><div id="kcBox" style="display:none;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px"><b style="font-size:14px">🧾 Nakladnoy savati (<span id="kcCnt">0</span>)</b><button class="btn btn-ghost sm" onclick="kcClear()">Tozalash</button></div><div id="kcList"></div><div class="krow ktot"><span>Tovarlar jami</span><b id="kcSum">0</b></div><div class="krow"><span>🚛 Yo’l kira (tannarxga)</span><input id="kcYk" type="text" inputmode="numeric" placeholder="0" oninput="renderKCart()"></div><div class="krow"><span>To’langan summa</span><input id="kcPaid" type="text" inputmode="numeric" placeholder="0" oninput="renderKCart()"></div><div class="krow"><span>Qaysi hisobdan</span><select id="kcAcc"><option value="naqd">💵 Naqd</option><option value="karta">💳 Karta</option><option value="payme1">📱 Payme 1</option><option value="payme2">📱 Payme 2</option><option value="bank">🏦 Hisob raqam</option></select></div><div class="krow ktot"><span>Ta’minotchiga qarz</span><b id="kcDebt">0</b></div><label class="krow" style="cursor:pointer"><span>Tannarx yangilansin (xarid + yo’l kira)</span><input type="checkbox" id="kcTn" checked style="width:18px;height:18px"></label><button class="btn" style="width:100%;margin-top:8px" onclick="kcSave()">💾 Nakladnoyni saqlash</button><div style="font-size:11px;color:var(--muted);margin-top:6px">Tovarni qidirib bosing — savatga tushadi. Soni va narxini shu yerda to’g’rilaysiz.</div></div><div class="sec-h">Ta’minotchilar <button class="btn btn-ghost sm" onclick="addSup()">➕ Qo’shish</button> <button class="btn btn-ghost sm" onclick="supBulkOpen()">📋 Ro’yxatdan</button> <button class="btn btn-ghost sm" onclick="supCleanOpen()">🧹 Tozalash</button> <button class="btn btn-ghost sm" onclick="supTplExport()">📤 Shablon</button> <button class="btn btn-ghost sm" onclick="document.getElementById('supImp').click()">📥 Excel biriktirish</button><input id="supImp" type="file" accept=".xlsx,.xls,.csv" style="display:none" onchange="supImportFile(this)"></div><div id="supList"></div><div class="sec-h" style="margin-top:18px">📋 Kirim tarixi (Заказы)</div><div id="kirimHist"></div></div><div id="view-mijoz" class="view"><div class="sec-h">👤 Mijozlar <button class="btn btn-ghost sm" onclick="addCust()">➕ Qo’shish</button> <button class="btn btn-ghost sm" onclick="document.getElementById('custImp').click()">📥 Excel</button><button class="btn btn-ghost sm" onclick="custExportDebts()">📤 Qarz Excel</button><input id="custImp" type="file" accept=".xlsx,.xls,.csv" style="display:none" onchange="custImportFile(this)"></div><div class="htab"><button class="ht active" onclick="setMTab('barcha',this)">Barcha</button><button class="ht" onclick="setMTab('qarz',this)">Qarzdorlar</button><button class="ht" onclick="setMTab('bolim',this)">Bo'limlar</button></div><div class="search" style="margin:8px 0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input id="mSearch" type="search" inputmode="search" placeholder="Mijoz qidirish (ism yoki telefon)…" autocomplete="off" oninput="_mSearch(this.value)"></div><div class="mstat" id="mStat"></div><div id="custList"></div></div><div id="view-kassa" class="view">
+<div class="hper" id="hperRow" style="margin-top:6px"><button class="hp active" data-p="bugun" onclick="setHPer('bugun',this)">Bugun</button><button class="hp" data-p="hafta" onclick="setHPer('hafta',this)">7 kun</button><button class="hp" data-p="oy" onclick="setHPer('oy',this)">Shu oy</button><button class="hp" data-p="oyold" onclick="setHPer('oyold',this)">O‘tgan oy</button><button class="hp" data-p="yil" onclick="setHPer('yil',this)">Yil</button></div><div style="text-align:right;margin:6px 0 0"><button class="btn btn-ghost sm" onclick="savdoExport()" style="background:#EEF4FB;border-color:#B9D3EC;color:#1F4E79;font-weight:700">📊 To‘liq savdo (Excel)</button><button class="btn btn-ghost sm" id="hExpBtn" onclick="hisobotExport()">📤 Bu bo‘limni Excel</button><button class="btn btn-ghost sm" onclick="exportAllReports()">📚 Hamma hisobotlar (Excel)</button><button class="btn btn-ghost sm" onclick="exportEachReport()">📂 Har biri alohida fayl</button></div><div id="dashTop"></div><div id="bugunBody"></div></div><div id="view-kirim" class="view"><div class="sec-h">🗂️ Katalog <button class="btn btn-ghost sm" onclick="prodForm(null)">➕ Yangi tovar</button> <button class="btn btn-ghost sm" onclick="ykOpen()">🚛 Yo’l kira (tannarxga)</button></div><div class="kbox"><div style="display:flex;gap:8px;margin-bottom:8px"><select id="kSup" class="seller" style="max-width:none;flex:1;margin:0"></select><button class="btn btn-ghost sm" onclick="addSup()" title="Yangi ta'minotchi">➕</button></div><div class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input id="kq" type="search" placeholder="Tovar qidiring…" autocomplete="off"></div><div id="k-results" class="sv-results"></div></div><div id="kcBox" style="display:none;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px"><b style="font-size:14px">🧾 Nakladnoy savati (<span id="kcCnt">0</span>)</b><button class="btn btn-ghost sm" onclick="kcClear()">Tozalash</button></div><div id="kcList"></div><div class="krow ktot"><span>Tovarlar jami</span><b id="kcSum">0</b></div><div class="krow"><span>🚛 Yo’l kira (tannarxga)</span><input id="kcYk" type="text" inputmode="numeric" placeholder="0" oninput="renderKCart()"></div><div class="krow"><span>To’langan summa</span><input id="kcPaid" type="text" inputmode="numeric" placeholder="0" oninput="renderKCart()"></div><div class="krow"><span>Qaysi hisobdan</span><select id="kcAcc"><option value="naqd">💵 Naqd</option><option value="karta">💳 Karta</option><option value="payme1">📱 Payme 1</option><option value="payme2">📱 Payme 2</option><option value="bank">🏦 Hisob raqam</option></select></div><div class="krow ktot"><span>Ta’minotchiga qarz</span><b id="kcDebt">0</b></div><label class="krow" style="cursor:pointer"><span>Tannarx yangilansin (xarid + yo’l kira)</span><input type="checkbox" id="kcTn" checked style="width:18px;height:18px"></label><button class="btn" style="width:100%;margin-top:8px" onclick="kcSave()">💾 Nakladnoyni saqlash</button><div style="font-size:11px;color:var(--muted);margin-top:6px">Tovarni qidirib bosing — savatga tushadi. Soni va narxini shu yerda to’g’rilaysiz.</div></div><div class="sec-h">Ta’minotchilar <button class="btn btn-ghost sm" onclick="addSup()">➕ Qo’shish</button> <button class="btn btn-ghost sm" onclick="supBulkOpen()">📋 Ro’yxatdan</button> <button class="btn btn-ghost sm" onclick="supCleanOpen()">🧹 Tozalash</button> <button class="btn btn-ghost sm" onclick="supTplExport()">📤 Shablon</button> <button class="btn btn-ghost sm" onclick="document.getElementById('supImp').click()">📥 Excel biriktirish</button><input id="supImp" type="file" accept=".xlsx,.xls,.csv" style="display:none" onchange="supImportFile(this)"></div><div id="supList"></div><div class="sec-h" style="margin-top:18px">📋 Kirim tarixi (Заказы)</div><div id="kirimHist"></div></div><div id="view-mijoz" class="view"><div class="sec-h">👤 Mijozlar <button class="btn btn-ghost sm" onclick="addCust()">➕ Qo’shish</button> <button class="btn btn-ghost sm" onclick="document.getElementById('custImp').click()">📥 Excel</button><button class="btn btn-ghost sm" onclick="custExportDebts()">📤 Qarz Excel</button><input id="custImp" type="file" accept=".xlsx,.xls,.csv" style="display:none" onchange="custImportFile(this)"> <button class="btn btn-ghost sm" onclick="if(_role!=='admin'){toast('Faqat admin uchun');return;}document.getElementById('bzImp').click()">📥 Billz</button><input id="bzImp" type="file" accept=".json,application/json" style="display:none" onchange="bzImportFile(this)"></div><div class="htab"><button class="ht active" onclick="setMTab('barcha',this)">Barcha</button><button class="ht" onclick="setMTab('qarz',this)">Qarzdorlar</button><button class="ht" onclick="setMTab('bolim',this)">Bo'limlar</button></div><div class="search" style="margin:8px 0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input id="mSearch" type="search" inputmode="search" placeholder="Mijoz qidirish (ism yoki telefon)…" autocomplete="off" oninput="_mSearch(this.value)"></div><div class="mstat" id="mStat"></div><div id="custList"></div></div><div id="view-kassa" class="view">
   <div class="sec-h">💰 Kassa — pul harakati <button class="btn btn-ghost sm" onclick="kassaForm()">➕ Amaliyot</button> <button class="btn btn-ghost sm" onclick="kassaKlik('toNaqd')">🔄 Payme→Naqd</button> <button class="btn btn-ghost sm" onclick="kassaKlik('toPayme')">🔄 Naqd→Payme</button></div>
   <div id="kassaFormBox" class="kformbox" style="display:none">
     <div class="kf-dirs"><button class="kf-dir active" id="kfIn" onclick="kfSetDir('in')">⬇️ Kirim</button><button class="kf-dir" id="kfOut" onclick="kfSetDir('out')">⬆️ Chiqim</button></div>
@@ -4912,6 +4912,9 @@ function custDetail(id){
   document.getElementById('cmNom').textContent=cust.nom;
   document.getElementById('cmPh').textContent=cust.phone||'';
   document.getElementById('custModal').classList.add('open');
+  document.getElementById('cmLedger').innerHTML='<div class="cart-empty">Yuklanmoqda\u2026</div>';
+  _bzGet(cust.nom,function(bz){if(_cmId!==id)return;
+  var _bzAt=bz?(+bz.yuklangan||0):0;
   evAll(function(evs){
     var pays=[];
     evs.forEach(function(e){if(e.kind==='pay'&&e.payload&&e.payload.typ==='cust'&&e.payload.id===id&&!VOID[e.id])pays.push({id:e.id,ts:e.ts,amount:e.payload.amount,method:e.payload.method});});
@@ -4920,8 +4923,10 @@ function custDetail(id){
       all.forEach(function(x){if(x.customer===cust.nom&&!x.isReturn)rows.push({ts:new Date(x.ts||x.day).getTime(),typ:'buy',amount:x.total,items:x.items||[],seller:x.seller,due:x.due,pay:x.pay,given:x.given||0});});
       pays.forEach(function(pp){rows.push({id:pp.id,ts:pp.ts,typ:'pay',amount:pp.amount,method:pp.method});});
       rows.sort(function(a,b){return a.ts-b.ts;});
-      var bal=0,nBuy=0,tBuy=0,H='';
-      if(!rows.length)H='<div class="cart-empty">Hali savdo yo\u2018q</div>';
+      if(bz)rows=rows.filter(function(r){return r.ts>_bzAt;});
+      var bal=bz?Math.round(+bz.qarz||0):0,nBuy=0,tBuy=0,H='';
+      if(bz)H+='<div class="cmrow"><div class="cmr-l"><div class="cmr-d">'+_bzDs(new Date(_bzAt).toISOString().slice(0,10))+'</div><div class="cmr-t" style="color:#1F4E79">Billz\u2019dan o\u2018tkazilgan qoldiq</div></div><div class="cmr-a" style="color:#a32d2d">'+grp(bal)+'</div><div class="cmr-b">'+grp(bal)+'</div></div>';
+      if(!rows.length&&!bz)H='<div class="cart-empty">Hali savdo yo\u2018q</div>';
       rows.forEach(function(r){
         if(r.typ==='buy'){nBuy++;tBuy+=r.amount;if(r.pay==='qarz')bal+=Math.max(0,r.amount-(r.given||0));}
         else bal=Math.max(0,bal-r.amount);
@@ -4942,7 +4947,7 @@ function custDetail(id){
         }
       });
       if(nBuy)H='<div style="font-size:11.5px;color:var(--muted);padding:4px 4px 8px">'+nBuy+' ta savdo \u00b7 jami '+grp(tBuy)+' so\u2019m</div>'+H;
-      document.getElementById('cmLedger').innerHTML=H;
+      document.getElementById('cmLedger').innerHTML=H+(bz?_bzRender(bz):'');
       document.getElementById('cmBal').innerHTML='<span class="cmbal-l">Joriy qarz</span><span class="cmbal-v '+(bal>0?'d-pos':'d-zero')+'">'+grp(bal)+' so\u2018m</span>';
       // Dashboard ko'rsatkichlari (Billz uslubida)
       var buys=rows.filter(function(r){return r.typ==='buy';});
@@ -4958,7 +4963,79 @@ function custDetail(id){
         '<div class="cmstat"><div class="cs-l">O\u2018rtacha tovar soni</div><div class="cs-v">'+(Math.round(avgItems*10)/10)+' ta</div></div>'+'<div class="cmstat"><div class="cs-l">\ud83c\udf81 Bonus</div><div class="cs-v" style="color:#1a7f37">'+grp(cust.bonus||0)+'</div></div>'+
         '<div class="cmstat wide"><div class="cs-l">Oxirgi xarid</div><div class="cs-v">'+lastStr+'</div></div>';
     });
-  });
+  });});
+}
+/* ===== Billz'dan qarzdorlar tarixi (import + kartochkada ko'rish) ===== */
+var BZ_TBL='billz_tarix', _BZC={}, _BZCUR=null;
+function _bzNorm(s){return String(s||'').toLowerCase().replace(/[ʻʼ‘’`]/g,"'").replace(/\s+/g,' ').trim();}
+function _bzGet(nom,cb){
+  if(_BZC.hasOwnProperty(nom)){cb(_BZC[nom]);return;}
+  if(!navigator.onLine||typeof fetch!=='function'){cb(null);return;}
+  var done=false,t=setTimeout(function(){if(!done){done=true;cb(null);}},8000);
+  fetch(SB_URL+'/rest/v1/'+BZ_TBL+'?select=qarz,yuklangan,data&nom=eq.'+encodeURIComponent(nom),{headers:_sbHdr()})
+    .then(function(r){return r.ok?r.json():[];})
+    .then(function(a){if(done)return;done=true;clearTimeout(t);var v=(a&&a[0])||null;_BZC[nom]=v;cb(v);})
+    .catch(function(){if(done)return;done=true;clearTimeout(t);cb(null);});
+}
+function bzImportFile(input){
+  var f=input.files&&input.files[0];if(!f)return;
+  if(_role!=='admin'){toast('Faqat admin uchun');input.value='';return;}
+  var rd=new FileReader();
+  rd.onload=function(e){
+    var J=null;try{J=JSON.parse(e.target.result);}catch(x){}
+    input.value='';
+    if(!J||J.src!=='billz'||!J.mijozlar||!J.mijozlar.length){toast('Bu Billz qarzdorlar fayli emas');return;}
+    var cu=getCust(),byN={};cu.forEach(function(c){var k=_bzNorm(c.nom);if(!byN[k])byN[k]=c;});
+    var list=[],rows=[],seen={},tot=0,matched=0,at=Date.now();
+    J.mijozlar.forEach(function(m){
+      var ex=byN[_bzNorm(m.nom)],nom=ex?ex.nom:String(m.nom).replace(/\s+/g,' ').trim();if(ex)matched++;
+      if(seen[nom])return;seen[nom]=1;
+      var q=Math.round(+m.qarz||0);tot+=q;
+      list.push({nom:nom,phone:m.tel||'',debt:q});
+      rows.push({nom:nom,bid:m.bid||'',tel:m.tel||'',qarz:q,yuklangan:at,data:{ledger:m.ledger||[],cheklar:m.cheklar||[]}});
+    });
+    var old=cu.filter(function(c){return !seen[c.nom]&&Math.round(c.debt||0)!==0;}),oldSum=0;old.forEach(function(c){oldSum+=Math.round(c.debt||0);});
+    if(!confirm('Billz\'dan '+rows.length+' ta qarzdor, jami '+grp(tot)+' so‘m.\n'+matched+' tasi mavjud mijozga ulanadi, '+(rows.length-matched)+' tasi yangi qo‘shiladi.\nQarz qoldiqlari Billz bo‘yicha yoziladi. Davom etamizmi?'))return;
+    if(old.length&&confirm('Billz\'da qarzi yo‘q '+old.length+' ta eski mijozning qarzi bor (jami '+grp(oldSum)+' so‘m).\nUlarning qarzini 0 qilamizmi?\n\nOK = 0 qilish   Bekor = tegmaslik'))
+      old.forEach(function(c){list.push({nom:c.nom,phone:'',debt:0});});
+    var i=0,B=10;
+    (function next(){
+      if(i>=rows.length){fin();return;}
+      var part=rows.slice(i,i+B);i+=B;toast('Billz tarixi yuklanmoqda: '+Math.min(i,rows.length)+' / '+rows.length);
+      fetch(SB_URL+'/rest/v1/'+BZ_TBL+'?on_conflict=nom',{method:'POST',headers:_sbHdr({'Prefer':'resolution=merge-duplicates,return=minimal'}),body:JSON.stringify(part)})
+        .then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error(t.slice(0,160));});next();})
+        .catch(function(err){alert('Tarixni yuklashda xato:\n'+err.message+'\n\nQarz qoldiqlari YOZILMADI — qaytadan urinib ko‘ring.');});
+    })();
+    function fin(){
+      commitEvent('custbulk',{list:list,src:'billz',at:at});
+      _BZC={};renderMijoz();
+      alert('✅ Billz\'dan ko‘chirildi: '+rows.length+' ta qarzdor, jami '+grp(tot)+' so‘m.\nTarix mijoz kartochkasida “📜 Billz tarixi” bo‘limida.');
+    }
+  };
+  rd.readAsText(f);
+}
+function _bzDs(s){s=String(s||'');return s.length>=10?(s.slice(8,10)+'.'+s.slice(5,7)+'.'+s.slice(0,4)+(s.length>=16?' '+s.slice(11,16):'')):s;}
+function bzToggle(id){var el=document.getElementById(id);if(el)el.style.display=(el.style.display==='none'?'':'none');}
+function bzChek(i){
+  var box=document.getElementById('bzc'+i);if(!box||!_BZCUR)return;
+  if(box.innerHTML){box.innerHTML='';return;}
+  var c=(_BZCUR.cheklar||[])[i];if(!c)return;
+  box.innerHTML=(c[6]||[]).map(function(z){return '<div style="display:flex;gap:8px;padding:4px 6px 4px 14px;font-size:12px;border-bottom:1px dashed var(--line2)"><div style="flex:1;min-width:0">'+esc(z[0]||'')+(z[1]?' <span style="color:#9aa4b2">'+esc(z[1])+'</span>':'')+'<div style="color:#9aa4b2">'+grp(z[3]||0)+' × '+(z[2]||0)+(z[4]?' · chegirma '+grp(z[4]):'')+'</div></div><div style="font-weight:700;white-space:nowrap">'+grp(z[5]||0)+'</div></div>';}).join('')||'<div style="padding:4px 14px;font-size:12px;color:#9aa4b2">Tovar yo‘q</div>';
+}
+function _bzRender(bz){
+  var d=(bz&&bz.data)||{},L=d.ledger||[],C=d.cheklar||[];_BZCUR=d;
+  if(!L.length&&!C.length)return '';
+  var H='<div style="margin-top:10px;border:1px solid var(--line);border-radius:12px;overflow:hidden">'+
+    '<div onclick="bzToggle(\'bzBody\')" style="cursor:pointer;padding:10px 12px;background:#eef4fb;font-weight:800;font-size:13.5px;color:#1F4E79">📜 Billz tarixi · '+L.length+' amal · '+C.length+' chek <span style="float:right">▾</span></div>'+
+    '<div id="bzBody" style="display:none">';
+  H+='<div onclick="bzToggle(\'bzL\')" style="cursor:pointer;padding:8px 10px;font-weight:700;font-size:12.5px;background:#f6f8fb">💳 Qarz harakati (berildi / to‘landi)</div><div id="bzL">';
+  for(var j=L.length-1;j>=0;j--){var r=L[j],g=+r[3]||0,p=+r[4]||0;
+    H+='<div class="cmrow"><div class="cmr-l"><div class="cmr-d">'+_bzDs(r[0])+' · '+esc(r[1]||'')+'</div><div class="cmr-t" style="font-weight:500;font-size:12px">'+(r[2]?'Chek '+esc(r[2]):'')+(r[6]?' · '+esc(r[6]):'')+'</div></div><div class="cmr-a" style="color:'+(g?'#a32d2d':'#375623')+'">'+(g?'+'+grp(g):'−'+grp(p))+'</div><div class="cmr-b">'+grp(+r[5]||0)+'</div></div>';}
+  H+='</div><div onclick="bzToggle(\'bzC\')" style="cursor:pointer;padding:8px 10px;font-weight:700;font-size:12.5px;background:#f6f8fb">🧾 Cheklar (bosilsa tovarlar ochiladi)</div><div id="bzC" style="display:none">';
+  for(var k=C.length-1;k>=0;k--){var c=C[k];
+    H+='<div class="cmrow" style="cursor:pointer" onclick="bzChek('+k+')"><div class="cmr-l"><div class="cmr-d">'+_bzDs(c[1])+(c[3]?' · '+esc(c[3]):'')+(c[5]?' · <b style="color:#a32d2d">qarzga</b>':'')+'</div><div class="cmr-t" style="font-size:12.5px">'+esc(c[2]||'Sotuv')+' №'+esc(c[0]||'')+' · '+(c[6]||[]).length+' xil tovar</div></div><div class="cmr-a" style="color:#5b6b7d">'+grp(+c[4]||0)+'</div></div><div id="bzc'+k+'"></div>';}
+  H+='</div></div></div>';
+  return H;
 }
 function closeCust(){document.getElementById('custModal').classList.remove('open');}
 function arxivExport(){
