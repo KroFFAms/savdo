@@ -32,7 +32,8 @@ var DEPLOY = {
   ADMIN_PIN:    "",
   SHOP_NAME:    "KROFF",
   SERVER_HISOBOT: true,  // hisobot ma'lumotini serverdan olish (false = eski usul)
-  REALTIME: true         // jonli yangilanish (false = faqat 5 soniyalik tekshiruv)
+  REALTIME: true,         // jonli yangilanish (false = faqat 5 soniyalik tekshiruv)
+  SERVER_HOLAT: true   // qoldiq va mijoz qarzi serverdan (false = telefon o'zi hisoblaydi)
 };
 </script>
 <script>
@@ -1283,6 +1284,7 @@ function matches(p,q){
   return p._s.indexOf(q)>=0 || (p.barcode&&p.barcode.indexOf(q)>=0) || (p.artikul&&p.artikul.toLowerCase().indexOf(q)>=0);
 }
 function refresh(){
+  if(typeof _srvHolatApply==='function')_srvHolatApply();
   // qidiruv indeksi
   if(PRODUCTS.length && PRODUCTS[0]._s===undefined){PRODUCTS.forEach(function(p){p._s=(p.nom+' '+p.brend+' '+p.kategoriya).toLowerCase();});}
   var q=_norm(document.getElementById('q').value);
@@ -4138,10 +4140,10 @@ function bolimAdd(){var n=prompt('Yangi bo\u2018lim nomi:');if(!n||!n.trim())ret
 function bolimRename(id){var b=getBolim();for(var i=0;i<b.length;i++)if(b[i].id===id){var n=prompt('Yangi nom:',b[i].nom);if(!n||!n.trim())return;b[i].nom=n.trim();setBolim(b);renderMijoz();break;}}
 function bolimDel(id){var b=getBolim();for(var i=0;i<b.length;i++)if(b[i].id===id){if((b[i].debt||0)>0){toast('Qarzi bor bo\u2018limni o\u2018chirib bo\u2018lmaydi');return;}if(!confirm(b[i].nom+' o\u2019chirilsinmi?'))return;b.splice(i,1);setBolim(b);renderMijoz();break;}}
 function bolimPay(id){var bl=getBolim();for(var i=0;i<bl.length;i++)if(bl[i].id===id){var _bn=bl[i].nom;spayOpen({icon:'\ud83c\udfec',nom:_bn,debt:Math.round(bl[i].debt||0),accs:['naqd','karta','payme1','payme2','bank'],onSave:function(parts,total){commitEvent('pay',{typ:'bolim',id:id,amount:total,split:parts,method:_spayBig(parts)});renderMijoz();_spayToast('\u2705 To\u2019lov: ',total,parts);}});break;}}
-function custPay(id){var c=getCust();for(var i=0;i<c.length;i++)if(c[i].id===id){var _cn=c[i].nom;spayOpen({icon:'\ud83d\udc64',nom:_cn,debt:Math.round(c[i].debt||0),accs:['naqd','karta','payme1','payme2','bank'],onSave:function(parts,total){commitEvent('pay',{typ:'cust',id:id,amount:total,split:parts,method:_spayBig(parts)});for(var k in parts){if(parts.hasOwnProperty(k))commitEvent('kassa',{dir:'in',acc:k,amount:parts[k],cat:'Qarz to\u2019lovi',note:_cn});}renderMijoz();_spayToast('\u2705 Qarz to\u2019lovi: ',total,parts);}});break;}}
+function custPay(id){var c=getCust();for(var i=0;i<c.length;i++)if(c[i].id===id){var _cn=c[i].nom;spayOpen({icon:'\ud83d\udc64',nom:_cn,debt:Math.round(c[i].debt||0),accs:['naqd','karta','payme1','payme2','bank'],onSave:function(parts,total){commitEvent('pay',{typ:'cust',id:id,nom:_cn,amount:total,split:parts,method:_spayBig(parts)});for(var k in parts){if(parts.hasOwnProperty(k))commitEvent('kassa',{dir:'in',acc:k,amount:parts[k],cat:'Qarz to\u2019lovi',note:_cn});}renderMijoz();_spayToast('\u2705 Qarz to\u2019lovi: ',total,parts);}});break;}}
 function _accLabel(m){return m==='ichki'?'Ichki kassa':(m==='karta'?'Karta':(m==='payme1'?'Payme 1':(m==='payme2'?'Payme 2':(m==='bank'?'Hisob raqam':'Naqd'))));}
-function custDel(id){if(!confirm('Mijoz o\u2019chirilsinmi?'))return;commitEvent('custdel',{id:id});renderMijoz();}
-function custDelFromDetail(){if(!_cmId)return;var _cn='';var _cl=getCust();for(var _i=0;_i<_cl.length;_i++)if(_cl[_i].id===_cmId)_cn=_cl[_i].nom;if(!confirm('\"'+_cn+'\" mijozini butunlay o\u2019chirasizmi?\n\nQarz tarixi ham o\u2019chadi. Bu amalni qaytarib bo\u2019lmaydi.'))return;commitEvent('custdel',{id:_cmId});closeCust();renderMijoz();toast('Mijoz o\u2019chirildi');}
+function custDel(id){if(!confirm('Mijoz o\u2019chirilsinmi?'))return;commitEvent('custdel',{id:id,nom:((_custById(id)||{}).nom||'')});renderMijoz();}
+function custDelFromDetail(){if(!_cmId)return;var _cn='';var _cl=getCust();for(var _i=0;_i<_cl.length;_i++)if(_cl[_i].id===_cmId)_cn=_cl[_i].nom;if(!confirm('\"'+_cn+'\" mijozini butunlay o\u2019chirasizmi?\n\nQarz tarixi ham o\u2019chadi. Bu amalni qaytarib bo\u2019lmaydi.'))return;commitEvent('custdel',{id:_cmId,nom:((_custById(_cmId)||{}).nom||'')});closeCust();renderMijoz();toast('Mijoz o\u2019chirildi');}
 function renderCustSel(){var inp=document.getElementById('custSearch');if(inp)inp.value='';var hid=document.getElementById('custSel');if(hid)hid.value='';custSearchFn();}
 var _CYR={'а':'a','б':'b','в':'v','г':'g','ғ':'g','д':'d','е':'e','ё':'yo','ж':'j','з':'z','и':'i','й':'y','к':'k','қ':'q','л':'l','м':'m','н':'n','о':'o','ў':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'h','ҳ':'h','һ':'h','ц':'s','ч':'ch','ш':'sh','щ':'sh','ъ':'','ы':'i','ь':'','э':'e','ю':'yu','я':'ya','ҷ':'j','ә':'a'};
 function _tl(s){var o='';for(var i=0;i<s.length;i++){var c=s.charAt(i);o+=(_CYR[c]!=null?_CYR[c]:c);}return o;}
@@ -5441,7 +5443,7 @@ function custVoidPay(pid,ev){if(ev&&ev.stopPropagation)ev.stopPropagation();if(_
     custDetail(cid);renderMijoz();
   });
 }
-function custPayFromDetail(){if(!_cmId)return;var _cn='',_cd=0,_cl=getCust();for(var _ci=0;_ci<_cl.length;_ci++)if(_cl[_ci].id===_cmId){_cn=_cl[_ci].nom;_cd=Math.round(_cl[_ci].debt||0);}var _cid=_cmId;spayOpen({icon:'\ud83d\udc64',nom:_cn,debt:_cd,accs:['naqd','karta','payme1','payme2','bank'],onSave:function(parts,total){commitEvent('pay',{typ:'cust',id:_cid,amount:total,split:parts,method:_spayBig(parts)});for(var k in parts){if(parts.hasOwnProperty(k))commitEvent('kassa',{dir:'in',acc:k,amount:parts[k],cat:'Qarz to\u2019lovi',note:_cn});}_spayToast('\u2705 To\u2019lov: ',total,parts);custDetail(_cid);renderMijoz();}});}
+function custPayFromDetail(){if(!_cmId)return;var _cn='',_cd=0,_cl=getCust();for(var _ci=0;_ci<_cl.length;_ci++)if(_cl[_ci].id===_cmId){_cn=_cl[_ci].nom;_cd=Math.round(_cl[_ci].debt||0);}var _cid=_cmId;spayOpen({icon:'\ud83d\udc64',nom:_cn,debt:_cd,accs:['naqd','karta','payme1','payme2','bank'],onSave:function(parts,total){commitEvent('pay',{typ:'cust',id:_cid,nom:_cn,amount:total,split:parts,method:_spayBig(parts)});for(var k in parts){if(parts.hasOwnProperty(k))commitEvent('kassa',{dir:'in',acc:k,amount:parts[k],cat:'Qarz to\u2019lovi',note:_cn});}_spayToast('\u2705 To\u2019lov: ',total,parts);custDetail(_cid);renderMijoz();}});}
 
 /* ---- SHTRIX SKANER (kamera) ---- */
 var _scanStream=null,_scanRAF=null,_scanRAF2=null,_scanDet=null,_scanLast=0,_zxMFR=null,_zxCanvas=null,_zxHints=null,_scanN=0,_zxReader=null;
@@ -5576,7 +5578,7 @@ function applyEvent(ev){
     (pl.items||[]).forEach(function(it){var p=findProd(it.id);if(p)p.qoldiq=Math.round((p.qoldiq-it.qty)*1000)/1000;});
     if(pl.pay==='qarz'){var _dbt=pl.total-(pl.given||0);
       if(pl.bolim){var bl=getBolim(),bf=0;for(var bi=0;bi<bl.length;bi++){if(bl[bi].id===pl.bolim){bl[bi].debt=(bl[bi].debt||0)+_dbt;bf=1;break;}}if(bf)setBolim(bl);}
-      else if(pl.customer){var cu=getCust(),f=0;for(var i=0;i<cu.length;i++){if(cu[i].nom===pl.customer){cu[i].debt=(cu[i].debt||0)+_dbt;f=1;break;}}if(!f)cu.push({id:uid('cust'),nom:pl.customer,phone:'',debt:_dbt});setCust(cu);}
+      else if(pl.customer){var cu=getCust(),f=0;for(var i=0;i<cu.length;i++){if(cu[i].nom===pl.customer){cu[i].debt=(cu[i].debt||0)+_dbt;f=1;break;}}if(!f)cu.push({id:'sc_'+ev.id,nom:pl.customer,phone:'',debt:_dbt});setCust(cu);}
     }
   }else if(ev.kind==='kirim'){
     var p2=findProd(pl.pid);if(p2)p2.qoldiq=Math.round((p2.qoldiq+pl.qty)*1000)/1000;
@@ -5589,7 +5591,7 @@ function applyEvent(ev){
   }else if(ev.kind==='supdue'){var sdd=getSup();for(var sq=0;sq<sdd.length;sq++){if(sdd[sq].id===pl.id){sdd[sq].due=pl.due||'';break;}}setSup(sdd);}else if(ev.kind==='sup'||ev.kind==='cust'){
     var g=(ev.kind==='sup')?getSup():getCust(),ex=0;for(var m=0;m<g.length;m++){if(g[m].id===pl.id){g[m].nom=pl.nom;g[m].phone=pl.phone;if(pl.limit!=null)g[m].limit=pl.limit;ex=1;break;}}if(!ex)g.push({id:pl.id,nom:pl.nom,phone:pl.phone,debt:0,limit:(pl.limit!=null?pl.limit:0)});if(ev.kind==='sup')setSup(g);else setCust(g);
   }else if(ev.kind==='custbulk'){
-    var cu=getCust();(pl.list||[]).forEach(function(it){var cf=0;for(var ci=0;ci<cu.length;ci++){if(cu[ci].nom===it.nom){cu[ci].debt=it.debt||0;if(it.phone)cu[ci].phone=it.phone;cf=1;break;}}if(!cf)cu.push({id:uid('cust'),nom:it.nom,phone:it.phone||'',debt:it.debt||0});});setCust(cu);
+    var cu=getCust();(pl.list||[]).forEach(function(it,_ii){var cf=0;for(var ci=0;ci<cu.length;ci++){if(cu[ci].nom===it.nom){cu[ci].debt=it.debt||0;if(it.phone)cu[ci].phone=it.phone;cf=1;break;}}if(!cf)cu.push({id:'cb_'+ev.id+'_'+_ii,nom:it.nom,phone:it.phone||'',debt:it.debt||0});});setCust(cu);
   }else if(ev.kind==='supdel'||ev.kind==='custdel'){
     var typ=(ev.kind==='supdel')?'sup':'cust';var d2=((typ==='sup')?getSup():getCust()).filter(function(x){return x.id!==pl.id;});if(typ==='sup')setSup(d2);else setCust(d2);
   }else if(ev.kind==='adjust'){var pa=findProd(pl.pid);if(pa)pa.qoldiq=pl.to;}else if(ev.kind==='config'){if(pl.pins){try{localStorage.setItem('kroff_pins',JSON.stringify(pl.pins));}catch(e){}}}else if(ev.kind==='prodadd'){if(!findProd(pl.id)){var np={id:pl.id,nom:pl.nom,artikul:pl.artikul||'',barcode:pl.barcode||'',olchov:pl.olchov||'dona',kategoriya:pl.kategoriya||'',brend:'',sotuv:pl.sotuv||0,xarid:pl.xarid||0,minn:pl.minn||0,qoldiq:pl.qoldiq||0,marja:0,arxiv:false,erkin:(pl.erkin?true:false)};np._s=(np.nom+' '+np.brend+' '+np.kategoriya).toLowerCase();PRODUCTS.push(np);if(np.barcode){if(!BCX[np.barcode])BCX[np.barcode]=[];BCX[np.barcode].push(np);}}}else if(ev.kind==='reprice'){var rp=findProd(pl.pid);if(rp){if(pl.sotuv!=null)rp.sotuv=pl.sotuv;if(pl.xarid!=null)rp.xarid=pl.xarid;if(pl.minn!=null)rp.minn=pl.minn;}}else if(ev.kind==='writeoff'){var wp=findProd(pl.pid);if(wp)wp.qoldiq=Math.round((wp.qoldiq-pl.qty)*1000)/1000;}else if(ev.kind==='optom'){var oo=findProd(pl.pid);if(oo&&pl.optom!=null)oo.optom=pl.optom;}else if(ev.kind==='prodsup'){var psx=findProd(pl.pid);if(psx)psx.supId=(pl.supId||'');}else if(ev.kind==='prodimg'){var pix=findProd(pl.pid);if(pix)pix.img=(pl.url||'');}else if(ev.kind==='prodedit'){var pe=findProd(pl.pid);if(pe){if(pl.nom!=null)pe.nom=pl.nom;if(pl.kategoriya!=null)pe.kategoriya=pl.kategoriya;if(pl.olchov!=null)pe.olchov=pl.olchov;if(pl.barcode!=null&&pl.barcode!=='')pe.barcode=pl.barcode;if(pl.erkin!=null)pe.erkin=!!pl.erkin;pe._s=((pe.nom||'')+' '+(pe.brend||'')+' '+(pe.kategoriya||'')).toLowerCase();}}else if(ev.kind==='draft'){var _drL=getDrafts(),_drI=-1;for(var _drX=0;_drX<_drL.length;_drX++)if(_drL[_drX].id===pl.id){_drI=_drX;break;}var _drO={id:pl.id,ts:pl.ts||ev.ts,label:pl.label,cust:pl.cust,pay:pl.pay,cart:pl.cart||[],seller:ev.seller||'',type:(pl.type||'kechik')};if(_drI>=0)_drL[_drI]=_drO;else _drL.unshift(_drO);setDrafts(_drL);}else if(ev.kind==='draftdel'){var _drZ=getDrafts();for(var _drY=0;_drY<_drZ.length;_drY++)if(_drZ[_drY].id===pl.id){_drZ.splice(_drY,1);break;}setDrafts(_drZ);}
@@ -5609,7 +5611,7 @@ function commitEvent(kind,payload,ts){
 
 function _trashInfo(evs){var trash={},purge={};evs.forEach(function(e){var pl=e.payload||{},r=pl.ref;if(!r)return;if(e.kind==='trash')trash[r]=1;else if(e.kind==='untrash')delete trash[r];else if(e.kind==='purge'){purge[r]=1;delete trash[r];}});var skip={};for(var a in trash)skip[a]=1;for(var b in purge)skip[b]=1;return {skip:skip,bin:trash};}
 /* ===== Nazorat nuqtasi (checkpoint) — faqat tezlatgich, asosiy manba hodisalar jurnali ===== */
-var SNAP_KEY='_snapshot_state',SNAP_V=1,SNAP_EVERY=200,_sinceSnap=0,_evCount=0,_BASEA=null,_snapOff=false;
+var SNAP_KEY='_snapshot_state',SNAP_V=2,SNAP_EVERY=200,_sinceSnap=0,_evCount=0,_BASEA=null,_snapOff=false;
 function _baseArr(){if(!_BASEA)_BASEA=loadBase();return _BASEA;}
 function _baseFP(){var b=_baseArr();return b.length+'|'+(b.length?b[0].id:'')+'|'+(b.length?b[b.length-1].id:'');}
 function _snapClear(){try{localStorage.removeItem(SNAP_KEY);}catch(e){}_sinceSnap=0;}
@@ -5731,6 +5733,56 @@ function _pushList(un,cb){
   try{ window._SYNC_XATO=m; console.error('PUSH XATO:',m); }catch(_){}
   cb&&cb(false);});
 }
+/* ===== SERVER HOLATI: qoldiq va mijoz qarzi serverdan (2026-10) =====
+   Telefon qoldiq/qarzni o'zi hisoblamaydi — server (tovar.qoldiq, mijoz_qarz) hisoblagan
+   tayyor raqamni oladi. Faqat o'zgarganlar olinadi (holat_ozgarish RPC), har 10 daqiqada to'liq.
+   Ma'lumot faqat xotirada (o'zgaruvchida) turadi. */
+var _SRVH={q:{},c:{},since:null,busy:false,ok:false,full:0};
+function srvHolat(full){
+  if(!DEPLOY.SERVER_HOLAT||_SRVH.busy||navigator.onLine===false)return;
+  if(!_SRVH.ok||Date.now()-_SRVH.full>600000)full=true;
+  _SRVH.busy=true;
+  fetch(SB_URL+'/rest/v1/rpc/holat_ozgarish',{method:'POST',headers:_sbHdr(),body:JSON.stringify({p_since:full?null:_SRVH.since})})
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(function(j){
+      _SRVH.busy=false;if(!j||!j.now)return;
+      if(full){_SRVH.q={};_SRVH.c={};_SRVH.full=Date.now();}
+      (j.tovar||[]).forEach(function(t){_SRVH.q[t.id]=+t.q||0;});
+      (j.mijoz||[]).forEach(function(m){_SRVH.c[m.id]=m;});
+      _SRVH.since=new Date(new Date(j.now).getTime()-3000).toISOString();
+      _SRVH.ok=true;
+      if(!full&&j.mijozN!=null&&+j.mijozN!==Object.keys(_SRVH.c).length){setTimeout(function(){srvHolat(true);},50);return;}
+      if(_srvHolatApply()&&typeof _refreshSoon==='function')_refreshSoon();
+    })
+    .catch(function(){_SRVH.busy=false;});
+}
+/* server raqamlarini ekrandagi ro'yxatlarga qo'yish; o'zgarish bo'lsa true */
+function _srvHolatApply(){
+  if(!DEPLOY.SERVER_HOLAT||!_SRVH.ok)return false;
+  if(_UNSYNC&&_UNSYNC.length)return false;      // o'zimizning hali yuborilmagan amal bor — kutamiz
+  var ch=false,i,p,v;
+  for(i=0;i<PRODUCTS.length;i++){p=PRODUCTS[i];v=_SRVH.q[p.id];if(v!=null&&p.qoldiq!==v){p.qoldiq=v;ch=true;}}
+  var loc=getCust(),byId={},byN={};
+  loc.forEach(function(c){byId[c.id]=c;if(!byN[c.nom])byN[c.nom]=c;});
+  var rows=Object.keys(_SRVH.c).map(function(k){return _SRVH.c[k];}).sort(function(a,b){return (+a.s||0)-(+b.s||0);});
+  var out=[],cc=(rows.length!==loc.length);
+  rows.forEach(function(m){
+    var b=byId[m.id]||byN[m.nom]||null,d=Math.round((+m.q||0)*100)/100,bo=+m.b||0;
+    if(!b||b.nom!==m.nom||Math.round((b.debt||0)*100)/100!==d||(b.bonus||0)!==bo||b.id!==m.id)cc=true;
+    var o={};if(b){for(var k in b)if(b.hasOwnProperty(k))o[k]=b[k];}
+    o.id=m.id;o.nom=m.nom;o.phone=m.tel||(b&&b.phone)||'';o.debt=d;o.bonus=bo;
+    out.push(o);
+  });
+  if(cc){setCust(out);ch=true;}
+  return ch;
+}
+(function(){
+  if(typeof cloudPull==='function'){var _cpl=cloudPull;cloudPull=function(cb){_cpl(function(ok){srvHolat();cb&&cb(ok);});};}
+  if(typeof cloudPush==='function'){var _cps=cloudPush;cloudPush=function(cb){_cps(function(ok){if(ok)setTimeout(srvHolat,400);cb&&cb(ok);});};}
+  setInterval(function(){srvHolat();},20000);
+  setTimeout(function(){srvHolat(true);},1500);
+})();
+
 function cloudPull(cb){
   var _since=Math.max(0,_maxEvTs-60000);
   fetch(SB_URL+'/rest/v1/'+SB_EV+'?select=*&ts=gt.'+_since,{headers:_sbHdr()})
@@ -6066,7 +6118,7 @@ function ihSetTyp(t){IHF.typ=t;
 function _ihRemove(id){
   var r=IHREC[id];if(!r)return;
   if(r.kevId)commitEvent('evvoid',{id:r.kevId});
-  if(r.acc==='qarz'&&r.custId)commitEvent('custadj',{id:r.custId,amount:r.amount});
+  if(r.acc==='qarz'&&r.custId)commitEvent('custadj',{id:r.custId,nom:((_custById(r.custId)||{}).nom||''),amount:r.amount});
   commitEvent('ihdel',{id:id});
 }
 function ihPaySave(){
@@ -6079,7 +6131,7 @@ function ihPaySave(){
   if(IHF.edit)_ihRemove(IHF.edit);
   var lbl=(typ==='oylik'?'Oylik':'Avans');
   var kevId='';
-  if(acc==='qarz'){ commitEvent('custadj',{id:x.custId,amount:-amt}); }
+  if(acc==='qarz'){ commitEvent('custadj',{id:x.custId,nom:((_custById(x.custId)||{}).nom||''),amount:-amt}); }
   else{ var kev=commitEvent('kassa',{dir:'out',acc:acc,amount:amt,cat:lbl,note:lbl+' \u00b7 '+x.nom+(note?(' \u00b7 '+note):'')},ts); kevId=kev.id; }
   commitEvent(typ,{id:uid('ih'),xid:x.id,amount:amt,acc:acc,ym:ym,day:day,note:note,kevId:kevId,custId:(acc==='qarz'?x.custId:'')},ts);
   var o=document.getElementById('ihPayOv');if(o)o.remove();
