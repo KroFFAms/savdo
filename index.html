@@ -821,7 +821,7 @@ var DEPLOY = {
 
   <div class="list" id="list"></div>
   </div>
-  <div id="view-sotuv" class="view">
+  <div id="view-sotuv" class="view"><div id="smenaBan" style="display:none;align-items:center;gap:10px;margin:0 0 8px;padding:8px 12px;background:#fdf3e7;border:1px solid #f0c98a;border-radius:10px;font-size:13px"><span style="flex:1">⏱️ <b>Smena ochilmagan</b> — kun boshida kassadagi pulni sanab, smenani oching</span><button class="btn sm" style="background:#375623;color:#fff;white-space:nowrap" onclick="smenaOchDlg()">🔓 Ochish</button></div>
     <div class="sv-bar"><select id="seller" class="seller"></select><button class="btn btn-ghost sm" onclick="editSellers()" title="Sotuvchilar">⚙️</button><button id="optomBtn" class="optbtn" onclick="toggleOptom()" title="Optom/Dona narx">Dona</button><button id="retBtn" class="btn btn-ghost sm" onclick="openReturn()" title="Qaytarish" style="display:none">↩️ Qaytar</button><button class="btn btn-ghost sm" onclick="holdSale('qoralama')" title="Qoralama sifatida saqlash">📝 Qoralama</button><button class="btn btn-ghost sm" onclick="holdSale('kechik')" title="Kechiktirish">⏸ Kechik.</button><button class="btn btn-ghost sm" onclick="openSavdolar()" title="Savdolar">💳 Savdolar</button><span style="flex:1"></span><div class="dtot">Bugun: <b id="dayTotal">0</b></div></div>
     <div id="draftBar" class="draftbar" style="display:none"></div><div class="sv-search" id="svSearchWrap"><div class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input id="sq" type="search" inputmode="search" placeholder="Sotuv — tovar qidiring…" autocomplete="off"></div><div class="bc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5v14M7 5v14M11 5v14M15 5v14M19 5v14M21 5v14"/></svg><input id="sbc" type="text" inputmode="numeric" placeholder="Skaner" autocomplete="off"></div><div class="sqty"><input id="sqQty" type="text" inputmode="decimal" placeholder="Soni" autocomplete="off"></div></div>
     <div style="padding:2px 16px 6px" id="svScanWrap"><button class="btn" style="width:100%" onclick="openScan()">📷 Kamera bilan skanerlash</button></div>
@@ -4919,7 +4919,7 @@ function renderKassa(){
       if(DEPLOY.SERVER_HOLAT&&_SRVH.ok&&_SRVH.kassa){['naqd','karta','payme1','payme2','bank'].forEach(function(a){cur[a]=+_SRVH.kassa[a]||0;});}
       var curC=cur.naqd, curB=cur.karta+cur.payme1+cur.payme2+cur.bank;
       function card(cls,ic,title,c,b){return '<div class="kcard '+cls+'"><div class="kc-h">'+ic+' '+title+'</div><div class="kc-r"><span>Naqd</span><b>'+grp(c)+'</b></div><div class="kc-r"><span>Karta/Payme/H.R</span><b>'+grp(b)+'</b></div></div>';}
-      var h='<div class="kgrid">';
+      var h=(typeof _smenaCard==='function'?_smenaCard():'')+'<div class="kgrid">';
       h+=card('kin','\u2b07\ufe0f',(DEPLOY.XOTIRA?'Bugun kirdi':'Kassaga kirdi'),inC,inB);
       h+=card('kout','\u2b06\ufe0f',(DEPLOY.XOTIRA?'Bugun chiqdi':'Kassadan chiqdi'),outC,outB);
       h+=card('','\ud83d\udd13','Ochilish qoldig\u2019i',openC,openB);
@@ -6603,6 +6603,200 @@ if(DEPLOY.QURILMA){
     }).catch(function(){});
   },1500);
 }
+
+/* ===== KASSA SMENASI (2026-10) =====
+   Smena ochiladi: kassadagi naqd pul sanaladi (boshi).
+   Smena yopiladi: pul qayta sanaladi (haqiqiy). Kutilgan = boshi + smena davridagi naqd harakat:
+     naqd sotuv (qarzga sotuvdan tashqari) + kassa naqd kirim − naqd chiqim (bekor qilinganlarsiz).
+   Farq = haqiqiy − kutilgan (minus — kamomad, plus — ortiqcha).
+   Hodisa: kind 'smena', payload {act:'och'|'yop', id, ...}. Butun do'kon uchun bitta smena. */
+var _SMV={};
+var _SM_SKIPCAT={'Ochilish qoldig’i':1,'Smena farqi':1};
+function _smList(){var a=[];for(var k in _SMV)a.push(_SMV[k]);a.sort(function(x,y){return (+x.ts||0)-(+y.ts||0)||(x.id<y.id?-1:1);});return a;}
+/* smenalar: [{id,och:ev,yop:ev|null}] */
+function _smShifts(){
+  var L=_smList(),S={},out=[];
+  L.forEach(function(e){var p=e.payload||{};
+    if(p.act==='och'){S[p.id]={id:p.id,och:e,yop:null};out.push(S[p.id]);}
+    else if(p.act==='yop'&&S[p.id]&&!S[p.id].yop)S[p.id].yop=e;});
+  return out;
+}
+function _smOpen(){var a=_smShifts();for(var i=a.length-1;i>=0;i--){if(!a[i].yop)return a[i];}return null;}
+function _smLastClosed(){var a=_smShifts();for(var i=a.length-1;i>=0;i--){if(a[i].yop)return a[i];}return null;}
+function _smWho(e){return (e&&(e.seller||(e.payload&&e.payload.kim)))||'Admin';}
+function _smTs(t){var d=new Date(+t||0);return ('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+' '+('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);}
+function _smIsAdm(){return typeof _role!=='undefined'&&_role==='admin';}
+function _smFarqH(f){f=Math.round(f||0);if(!f)return '<b style="color:#375623">0 ✔️</b>';return '<b style="color:'+(f<0?'#a32d2d':'#1F4E79')+'">'+(f>0?'+':'−')+grp(Math.abs(f))+(f<0?' kamomad':' ortiqcha')+'</b>';}
+
+/* smena davridagi pul harakati (fromTs dan hozirgacha) */
+function _smCalc(fromTs,cb){
+  var _d0=new Date(+fromTs||0);_d0.setHours(0,0,0,0);
+  (typeof _memEnsure==='function'?_memEnsure:function(f,c){c();})(_d0.getTime(),function(){
+    salesLoad(function(all){evAll(function(evs){
+      var sv={naqd:0,karta:0,payme1:0,payme2:0,bank:0,qarz:0},n=0,tot=0,kin=0,kout=0,kinB=0,koutB=0;
+      all.forEach(function(x){var t=x.ts?Date.parse(x.ts):0;if(!t||t<fromTs)return;n++;tot+=+x.total||0;
+        var pp=_payParts(x,1);for(var k in sv)sv[k]+=pp[k]||0;});
+      evs.forEach(function(e){if(e.kind!=='kassa'||!e.payload||VOID[e.id]||(+e.ts||0)<fromTs)return;var p=e.payload;
+        if(_SM_SKIPCAT[p.cat||''])return;var a=+p.amount||0,c=(p.acc||'naqd')==='naqd';
+        if(p.dir==='in'){if(c)kin+=a;else kinB+=a;}else{if(c)kout+=a;else koutB+=a;}});
+      cb({sv:sv,n:n,tot:Math.round(tot),kin:kin,kout:kout,kinB:kinB,koutB:koutB,naqd:sv.naqd+kin-kout});
+    });});
+  });
+}
+
+/* ---- oyna ---- */
+function _smDlg(html){
+  var o=document.getElementById('smDlg');
+  if(!o){o=document.createElement('div');o.id='smDlg';o.style.cssText='position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:9999;display:flex;align-items:flex-end;justify-content:center';
+    o.onclick=function(e){if(e.target===o)_smDlgX();};document.body.appendChild(o);}
+  o.innerHTML='<div style="background:#fff;width:100%;max-width:480px;max-height:92vh;overflow:auto;border-radius:16px 16px 0 0;padding:16px 16px 22px;box-sizing:border-box">'+html+'</div>';
+  o.style.display='flex';
+}
+function _smDlgX(){var o=document.getElementById('smDlg');if(o){o.style.display='none';o.innerHTML='';}}
+function _smRow(l,v,st){return '<div style="display:flex;justify-content:space-between;gap:10px;padding:5px 0;font-size:13.5px;border-bottom:1px dashed #e5e9ef'+(st||'')+'"><span style="color:#5b6b7d">'+l+'</span><span>'+v+'</span></div>';}
+var _SMIN='width:100%;box-sizing:border-box;font-size:20px;font-weight:800;padding:10px 12px;border:1.5px solid #B9D3EC;border-radius:10px;margin:6px 0 10px';
+
+/* ---- ochish ---- */
+function smenaOchDlg(){
+  var o=_smOpen();if(o){toast('Smena allaqachon ochiq ('+_smTs(o.och.ts)+', '+esc(_smWho(o.och))+')');return;}
+  var lc=_smLastClosed(),h='<div style="font-weight:800;font-size:17px;margin-bottom:6px">🔓 Smenani ochish</div>';
+  if(lc){var y=lc.yop.payload||{};
+    h+='<div style="background:#f6f8fb;border-radius:10px;padding:8px 10px;margin:6px 0 10px;font-size:12.5px">Oldingi smena yopilgan: <b>'+_smTs(lc.yop.ts)+'</b> · '+esc(_smWho(lc.yop))+
+      '<br>Kassada sanalgan: <b>'+grp(y.haqiqiy||0)+'</b>'+(y.farq?' · farq '+_smFarqH(y.farq):'')+'</div>';}
+  h+='<div style="font-size:13px;color:#5b6b7d">Kassadagi naqd pulni sanang:</div>'+
+    '<input id="smBoshi" type="text" inputmode="numeric" placeholder="0" style="'+_SMIN+'" oninput="_smOchHint()" value="'+(lc?Math.round(lc.yop.payload.haqiqiy||0):'')+'">'+
+    '<div id="smOchHint" style="font-size:12.5px;min-height:16px;margin-bottom:8px"></div>'+
+    '<input id="smOchIzoh" type="text" placeholder="Izoh (ixtiyoriy)" style="width:100%;box-sizing:border-box;padding:9px 12px;border:1px solid #d6dde6;border-radius:10px;margin-bottom:12px">'+
+    '<div style="display:flex;gap:8px"><button class="btn btn-ghost" style="flex:1" onclick="_smDlgX()">Bekor</button><button class="btn" style="flex:2;background:#375623;color:#fff" onclick="smenaOch()">✅ Smenani ochish</button></div>';
+  _smDlg(h);_smOchHint();
+}
+function _smOchHint(){var el=document.getElementById('smOchHint'),lc=_smLastClosed();if(!el||!lc)return;
+  var v=_pf((document.getElementById('smBoshi')||{}).value),d=v-(+lc.yop.payload.haqiqiy||0);
+  el.innerHTML=d?'Oldingi yopilishdan farq: '+_smFarqH(d):'<span style="color:#375623">Oldingi yopilish bilan bir xil ✔️</span>';}
+function smenaOch(){
+  if(_smOpen()){_smDlgX();toast('Smena allaqachon ochiq');return;}
+  var v=Math.round(_pf((document.getElementById('smBoshi')||{}).value)||0),iz=((document.getElementById('smOchIzoh')||{}).value||'').trim();
+  if(v<0){toast('Summa noto‘g‘ri');return;}
+  var lc=_smLastClosed(),p={act:'och',id:uid('sm'),boshi:v};
+  if(lc)p.oldingi=Math.round(+lc.yop.payload.haqiqiy||0);
+  if(iz)p.izoh=iz;
+  commitEvent('smena',p);_smDlgX();toast('🔓 Smena ochildi · kassada '+grp(v));_smRefresh();
+}
+
+/* ---- yopish ---- */
+var _SMC=null;
+function smenaYopDlg(){
+  var o=_smOpen();if(!o){toast('Ochiq smena yo‘q');return;}
+  _smDlg('<div class="cart-empty">⏳ Hisoblanmoqda…</div>');
+  _smCalc(+o.och.ts,function(c){
+    _SMC={o:o,c:c};var b=+o.och.payload.boshi||0,kut=b+c.naqd,s=c.sv;
+    var h='<div style="font-weight:800;font-size:17px;margin-bottom:2px">🔒 Smenani yopish</div>'+
+      '<div style="font-size:12px;color:#5b6b7d;margin-bottom:8px">Ochildi: '+_smTs(o.och.ts)+' · '+esc(_smWho(o.och))+' · '+c.n+' chek · savdo '+grp(c.tot)+'</div>';
+    h+=_smRow('Smena boshida (naqd)','<b>'+grp(b)+'</b>');
+    h+=_smRow('+ Naqd savdo',grp(s.naqd));
+    h+=_smRow('+ Kassaga naqd kirim','<span title="qarz to‘lovi, qarzga sotuvdan olingan pul va b.">'+grp(c.kin)+'</span>');
+    h+=_smRow('− Kassadan naqd chiqim',grp(c.kout));
+    h+=_smRow('<b>Kassada bo‘lishi kerak</b>','<b style="font-size:16px">'+grp(kut)+'</b>',';border-bottom:2px solid #1F4E79');
+    h+='<div style="font-size:12px;color:#5b6b7d;margin:8px 0 2px">Naqdsiz (ma’lumot uchun): karta '+grp(s.karta)+' · payme '+grp(s.payme1+s.payme2)+' · hisob r. '+grp(s.bank)+' · qarzga '+grp(s.qarz)+'</div>';
+    h+='<div style="font-size:13px;color:#5b6b7d;margin-top:10px">Kassadagi naqd pulni sanang:</div>'+
+      '<input id="smHaq" type="text" inputmode="numeric" placeholder="0" style="'+_SMIN+'" oninput="_smYopHint()">'+
+      '<div id="smYopHint" style="font-size:14px;min-height:20px;margin-bottom:8px"></div>'+
+      '<input id="smYopIzoh" type="text" placeholder="Izoh (masalan: farq sababi)" style="width:100%;box-sizing:border-box;padding:9px 12px;border:1px solid #d6dde6;border-radius:10px;margin-bottom:10px">';
+    if(_smIsAdm())h+='<label style="display:flex;gap:8px;align-items:center;font-size:12.5px;margin-bottom:12px"><input type="checkbox" id="smFarqK"> Farqni kassaga yozish (“Smena farqi” amaliyoti)</label>';
+    h+='<div style="display:flex;gap:8px"><button class="btn btn-ghost" style="flex:1" onclick="_smDlgX()">Bekor</button><button class="btn" style="flex:2;background:#a32d2d;color:#fff" onclick="smenaYop()">🔒 Smenani yopish</button></div>';
+    _smDlg(h);
+  });
+}
+function _smYopHint(){var el=document.getElementById('smYopHint');if(!el||!_SMC)return;
+  var raw=(document.getElementById('smHaq')||{}).value;if(!String(raw||'').trim()){el.innerHTML='';return;}
+  var kut=(+_SMC.o.och.payload.boshi||0)+_SMC.c.naqd;el.innerHTML='Farq: '+_smFarqH(_pf(raw)-kut);}
+function smenaYop(){
+  if(!_SMC)return;var o=_SMC.o,c=_SMC.c;
+  var cur=_smOpen();if(!cur||cur.id!==o.id){_smDlgX();toast('Smena holati o‘zgargan — qayta oching');return;}
+  var raw=(document.getElementById('smHaq')||{}).value;if(!String(raw||'').trim()){toast('Kassadagi pulni kiriting');return;}
+  var haq=Math.round(_pf(raw)||0),b=+o.och.payload.boshi||0,kut=Math.round(b+c.naqd),f=haq-kut;
+  var iz=((document.getElementById('smYopIzoh')||{}).value||'').trim(),fk=document.getElementById('smFarqK');
+  if(f&&!confirm('Farq: '+(f>0?'+':'−')+grp(Math.abs(f))+(f<0?' (kamomad)':' (ortiqcha)')+'\nSmena yopilsinmi?'))return;
+  var p={act:'yop',id:o.id,boshi:b,kutilgan:kut,haqiqiy:haq,farq:f,ochts:+o.och.ts,
+    sv:c.sv,kin:c.kin,kout:c.kout,cheklar:c.n,savdo:c.tot};
+  if(iz)p.izoh=iz;
+  commitEvent('smena',p);
+  if(f&&fk&&fk.checked)commitEvent('kassa',{dir:f>0?'in':'out',acc:'naqd',amount:Math.abs(f),cat:'Smena farqi',note:'Smena '+_smTs(o.och.ts)+(iz?' · '+iz:'')});
+  _SMC=null;_smDlgX();
+  toast('🔒 Smena yopildi'+(f?' · farq '+(f>0?'+':'−')+grp(Math.abs(f)):' · farq yo‘q'));_smRefresh();
+}
+
+/* ---- kassa ekranidagi karta ---- */
+function _smenaCard(){setTimeout(_smFill,0);return '<div id="smenaBox" style="margin-bottom:10px"></div>';}
+function _smFill(){
+  var el=document.getElementById('smenaBox');if(!el)return;
+  var o=_smOpen(),B='border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px;';
+  if(!o){var lc=_smLastClosed();
+    el.innerHTML='<div style="'+B+'background:#fdf3e7;border:1px solid #f0c98a"><div style="flex:1;font-size:13px"><b>⏱️ Smena yopiq</b>'+
+      (lc?'<div style="font-size:11.5px;color:#7a5a25">Oxirgi: '+_smTs(lc.yop.ts)+' · '+esc(_smWho(lc.yop))+' · sanalgan '+grp(lc.yop.payload.haqiqiy||0)+(lc.yop.payload.farq?' · farq '+_smFarqH(lc.yop.payload.farq):'')+'</div>':'')+
+      '</div><button class="btn" style="background:#375623;color:#fff;white-space:nowrap" onclick="smenaOchDlg()">🔓 Ochish</button></div>';
+    return;}
+  var b=+o.och.payload.boshi||0;
+  el.innerHTML='<div style="'+B+'background:#eef7ea;border:1px solid #b9dcaa"><div style="flex:1;font-size:13px"><b>⏱️ Smena ochiq</b> <span style="font-size:11.5px;color:#5b6b7d">'+_smTs(o.och.ts)+' · '+esc(_smWho(o.och))+'</span>'+
+    '<div id="smKut" style="font-size:12px;color:#375623">Boshida '+grp(b)+' · hisoblanmoqda…</div></div>'+
+    '<button class="btn" style="background:#a32d2d;color:#fff;white-space:nowrap" onclick="smenaYopDlg()">🔒 Yopish</button></div>';
+  _smCalc(+o.och.ts,function(c){var k=document.getElementById('smKut');if(k)k.innerHTML='Boshida '+grp(b)+' · naqd harakat '+(c.naqd<0?'−':'+')+grp(Math.abs(c.naqd))+' · <b>kassada bo‘lishi kerak '+grp(b+c.naqd)+'</b>';});
+}
+
+/* ---- sotuv ekranidagi eslatma ---- */
+var _smBanT=0;
+function _smBanner(){
+  var el=document.getElementById('smenaBan');if(!el)return;
+  var show=!_smOpen()&&(typeof _SRVH==='undefined'||_SRVH.ok||!DEPLOY.SERVER_HOLAT);
+  el.style.display=show?'flex':'none';
+}
+function _smRefresh(){
+  _smBanner();
+  if(document.getElementById('smenaBox'))_smFill();
+  if(typeof HTAB!=='undefined'&&HTAB==='smena'&&typeof renderHisobot==='function'&&document.getElementById('smHist'))renderHisobot();
+}
+
+/* ---- hisobot: Smena (smenalar tarixi + davr xulosasi) ---- */
+function _smHistory(el){
+  var r=_rrRange(),a=_smShifts().filter(function(s){var d=dayStr(new Date(+s.och.ts));return d>=r.from&&d<=r.to;}).reverse();
+  var head=['Ochildi','Yopildi','Ochdi','Yopdi','Boshida','Naqd savdo','Naqd kirim','Naqd chiqim','Kutilgan','Sanaldi','Farq','Izoh'];
+  var rows=[],F=0,K=0,H=0;
+  a.forEach(function(s){var o=s.och.payload||{},y=s.yop?(s.yop.payload||{}):null;
+    var iz=[o.izoh,y&&y.izoh].filter(Boolean).join(' / ');
+    if(y){F+=+y.farq||0;K+=+y.kutilgan||0;H+=+y.haqiqiy||0;}
+    rows.push([_smTs(s.och.ts),y?_smTs(s.yop.ts):'ochiq',_smWho(s.och),y?_smWho(s.yop):'',+o.boshi||0,
+      y&&y.sv?Math.round(y.sv.naqd||0):'',y?Math.round(y.kin||0):'',y?Math.round(y.kout||0):'',y?+y.kutilgan||0:'',y?+y.haqiqiy||0:'',y?+y.farq||0:'',iz]);});
+  var h='<div class="bhead" id="smHist">⏱️ Smenalar tarixi · '+a.length+' ta'+(F?' · jami farq '+_smFarqH(F):'')+'</div>';
+  h+=_rrTable('smena',head,rows,rows.length?['Jami','','','','','','','',K,H,F,'']:null);
+  var d=document.createElement('div');d.innerHTML=h;el.insertBefore(d,el.firstChild);
+}
+if(typeof renderH_smena==='function'){
+  var _rhSmOld=renderH_smena;
+  renderH_smena=function(el,all){
+    el.innerHTML='';var top=document.createElement('div'),sub=document.createElement('div');
+    el.appendChild(top);el.appendChild(sub);
+    _smHistory(top);
+    var o=_smOpen();
+    var bt=document.createElement('div');bt.style.cssText='margin:8px 0 14px;display:flex;gap:8px';
+    bt.innerHTML=o?'<button class="btn" style="background:#a32d2d;color:#fff" onclick="smenaYopDlg()">🔒 Smenani yopish</button>':'<button class="btn" style="background:#375623;color:#fff" onclick="smenaOchDlg()">🔓 Smenani ochish</button>';
+    top.appendChild(bt);
+    var hd=document.createElement('div');hd.className='bhead';hd.textContent='Davr savdosi';top.appendChild(hd);
+    _rhSmOld(sub,all);
+    /* eski "Kassa balansi (bugun)" bloki endi smena bilan almashtirildi */
+    var t=setInterval(function(){var kb=sub.querySelector('.kassa-box');if(kb){var p=kb.previousSibling;if(p&&p.className==='bhead')p.parentNode.removeChild(p);kb.parentNode.removeChild(kb);clearInterval(t);}},30);
+    setTimeout(function(){clearInterval(t);},3000);
+  };
+}
+
+/* hodisalarni kuzatish */
+(function(){
+  var _aeS=applyEvent;
+  applyEvent=function(ev){
+    if(ev&&ev.kind==='smena'&&ev.id){var n=!_SMV[ev.id];_SMV[ev.id]=ev;if(n){clearTimeout(_smBanT);_smBanT=setTimeout(_smRefresh,150);}return;}
+    return _aeS.apply(this,arguments);
+  };
+  setInterval(_smBanner,4000);
+})();
 
 /* ---- init ---- */
 openDB(function(){
