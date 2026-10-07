@@ -5300,26 +5300,39 @@ function bzImportFile(input){
 }
 function _bzDs(s){s=String(s||'');return s.length>=10?(s.slice(8,10)+'.'+s.slice(5,7)+'.'+s.slice(0,4)+(s.length>=16?' '+s.slice(11,16):'')):s;}
 function bzToggle(id){var el=document.getElementById(id);if(el)el.style.display=(el.style.display==='none'?'':'none');}
-function bzChek(i){
-  var box=document.getElementById('bzc'+i);if(!box||!_BZCUR)return;
-  if(box.innerHTML){box.innerHTML='';return;}
-  var c=(_BZCUR.cheklar||[])[i];if(!c)return;
-  box.innerHTML=(c[6]||[]).map(function(z){return '<div style="display:flex;gap:8px;padding:4px 6px 4px 14px;font-size:12px;border-bottom:1px dashed var(--line2)"><div style="flex:1;min-width:0">'+esc(z[0]||'')+(z[1]?' <span style="color:#9aa4b2">'+esc(z[1])+'</span>':'')+'<div style="color:#9aa4b2">'+grp(z[3]||0)+' × '+(z[2]||0)+(z[4]?' · chegirma '+grp(z[4]):'')+'</div></div><div style="font-weight:700;white-space:nowrap">'+grp(z[5]||0)+'</div></div>';}).join('')||'<div style="padding:4px 14px;font-size:12px;color:#9aa4b2">Tovar yo‘q</div>';
+function _bzItems(c){
+  /* chekdagi tovarlar: nom — soni × narx = summa (narx = summa / soni, Billz'da qator summasi saqlangan) */
+  var it=(c&&c[6])||[];
+  if(!it.length)return '<div style="padding:3px 0 2px 2px;font-size:11.5px;color:#9aa4b2">Tovar ma’lumoti yo‘q</div>';
+  return '<div style="margin:4px 0 2px;padding:6px 8px;background:#f8fafc;border-radius:8px;border:1px solid var(--line2)">'+it.map(function(z){
+    var q=+z[2]||0,t=+z[5]||0,u=q?Math.round(t/q):(+z[3]||0);
+    return '<div style="display:flex;gap:8px;font-size:12px;padding:2px 0"><div style="flex:1;min-width:0">'+esc(z[0]||'')+
+      '<span style="color:#9aa4b2"> — '+grp(q)+' × '+grp(u)+(z[4]?' · chegirma '+grp(z[4]):'')+'</span></div><div style="font-weight:700;white-space:nowrap">'+grp(t)+'</div></div>';
+  }).join('')+'</div>';
 }
 function _bzRender(bz){
   var d=(bz&&bz.data)||{},L=d.ledger||[],C=d.cheklar||[];_BZCUR=d;
   if(!L.length&&!C.length)return '';
+  var CN={};C.forEach(function(c){CN[c[0]]=c;});
   var H='<div style="margin-top:10px;border:1px solid var(--line);border-radius:12px;overflow:hidden">'+
     '<div onclick="bzToggle(\'bzBody\')" style="cursor:pointer;padding:10px 12px;background:#eef4fb;font-weight:800;font-size:13.5px;color:#1F4E79">📜 Billz tarixi · '+L.length+' amal · '+C.length+' chek <span style="float:right">▾</span></div>'+
-    '<div id="bzBody" style="display:none">';
-  H+='<div onclick="bzToggle(\'bzL\')" style="cursor:pointer;padding:8px 10px;font-weight:700;font-size:12.5px;background:#f6f8fb">💳 Qarz harakati (berildi / to‘landi)</div><div id="bzL">';
-  for(var j=L.length-1;j>=0;j--){var r=L[j],g=+r[3]||0,p=+r[4]||0;
-    H+='<div class="cmrow"><div class="cmr-l"><div class="cmr-d">'+_bzDs(r[0])+' · '+esc(r[1]||'')+'</div><div class="cmr-t" style="font-weight:500;font-size:12px">'+(r[2]?'Chek '+esc(r[2]):'')+(r[6]?' · '+esc(r[6]):'')+'</div></div><div class="cmr-a" style="color:'+(g?'#a32d2d':'#375623')+'">'+(g?'+'+grp(g):'−'+grp(p))+'</div><div class="cmr-b">'+grp(+r[5]||0)+'</div></div>';}
-  H+='</div><div onclick="bzToggle(\'bzC\')" style="cursor:pointer;padding:8px 10px;font-weight:700;font-size:12.5px;background:#f6f8fb">🧾 Cheklar (bosilsa tovarlar ochiladi)</div><div id="bzC" style="display:none">';
+    '<div id="bzBody">';
+  H+='<div onclick="bzToggle(\'bzL\')" style="cursor:pointer;padding:8px 10px;font-weight:700;font-size:12.5px;background:#f6f8fb">💳 Qarz harakati — qarzga nima olgan, qachon to‘lagan</div><div id="bzL">';
+  for(var j=L.length-1;j>=0;j--){var r=L[j],g=+r[3]||0,p=+r[4]||0,ch=(g&&r[2])?CN[r[2]]:null;
+    H+='<div class="cmrow" style="align-items:flex-start"><div class="cmr-l"><div class="cmr-d">'+_bzDs(r[0])+' · '+esc(r[1]||'')+(ch&&ch[3]?' · '+esc(ch[3]):'')+'</div>'+
+      '<div class="cmr-t" style="font-weight:500;font-size:12px">'+(r[2]?'Chek №'+esc(r[2]):'')+(r[6]?' · '+esc(r[6]):'')+'</div>'+
+      (g&&r[2]?_bzItems(ch):'')+
+      '</div><div class="cmr-a" style="color:'+(g?'#a32d2d':'#375623')+'">'+(g?'+'+grp(g):'−'+grp(p))+'</div><div class="cmr-b">'+grp(+r[5]||0)+'</div></div>';}
+  H+='</div><div onclick="bzToggle(\'bzC\')" style="cursor:pointer;padding:8px 10px;font-weight:700;font-size:12.5px;background:#f6f8fb">🧾 Barcha cheklar ('+C.length+') — bosilsa tovarlar ochiladi</div><div id="bzC" style="display:none">';
   for(var k=C.length-1;k>=0;k--){var c=C[k];
-    H+='<div class="cmrow" style="cursor:pointer" onclick="bzChek('+k+')"><div class="cmr-l"><div class="cmr-d">'+_bzDs(c[1])+(c[3]?' · '+esc(c[3]):'')+(c[5]?' · <b style="color:#a32d2d">qarzga</b>':'')+'</div><div class="cmr-t" style="font-size:12.5px">'+esc(c[2]||'Sotuv')+' №'+esc(c[0]||'')+' · '+(c[6]||[]).length+' xil tovar</div></div><div class="cmr-a" style="color:#5b6b7d">'+grp(+c[4]||0)+'</div></div><div id="bzc'+k+'"></div>';}
+    H+='<div class="cmrow" style="cursor:pointer" onclick="bzChek('+k+')"><div class="cmr-l"><div class="cmr-d">'+_bzDs(c[1])+(c[3]?' · '+esc(c[3]):'')+(c[5]?' · <b style="color:#a32d2d">qarzga</b>':'')+'</div><div class="cmr-t" style="font-size:12.5px">'+esc(c[2]||'Sotuv')+' №'+esc(c[0]||'')+' · '+(c[6]||[]).length+' xil tovar</div></div><div class="cmr-a" style="color:#5b6b7d">'+grp(+c[4]||0)+'</div></div><div id="bzc'+k+'" style="padding:0 6px"></div>';}
   H+='</div></div></div>';
   return H;
+}
+function bzChek(i){
+  var box=document.getElementById('bzc'+i);if(!box||!_BZCUR)return;
+  if(box.innerHTML){box.innerHTML='';return;}
+  box.innerHTML=_bzItems((_BZCUR.cheklar||[])[i]);
 }
 function closeCust(){document.getElementById('custModal').classList.remove('open');}
 function arxivExport(){
