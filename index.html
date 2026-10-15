@@ -421,7 +421,7 @@ var DEPLOY = {
   #scanVid{width:100%;height:100%;object-fit:cover;background:#000}
   .scan-frame{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:76%;max-width:340px;height:150px;border:3px solid #2E75B6;border-radius:14px;box-shadow:0 0 0 9999px rgba(0,0,0,.4)}
   .scan-hint{position:absolute;bottom:56px;left:0;right:0;text-align:center;color:#fff;font-size:14px;padding:0 24px;text-shadow:0 1px 3px rgba(0,0,0,.8)}
-  /* ===== Chek (58mm termal) + print ===== */
+  /* ===== Chek (80/58mm termal) + print — o'lcham _prnMode() da ===== */
   #receiptArea{display:none}
   #printLastBtn{position:fixed;right:14px;bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:9998;display:none;
     background:#1F4E79;color:#fff;border:none;border-radius:24px;padding:12px 18px;
@@ -786,7 +786,7 @@ var DEPLOY = {
     <h1>KROFF <span class="dot">·</span> Savdo</h1>
     <div class="syncchip" id="syncChip" onclick="manualSync()">☁️ …</div>
     <button class="menu-btn" onclick="toggleMenu(event)" aria-label="Menyu">☰</button>
-    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v90</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)"><span class="mi-i">📦</span>Tovarlar</button><button class="menu-item" data-admin="1" onclick="openOps()"><span class="mi-i">🧾</span>Amaliyotlar</button><button class="menu-item" data-admin="1" onclick="openRetSup()"><span class="mi-i">↩️</span>Ta‘minotga qaytarish</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)"><span class="mi-i">🛒</span>Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)"><span class="mi-i">📈</span>Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)"><span class="mi-i">🚚</span>Katalog</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)"><span class="mi-i">👤</span>Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)"><span class="mi-i">🔧</span>Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)"><span class="mi-i">💰</span>Kassa</button><button class="menu-item" data-v="ishhaqi" data-admin="1" onclick="switchView('ishhaqi',this)"><span class="mi-i">👷</span>Ish haqi</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)"><span class="mi-i">📋</span>Sanoq</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)"><span class="mi-i">⚙️</span>Sozlamalar</button><button class="menu-item" data-admin="1" onclick="manualSync()"><span class="mi-i">🔄</span>Yangilash (bulut)</button><button class="menu-item" data-admin="1" onclick="publishCatalog(true);menuOpen(false)"><span class="mi-i">📤</span>Katalogga chiqarish</button><button class="menu-item" data-admin="1" onclick="openOnlOrders()"><span class="mi-i">🛍️</span>Onlayn buyurtmalar<span id="onlBadge" style="display:none;margin-left:auto;background:#e01438;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:800"></span></button><button class="menu-item" data-admin="1" onclick="editPins()"><span class="mi-i">🔑</span>Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)"><span class="mi-i">👥</span>Xodimlar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d"><span class="mi-i">🔒</span>Qulflash (chiqish)</button></div>
+    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v92</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)"><span class="mi-i">📦</span>Tovarlar</button><button class="menu-item" data-admin="1" onclick="openOps()"><span class="mi-i">🧾</span>Amaliyotlar</button><button class="menu-item" data-admin="1" onclick="openRetSup()"><span class="mi-i">↩️</span>Ta‘minotga qaytarish</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)"><span class="mi-i">🛒</span>Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)"><span class="mi-i">📈</span>Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)"><span class="mi-i">🚚</span>Katalog</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)"><span class="mi-i">👤</span>Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)"><span class="mi-i">🔧</span>Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)"><span class="mi-i">💰</span>Kassa</button><button class="menu-item" data-v="ishhaqi" data-admin="1" onclick="switchView('ishhaqi',this)"><span class="mi-i">👷</span>Ish haqi</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)"><span class="mi-i">📋</span>Sanoq</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)"><span class="mi-i">⚙️</span>Sozlamalar</button><button class="menu-item" data-admin="1" onclick="manualSync()"><span class="mi-i">🔄</span>Yangilash (bulut)</button><button class="menu-item" onclick="prnSoz();menuOpen(false)"><span class="mi-i">🖨️</span>Printer</button><button class="menu-item" data-admin="1" onclick="publishCatalog(true);menuOpen(false)"><span class="mi-i">📤</span>Katalogga chiqarish</button><button class="menu-item" data-admin="1" onclick="openOnlOrders()"><span class="mi-i">🛍️</span>Onlayn buyurtmalar<span id="onlBadge" style="display:none;margin-left:auto;background:#e01438;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:800"></span></button><button class="menu-item" data-admin="1" onclick="editPins()"><span class="mi-i">🔑</span>Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)"><span class="mi-i">👥</span>Xodimlar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d"><span class="mi-i">🔒</span>Qulflash (chiqish)</button></div>
     <div class="stats" id="stats">
       <div class="stat"><div class="v" id="s_tovar">0</div><div class="l">Tovar turi</div></div>
       <div class="stat"><div class="v" id="s_qty">0</div><div class="l">Qoldiq (dona)</div></div>
@@ -1259,7 +1259,7 @@ document.getElementById('file').addEventListener('change',function(e){
   };
   rd.readAsArrayBuffer(f);
 });
-function rebuildBCX(){BCX={};PRODUCTS.forEach(function(p){if(p.barcode){(BCX[p.barcode]=BCX[p.barcode]||[]).push(p);}});}
+function rebuildBCX(){BCX={};PRODUCTS.forEach(function(p){var k=p.barcode||p.artikul;/* shtrix-kodi yo'q tovar yorlig'ida artikul chiqadi — skaner uni ham topadi */if(k){(BCX[k]=BCX[k]||[]).push(p);}});}
 
 /* ---- Search & render ---- */
 var _t;
@@ -1730,18 +1730,75 @@ function printReceipt(sale){
   var _rm=document.getElementById('rcModal');if(_rm)_rm.style.display='block';
 }
 function closeRcModal(){var m=document.getElementById('rcModal');if(m)m.style.display='none';}
-function printNow(){window.print();}
-function printLabelIdx(i){var p=(window.LASTRES||[])[i]; if(p)printLabel(p); else toast('Tovar topilmadi');}
-function printLabel(p){
-  var h='<div class="lbl">';
-  h+='<div class="lbl-shop">'+esc(SHOP.name)+'</div>';
-  h+='<div class="lbl-nom">'+esc(p.nom)+'</div>';
-  h+='<div class="lbl-price">'+grp(p.sotuv)+' so\u2018m</div>';
-  if(p.barcode)h+='<div class="lbl-bar"><svg id="lblBar"></svg></div><div class="lbl-code">'+esc(p.barcode)+'</div>';
-  h+='</div>';
+
+/* ===== Printer sozlamasi (har bir kompyuterda alohida): chek 80/58 mm (Xprinter XP-D200N — 80mm),
+   etiketka o'lchami (Xprinter XP-365B — 20–82mm) ===== */
+function _prnCfg(){var c={};try{c=JSON.parse(localStorage.getItem('kroff_prn')||'{}')||{};}catch(e){}return {chek:+c.chek||80,lw:+c.lw||58,lh:+c.lh||40};}
+function _prnMode(m){
+  var c=_prnCfg(),s=document.getElementById('prnStyle');
+  if(!s){s=document.createElement('style');s.id='prnStyle';document.head.appendChild(s);}
+  if(m==='lbl'){
+    s.textContent='@media print{@page{size:'+c.lw+'mm '+c.lh+'mm;margin:0}'+
+      '#receiptArea{width:'+c.lw+'mm!important;padding:0!important;font-size:10px!important}'+
+      '#receiptArea .lbl{width:'+c.lw+'mm;height:'+c.lh+'mm;padding:1mm 1.5mm!important;box-sizing:border-box;overflow:hidden;page-break-after:always;break-after:page;display:flex;flex-direction:column;justify-content:center}'+
+      '#receiptArea .lbl:last-child{page-break-after:auto;break-after:auto}#receiptArea .lbl-nom{font-size:'+(c.lh>=40?12:10)+'px!important;margin:1px 0!important;max-height:'+(c.lh*0.3)+'mm;overflow:hidden}'+
+      '#receiptArea .lbl-price{font-size:'+(c.lh>=40?20:15)+'px!important;margin:1px 0!important}'+
+      '#receiptArea svg{max-width:'+(c.lw-4)+'mm!important;height:auto;max-height:'+(c.lh*0.32)+'mm!important}}';
+  }else{
+    var w=c.chek,pw=(w>=80?72:48),pad=(w-pw)/2;
+    s.textContent='@media print{@page{size:'+w+'mm auto;margin:0}'+
+      '#receiptArea{width:'+pw+'mm!important;padding:2mm '+pad+'mm!important;font-size:'+(w>=80?13:12)+'px!important}'+
+      '#receiptArea svg#rcBar{max-width:'+(pw-2)+'mm!important}}';
+  }
+}
+function _print(m){_prnMode(m||'chek');setTimeout(function(){window.print();},60);}
+function prnSoz(){
+  var c=_prnCfg(),o=document.getElementById('prnOv');if(o)o.remove();
+  o=document.createElement('div');o.id='prnOv';
+  o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px';
+  var sel=function(id,opts,v){return '<select id="'+id+'" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;font-size:14px">'+opts.map(function(x){return '<option value="'+x[0]+'"'+(String(x[0])===String(v)?' selected':'')+'>'+x[1]+'</option>';}).join('')+'</select>';};
+  var lv=c.lw+'x'+c.lh;
+  o.innerHTML='<div style="background:#fff;border-radius:12px;max-width:380px;width:100%;padding:16px;font-size:14px">'+
+    '<b style="color:#1F4E79;font-size:16px">🖨️ Printer sozlamasi</b><div style="font-size:12px;color:#777;margin:4px 0 12px">Shu kompyuter uchun saqlanadi.</div>'+
+    '<div style="margin-bottom:10px"><div style="font-weight:700;margin-bottom:4px">Chek qog‘ozi</div>'+sel('prnChek',[[80,'80 mm (Xprinter XP-D200N)'],[58,'58 mm']],c.chek)+'</div>'+
+    '<div style="margin-bottom:10px"><div style="font-weight:700;margin-bottom:4px">Etiketka o‘lchami (Xprinter XP-365B)</div>'+
+      sel('prnLbl',[['58x40','58 × 40 mm'],['58x30','58 × 30 mm'],['60x40','60 × 40 mm'],['50x30','50 × 30 mm'],['40x30','40 × 30 mm'],['40x25','40 × 25 mm'],['30x20','30 × 20 mm'],['80x50','80 × 50 mm']],lv)+'</div>'+
+    '<div style="font-size:12px;color:#555;background:#f4f7fb;border-radius:8px;padding:8px;margin-bottom:12px">Chop etish oynasida printerni tanlang: chek uchun <b>XP-D200N</b>, etiketka uchun <b>XP-365B</b>. “Poля / Margins” — <b>Yo‘q (None)</b>, masshtab — <b>100%</b>.</div>'+
+    '<div style="display:flex;gap:8px;justify-content:flex-end"><button onclick="prnTest(\'lbl\')" class="prnbtn">Etiketka sinov</button><button onclick="prnTest(\'chek\')" class="prnbtn">Chek sinov</button>'+
+    '<button onclick="prnSave()" style="background:#1F4E79;color:#fff;border:0;border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer">Saqlash</button></div></div>';
+  o.addEventListener('click',function(e){if(e.target===o)o.remove();});
+  document.body.appendChild(o);
+}
+function prnSave(){
+  var ch=+document.getElementById('prnChek').value,l=String(document.getElementById('prnLbl').value).split('x');
+  try{localStorage.setItem('kroff_prn',JSON.stringify({chek:ch,lw:+l[0],lh:+l[1]}));}catch(e){}
+  var o=document.getElementById('prnOv');if(o)o.remove();toast('✅ Printer sozlamasi saqlandi');
+}
+function prnTest(m){
+  prnSave();
+  if(m==='lbl'){printLabel({nom:'SINOV tovar nomi',sotuv:125000,barcode:'2000000012345'});return;}
+  var ra=document.getElementById('receiptArea');if(!ra)return;
+  ra.innerHTML='<div class="r-c r-b">'+esc(SHOP.name)+'</div><div class="r-line"></div>'+_dash('Sinov chek','1 000 UZS')+'<div class="r-line"></div><div class="r-c">'+new Date().toLocaleString('ru-RU')+'</div><div class="r-c">&nbsp;</div>';
+  _print('chek');
+}
+function printNow(){_print('chek');}
+function printLabelIdx(i){var p=(window.LASTRES||[])[i]; if(!p){toast('Tovar topilmadi');return;}
+  var n=prompt('🏷️ '+p.nom+'\n\nNechta yorliq chiqarilsin?','1'); if(n==null)return;
+  n=parseInt(String(n).replace(/\D/g,''),10)||1; if(n>200){toast('Bir martada ko‘pi bilan 200 ta');n=200;}
+  printLabel(p,n);}
+/* Yorliq: do'kon, tovar nomi, narx, shtrix-kod (yo'q bo'lsa — artikul). n ta nusxa bitta chop etishda, har biri alohida etiketkaga */
+function printLabel(p,n){
+  n=Math.max(1,Math.min(200,+n||1));
+  var code=String(p.barcode||p.artikul||'').trim(), svg='';
+  if(code){try{var tmp=document.createElementNS('http://www.w3.org/2000/svg','svg');JsBarcode(tmp,code,{format:'CODE128',width:2,height:40,margin:0,displayValue:false});svg=tmp.outerHTML;}catch(e){svg='';}}
+  var one='<div class="lbl">'+
+    '<div class="lbl-shop">'+esc(SHOP.name)+'</div>'+
+    '<div class="lbl-nom">'+esc(p.nom)+'</div>'+
+    '<div class="lbl-price">'+grp(p.sotuv)+' so‘m</div>'+
+    (svg?'<div class="lbl-bar">'+svg+'</div><div class="lbl-code">'+esc(code)+'</div>':'')+'</div>';
+  var h='';for(var i=0;i<n;i++)h+=one;
   document.getElementById('receiptArea').innerHTML=h;
-  try{if(p.barcode)JsBarcode('#lblBar',String(p.barcode),{format:'CODE128',width:2,height:40,margin:0,displayValue:false});}catch(e){}
-  setTimeout(function(){window.print();},80);
+  _print('lbl');
 }
 function exportXlsx(){
   if(typeof XLSX==='undefined'){toast('Excel kutubxonasi yuklanmadi');return;}
@@ -1768,7 +1825,7 @@ function printReorder(){
   low.forEach(function(p,i){h+='<div class="r-b" style="margin-top:4px">'+(i+1)+'. '+esc(p.nom)+'</div>'+_dash('Qoldiq: '+grp(p.qoldiq||0)+' '+(p.olchov||''),'_______');});
   h+='<div class="r-line"></div><div class="r-c">Jami: '+low.length+' xil tovar</div><div class="r-c">&nbsp;</div>';
   document.getElementById('receiptArea').innerHTML=h;
-  setTimeout(function(){window.print();},80);
+  _print('chek');
 }
 function printSaleById(id){salesLoad(function(all){for(var i=0;i<all.length;i++){if(all[i].id===id){printReceipt(all[i]);return;}}toast('Chek topilmadi');});}
 function printLast(){if(window.LAST_SALE)printReceipt(window.LAST_SALE);else toast('Oxirgi chek yo\u2018q');}
@@ -3293,7 +3350,7 @@ function printZReport(){
     h+='<div class="r-c">Kassir: '+esc((typeof _curSeller==='function'?_curSeller():'')||'-')+'</div>';
     h+='<div class="r-c">&nbsp;</div>';
     document.getElementById('receiptArea').innerHTML=h;
-    setTimeout(function(){window.print();},80);
+    _print('chek');
   });
 }
 var HCHQ='';
@@ -5680,7 +5737,7 @@ function _snapRestore(sn){
   var pdl=sn.pd||[];
   for(i=0;i<pdl.length;i++){var np=pdl[i];if(findProd(np.id))continue;
     np._s=((np.nom||'')+' '+(np.brend||'')+' '+(np.kategoriya||'')).toLowerCase();PRODUCTS.push(np);
-    if(np.barcode){if(!BCX[np.barcode])BCX[np.barcode]=[];BCX[np.barcode].push(np);}}
+    var _bk=np.barcode||np.artikul;if(_bk){if(!BCX[_bk])BCX[_bk]=[];BCX[_bk].push(np);}}
   setSup(sn.sup||[]);setCust(sn.cust||[]);setBolim(sn.bolim||[]);setDrafts(sn.dr||[]);
   ARITEMS=(sn.ar&&sn.ar.items)||[];ARENTALS=(sn.ar&&sn.ar.rent)||{};
   XODIM=(sn.ih&&sn.ih.x)||[];IHREC=(sn.ih&&sn.ih.r)||{};NACH=(sn.ih&&sn.ih.n)||{};VOID=(sn.ih&&sn.ih.v)||{};YKD=(sn.ih&&sn.ih.y)||{};
@@ -6791,7 +6848,7 @@ function smenaZ(id){
   if(o.izoh||y.izoh)h+='<div class="r-c">Izoh: '+esc([o.izoh,y.izoh].filter(Boolean).join(' / '))+'</div>';
   h+='<div class="r-line"></div><div class="r-c">Topshirdi: ______________</div><div class="r-c">Qabul qildi: ______________</div><div class="r-c">&nbsp;</div>';
   var ra=document.getElementById('receiptArea');if(!ra){toast('Chop etish oynasi topilmadi');return;}
-  ra.innerHTML=h;setTimeout(function(){window.print();},80);
+  ra.innerHTML=h;_print('chek');
 }
 
 /* ---- kassa ekranidagi karta ---- */
