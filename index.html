@@ -1722,6 +1722,7 @@ function printReceipt(sale){
   }else if(sale.change>0){h+=_dash('Qaytim', _money(sale.change)+' UZS');}
   h+='<div class="r-line"></div>';
   (SHOP.social||[]).forEach(function(s){h+='<div class="r-c">'+esc(s)+'</div>';});
+  h+='<div class="r-c r-b" style="margin-top:4px">Aloqa: Akmalov Alisher</div><div class="r-c r-b">+998 93 681 68 67</div>';
   h+='<div class="r-c" style="margin-top:8px"><svg id="rcBar"></svg></div>';
   h+='<div class="r-c">&nbsp;</div>';
   document.getElementById('receiptArea').innerHTML=h;
