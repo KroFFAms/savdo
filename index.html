@@ -1291,7 +1291,7 @@ function refresh(){
   var res=[],_n=0,_qty=0,_xar=0,_sot=0;
   for(var i=0;i<PRODUCTS.length;i++){var p=PRODUCTS[i];if(!showArch&&p.arxiv)continue;
     _n++;_qty+=p.qoldiq;_xar+=p.qoldiq*p.xarid;_sot+=p.qoldiq*p.sotuv;
-    if(_bcCode){ if(p.barcode===_bcCode)res.push(p); }
+    if(_bcCode){ if((p.barcode||p.artikul)===_bcCode)res.push(p); }
     else if(matches(p,q))res.push(p);
   }
   renderStats({n:_n,qty:_qty,xar:_xar,sot:_sot});
@@ -1756,21 +1756,24 @@ function prnSoz(){
   var c=_prnCfg(),o=document.getElementById('prnOv');if(o)o.remove();
   o=document.createElement('div');o.id='prnOv';
   o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px';
-  var sel=function(id,opts,v){return '<select id="'+id+'" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;font-size:14px">'+opts.map(function(x){return '<option value="'+x[0]+'"'+(String(x[0])===String(v)?' selected':'')+'>'+x[1]+'</option>';}).join('')+'</select>';};
+  var sel=function(id,opts,v){return '<select id="'+id+'"'+(id==='prnLbl'?' onchange="_prnLblCh(this.value)"':'')+' style="width:100%;padding:8px;border:1px solid #ccc;border-radius:8px;font-size:14px">'+opts.map(function(x){return '<option value="'+x[0]+'"'+(String(x[0])===String(v)?' selected':'')+'>'+x[1]+'</option>';}).join('')+'</select>';};
   var lv=c.lw+'x'+c.lh;
   o.innerHTML='<div style="background:#fff;border-radius:12px;max-width:380px;width:100%;padding:16px;font-size:14px">'+
     '<b style="color:#1F4E79;font-size:16px">🖨️ Printer sozlamasi</b><div style="font-size:12px;color:#777;margin:4px 0 12px">Shu kompyuter uchun saqlanadi.</div>'+
     '<div style="margin-bottom:10px"><div style="font-weight:700;margin-bottom:4px">Chek qog‘ozi</div>'+sel('prnChek',[[80,'80 mm (Xprinter XP-D200N)'],[58,'58 mm']],c.chek)+'</div>'+
     '<div style="margin-bottom:10px"><div style="font-weight:700;margin-bottom:4px">Etiketka o‘lchami (Xprinter XP-365B)</div>'+
-      sel('prnLbl',[['58x40','58 × 40 mm'],['58x30','58 × 30 mm'],['60x40','60 × 40 mm'],['50x30','50 × 30 mm'],['40x30','40 × 30 mm'],['40x25','40 × 25 mm'],['30x20','30 × 20 mm'],['80x50','80 × 50 mm']],lv)+'</div>'+
+      sel('prnLbl',[['58x40','58 × 40 mm'],['58x30','58 × 30 mm'],['60x40','60 × 40 mm'],['50x30','50 × 30 mm'],['40x30','40 × 30 mm'],['40x25','40 × 25 mm'],['30x20','30 × 20 mm'],['80x50','80 × 50 mm'],['80x40','80 × 40 mm'],['80x30','80 × 30 mm'],['72x40','72 × 40 mm'],['custom','Boshqa (o‘zim yozaman)']],(['58x40','58x30','60x40','50x30','40x30','40x25','30x20','80x50','80x40','80x30','72x40'].indexOf(lv)<0?'custom':lv))+
+      '<div id="prnCw" style="display:'+(['58x40','58x30','60x40','50x30','40x30','40x25','30x20','80x50','80x40','80x30','72x40'].indexOf(lv)<0?'flex':'none')+';gap:6px;margin-top:6px;align-items:center"><input id="prnW" type="number" value="'+c.lw+'" style="width:80px;padding:7px;border:1px solid #ccc;border-radius:8px"> × <input id="prnH" type="number" value="'+c.lh+'" style="width:80px;padding:7px;border:1px solid #ccc;border-radius:8px"> mm (eni × bo‘yi)</div></div>'+
     '<div style="font-size:12px;color:#555;background:#f4f7fb;border-radius:8px;padding:8px;margin-bottom:12px">Chop etish oynasida printerni tanlang: chek uchun <b>XP-D200N</b>, etiketka uchun <b>XP-365B</b>. “Poля / Margins” — <b>Yo‘q (None)</b>, masshtab — <b>100%</b>.</div>'+
     '<div style="display:flex;gap:8px;justify-content:flex-end"><button onclick="prnTest(\'lbl\')" class="prnbtn">Etiketka sinov</button><button onclick="prnTest(\'chek\')" class="prnbtn">Chek sinov</button>'+
     '<button onclick="prnSave()" style="background:#1F4E79;color:#fff;border:0;border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer">Saqlash</button></div></div>';
   o.addEventListener('click',function(e){if(e.target===o)o.remove();});
   document.body.appendChild(o);
 }
+function _prnLblCh(v){var e=document.getElementById('prnCw');if(e)e.style.display=v==='custom'?'flex':'none';}
 function prnSave(){
-  var ch=+document.getElementById('prnChek').value,l=String(document.getElementById('prnLbl').value).split('x');
+  var ch=+document.getElementById('prnChek').value,lv=String(document.getElementById('prnLbl').value),l=lv==='custom'?[document.getElementById('prnW').value,document.getElementById('prnH').value]:lv.split('x');
+  if(!(+l[0]>=20&&+l[1]>=15)){l=['58','40'];}
   try{localStorage.setItem('kroff_prn',JSON.stringify({chek:ch,lw:+l[0],lh:+l[1]}));}catch(e){}
   var o=document.getElementById('prnOv');if(o)o.remove();toast('✅ Printer sozlamasi saqlandi');
 }
@@ -5625,6 +5628,39 @@ function _scanLoopOld(){
   }).catch(function(){});
   _scanRAF=setTimeout(scanLoop,180);
 }
+/* USB shtrix-skaner (klaviatura kabi yozadi + Enter): qaysi oynada bo'lsa ham ishlaydi.
+   Tez (<60 ms) yozilgan 4+ belgi + Enter = skaner. Sotuvda — savatga qo'shadi, Tovarlarda — tovarni topadi. */
+(function(){
+  var buf='',last=0,fast=true;
+  document.addEventListener('keydown',function(e){
+    if(e.ctrlKey||e.metaKey||e.altKey)return;
+    var t=e.target,tag=(t&&t.tagName)||'',id=(t&&t.id)||'';
+    var inField=(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT');
+    var ownScan=(id==='sbc'||id==='bc'||id==='scanManual'||id==='retSearch'||id==='chkSearch');
+    var now=Date.now();
+    if(e.key==='Enter'){
+      var code=buf;buf='';
+      if(code.length>=4&&fast&&!ownScan&&(!inField||id==='sq'||id==='q')){
+        var arr=(typeof BCX!=='undefined')?BCX[code]:null;
+        if(inField&&!(arr&&arr.length))return;      // oddiy qidiruv — tegmaymiz
+        e.preventDefault();e.stopPropagation();
+        if(inField){t.value='';try{t.dispatchEvent(new Event('input',{bubbles:true}));}catch(_){}}
+        if(typeof CURV!=='undefined'&&CURV==='sotuv'){onScanCode(code);}
+        else if(typeof CURV!=='undefined'&&CURV==='tovarlar'){
+          if(arr&&arr.length){_bcCode=code;var q=document.getElementById('q');if(q)q.value='';refresh();window.scrollTo(0,0);toast(arr.length>1?('\ud83d\udd0e '+arr.length+' ta mos tovar'):('\ud83d\udd0e '+arr[0].nom));}
+          else toast('\u274c Shtrix-kod topilmadi: '+code);
+        }
+        else if(arr&&arr.length===1){switchView('sotuv');onScanCode(code);}
+      }
+      return;
+    }
+    if(e.key&&e.key.length===1){
+      if(now-last>60){buf='';fast=true;}
+      else if(now-last>60)fast=false;
+      buf+=e.key;last=now;
+    }
+  },true);
+})();
 function scanManualGo(){var el=document.getElementById('scanManual');if(!el)return;var code=(el.value||'').trim();if(!code)return;el.value='';onScanCode(code);}
 function onScanCode(code){
   var arr=BCX[code];
