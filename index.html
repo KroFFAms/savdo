@@ -817,7 +817,7 @@ var DEPLOY = {
 
   <div class="list" id="list"></div>
   </div>
-  <div id="view-sotuv" class="view"><div id="smenaBan" style="display:none;align-items:center;gap:10px;margin:0 0 8px;padding:8px 12px;background:#fdf3e7;border:1px solid #f0c98a;border-radius:10px;font-size:13px"><span style="flex:1">⏱️ <b>Smena ochilmagan.</b> Sotuv uchun avval kassadagi pulni sanab, smenani oching</span><button class="btn sm" style="background:#375623;color:#fff;white-space:nowrap" onclick="smenaOchDlg()">🔓 Ochish</button></div>
+  <div id="view-sotuv" class="view"><div id="smenaBan" style="display:none;align-items:center;gap:10px;margin:0 0 8px;padding:8px 12px;background:#fdf3e7;border:1px solid #f0c98a;border-radius:10px;font-size:13px"><span style="flex:1">⏱️ <b>Smena ochilmagan.</b> Sotuv uchun avval kassadagi pulni sanab, smenani oching</span><button class="btn sm" style="background:#375623;color:#fff;white-space:nowrap" onclick="smenaOchDlg()">🔓 Ochish</button></div><div id="dueBan" style="display:none"></div>
     <div class="sv-bar"><select id="seller" class="seller"></select><button class="btn btn-ghost sm" onclick="editSellers()" title="Sotuvchilar">⚙️</button><button id="optomBtn" class="optbtn" onclick="toggleOptom()" title="Optom/Dona narx">Dona</button><button id="retBtn" class="btn btn-ghost sm" onclick="openReturn()" title="Qaytarish" style="display:none">↩️ Qaytar</button><button class="btn btn-ghost sm" onclick="holdSale('qoralama')" title="Qoralama sifatida saqlash">📝 Qoralama</button><button class="btn btn-ghost sm" onclick="holdSale('kechik')" title="Kechiktirish">⏸ Kechik.</button><button class="btn btn-ghost sm" onclick="openSavdolar()" title="Savdolar">💳 Savdolar</button><span style="flex:1"></span><div class="dtot">Bugun: <b id="dayTotal">0</b></div></div>
     <div id="draftBar" class="draftbar" style="display:none"></div><div class="sv-search" id="svSearchWrap"><div class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input id="sq" type="search" inputmode="search" placeholder="Sotuv — tovar qidiring…" autocomplete="off"></div><div class="bc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5v14M7 5v14M11 5v14M15 5v14M19 5v14M21 5v14"/></svg><input id="sbc" type="text" inputmode="numeric" placeholder="Skaner" autocomplete="off"></div><div class="sqty"><input id="sqQty" type="text" inputmode="decimal" placeholder="Soni" autocomplete="off"></div></div>
     <div style="padding:2px 16px 6px" id="svScanWrap"><button class="btn" style="width:100%" onclick="openScan()">📷 Kamera bilan skanerlash</button></div>
@@ -1426,6 +1426,7 @@ function switchView(v,btn){
   menuOpen(false);
   document.body.className=(v==='tovarlar')?'':'v-'+v;
   if(v==='sotuv'){SVPHASE='cart';renderSellers();renderCart();if(typeof _applyPhase==='function')_applyPhase();updateDayTotal();if(typeof renderQuick==='function')renderQuick();if(typeof renderRepeat==='function')renderRepeat();if(typeof renderDrafts==='function')renderDrafts();}
+  if(v==='sotuv'){try{_dueBanPaint();}catch(e){}}
   if(v==='hisobot')renderHisobot();
   if(v==='kirim'){renderKirim();kSearch();}
   if(v==='mijoz')renderMijoz();
@@ -4352,6 +4353,26 @@ function custExportDebts(){
 var _DUEMAP={};
 function _dmy(d){if(!d)return '';var p=String(d).split('-');return p.length===3?(p[2]+'.'+p[1]+'.'+p[0]):d;}
 function buildDueMap(cb){salesLoad(function(all){var m={};all.forEach(function(x){if(x.pay==='qarz'&&x.due&&x.customer){if(!m[x.customer]||x.due<m[x.customer])m[x.customer]=x.due;}});_DUEMAP=m;cb&&cb();});}
+/* ===== Sotuv ekrani: bugun to'lov muddati kelgan / muddati o'tgan qarzdorlar ===== */
+var _dueBanT=0,_dueBanOpen=false;
+function _dueBanPaint(force){
+  var el=document.getElementById('dueBan');if(!el)return;
+  if(typeof _role!=='undefined'&&_role!=='admin'){el.style.display='none';return;}
+  if(!force&&Date.now()-_dueBanT<300000&&el.innerHTML){return;}
+  _dueBanT=Date.now();
+  buildDueMap(function(){
+    var tod=dayStr(new Date()),T=[],O=[];
+    getCust().forEach(function(c){var d=_DUEMAP[c.nom];if(!d||(c.debt||0)<=0)return;
+      if(d===tod)T.push(c);else if(d<tod)O.push(c);});
+    if(!T.length&&!O.length){el.style.display='none';el.innerHTML='';return;}
+    var sum=function(a){var t=0;a.forEach(function(c){t+=(c.debt||0);});return t;};
+    var row=function(c,od){return '<div style="display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-top:1px solid #f0d9a8;font-size:13px"><span onclick="_dueBanGo(\''+c.id+'\')" style="cursor:pointer;flex:1">'+esc(c.nom)+(od?' <small style="color:#a32d2d">· '+_dmy(_DUEMAP[c.nom])+'</small>':'')+'</span><b>'+grp(c.debt||0)+'</b>'+(c.phone?'<a href="tel:'+esc(c.phone)+'" style="text-decoration:none">📞</a>':'')+'</div>';};
+    var h='<div style="margin:0 0 8px;padding:8px 12px;background:#fff8e6;border:1px solid #f0c98a;border-radius:10px"><div onclick="_dueBanOpen=!_dueBanOpen;_dueBanPaint(1)" style="display:flex;justify-content:space-between;cursor:pointer;font-size:13px"><span>⏰ <b>Bugun to‘lov muddati: '+T.length+' ta</b> ('+grp(sum(T))+')'+(O.length?' · <span style="color:#a32d2d"><b>muddati o‘tgan: '+O.length+' ta</b> ('+grp(sum(O))+')</span>':'')+'</span><span>'+(_dueBanOpen?'▲':'▼')+'</span></div>';
+    if(_dueBanOpen){T.forEach(function(c){h+=row(c,0);});O.sort(function(a,b){return _DUEMAP[a.nom]<_DUEMAP[b.nom]?-1:1;}).slice(0,30).forEach(function(c){h+=row(c,1);});}
+    el.innerHTML=h+'</div>';el.style.display='block';
+  });
+}
+function _dueBanGo(id){try{custDetail(id);}catch(e){}}
 function renderMijoz(){buildDueMap(_renderMijozInner);}
 function _mSearch(v){MSEARCH=v||'';renderMijoz();}
 function _renderMijozInner(){
