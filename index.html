@@ -775,6 +775,57 @@ var DEPLOY = {
 @media(max-width:480px){.num-big{font-size:17px!important}}
 </style>
 <style id="bzDashCss">
+.tr-cnt{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:34px;border-radius:50%;background:#EEF1F5;color:#2E6BE6;font-size:16px;vertical-align:middle;margin-left:6px}
+.tr-srow{display:flex;gap:0;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(16,24,40,.05);margin-bottom:10px}
+.tr-srow #trQ{flex:1;box-shadow:none;border-radius:0}
+#trFiltBtn{position:relative;border:0;border-left:1px solid #EEF1F5;background:#fff;color:#2E6BE6;font-size:20px;width:54px;cursor:pointer}
+#trFiltBtn.on{background:#EEF4FF}
+#trFiltBtn i{position:absolute;top:6px;right:6px;background:#E5484D;color:#fff;font-style:normal;font-size:11px;font-weight:800;border-radius:9px;min-width:16px;height:16px;line-height:16px}
+.tr-chips{flex-wrap:wrap}
+.tr-date{position:relative;border:0;background:#EEF1F5;color:#344054;border-radius:20px;padding:8px 14px;font-size:14px;font-weight:600;cursor:pointer;overflow:hidden}
+.tr-date.on{background:#2E6BE6;color:#fff}
+.tr-date input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.tr-no{color:#2E6BE6!important}.tr-no.ret{color:#E5484D!important}
+.tr-m{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tr-u{background:#F2F4F7;border-radius:10px;padding:1px 8px;color:#475467}
+.tr-cu{display:inline-block;margin-top:7px;background:#F2F4F7;border-radius:12px;padding:4px 10px;font-size:13px;font-weight:600;color:#344054}
+.tr-r b{color:#2E6BE6!important}.tr-r b.ret{color:#E5484D!important}
+.tr-r div{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+#trFiltOv{position:fixed;inset:0;background:#F2F4F7;z-index:100000;display:flex;justify-content:center}
+.tf-box{width:100%;max-width:560px;display:flex;flex-direction:column;height:100%}
+.tf-hd{display:flex;align-items:center;justify-content:space-between;background:#fff;padding:14px 16px;border-radius:0 0 18px 18px}
+.tf-hd button{border:0;background:none;color:#2E6BE6;font-size:24px;cursor:pointer;width:36px}.tf-hd b{font-size:18px}.tf-hd span{width:36px}
+.tf-body{flex:1;overflow:auto;padding:12px}
+.tf-sec{background:#fff;border-radius:18px;padding:14px 16px;margin-bottom:12px}
+.tf-t{font-size:17px;font-weight:800;margin-bottom:6px;color:#101828}
+.tf-it{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid #F2F4F7;font-size:16px;color:#344054;cursor:pointer}
+.tf-it:first-of-type{border-top:0}.tf-it input{width:20px;height:20px;accent-color:#2E6BE6}
+.tf-mm{display:flex;gap:10px}.tf-mm input{flex:1;min-width:0;border:0;background:#F2F4F7;border-radius:14px;padding:14px;font-size:16px;font-family:inherit}
+.tf-ft{display:flex;gap:10px;padding:12px 14px calc(14px + env(safe-area-inset-bottom));background:#fff;border-radius:18px 18px 0 0}
+.tf-ft button{flex:1;height:52px;border-radius:14px;border:0;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer}
+.tf-r{background:#F2F4F7;color:#475467}.tf-a{background:#2E6BE6;color:#fff}
+/* ===== To'lov oynasi: Billz kabi ===== */
+#cartFoot{background:#fff;border-radius:18px;padding:14px 14px 18px;box-shadow:0 1px 3px rgba(16,24,40,.06)}
+#cartFoot>button.btn-ghost{border:0;background:#F2F4F7;border-radius:12px}
+#cartFoot .ct-fin{font-size:15px;margin-top:6px}
+#cartFoot .ct-fin #finalTotal{font-size:28px;font-weight:800;color:#101828}
+#cartFoot .ct-row2 input#discInp,#cartFoot .ct-row2 input#saleNote{font-size:15px!important;font-weight:600!important;padding:10px 12px;border-radius:12px;background:#F7F8FA}
+#cartFoot #discQuick .optbtn{border-radius:10px}
+#cartFoot.cf-min #discQuick,#cartFoot.cf-min #saleNote,#cartFoot.cf-min #dostBtn,#cartFoot.cf-min #dostShow{display:none}
+#cartFoot.cf-min #saleNote{display:none}
+#cfMore{border:0;background:none;color:#2E6BE6;font-weight:700;font-size:14px;padding:6px 2px;cursor:pointer;font-family:inherit}
+#splitBox{display:grid!important;grid-template-columns:1fr 1fr;gap:10px;background:none!important;border:0!important;padding:0!important}
+#splitBox[style*="display: none"],#splitBox[style*="display:none"]{display:none!important}
+#splitBox .sp-tip,#splitBox .sp-sec,#splitBox .sp-foot,#splitBox .sp-hint{grid-column:1/-1}
+#splitBox .sp-row{flex-direction:column;align-items:stretch;gap:4px;background:#F7F8FA;border:2px solid transparent;border-radius:14px;padding:10px 12px;margin:0}
+#splitBox .sp-row.on{border-color:#2E6BE6;background:#EEF4FF}
+#splitBox .sp-row .sp-lb{font-size:14px!important;font-weight:700;text-decoration:none!important;border:0!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#splitBox .sp-row .sp-in{width:100%!important;border:0!important;background:transparent!important;padding:0!important;text-align:left!important;font-size:20px!important;font-weight:800!important;height:auto}
+#splitBox .sp-row .sp-lb,#splitBox .sp-row .sp-in{flex:none!important}#splitBox .sp-row .sp-in{height:30px!important;line-height:30px}
+#splitBox .sp-sec{margin:4px 0 -2px;font-size:12px}
+#splitBox .sp-foot{background:#F2F4F7;border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
+#custRow{margin:2px 0 12px}
+#custRow input#custSearch{font-size:15px;padding:12px 14px;border-radius:12px;background:#F7F8FA;border:1px solid #EEF1F5}
 #view-tranz{padding:0 0 90px}
 .tr-top{position:sticky;top:0;background:var(--bg,#F4F6FA);padding:6px 2px 8px;z-index:5}
 .tr-h{font-size:24px;font-weight:800;color:#101828;margin:4px 2px 10px}
@@ -1988,13 +2039,16 @@ function splitBuild(){
   h+='<div class="sp-foot"><span>To\u2018lash uchun qoldi</span><b id="spLeft">0</b></div>';
   h+='<div class="sp-hint" id="spHint"></div>';
   b.innerHTML=h;splitAutoCash();splitRecalc();}
+function _spClearAll(keep){var ins=document.querySelectorAll('#splitBox input.sp-in');for(var i=0;i<ins.length;i++){if(ins[i].id!==keep)ins[i].value='';}}
+/* Billz kabi: boshqa turda summa to'liq turgan bo'lsa — bosilgan turga butun summa o'tadi, qolganlari tozalanadi */
+function _spTake(id){var e=document.getElementById(id);if(!e)return;var t=Math.round(saleTotal());
+  var others=0,ins=document.querySelectorAll('#splitBox input.sp-in');for(var i=0;i<ins.length;i++){if(ins[i].id!==id)others+=(_pf(ins[i].value)||0);}
+  var rest=t-others;if(rest<=0){_spClearAll(id);rest=t;}
+  e.value=rest>0?grp(Math.round(rest)):'';SPLIT.touched=true;splitRecalc();}
 function _splitQarz(){var e=document.getElementById('sp_qarz');return e?(_pf(e.value)||0):0;}
-function splitFillQarz(){var t=saleTotal(),rest=t-_splitPaid()-_splitBolSum();if(rest<0)rest=0;
-  var e=document.getElementById('sp_qarz');if(e){e.value=rest?grp(Math.round(rest)):'';}SPLIT.touched=true;splitRecalc();}
-function splitFillLbl(a){var t=saleTotal(),rest=t-(_splitPaid()-_splitVal(a))-_splitBolSum()-_splitQarz();if(rest<0)rest=0;
-  var e=document.getElementById('sp_'+a);if(e){e.value=rest?grp(Math.round(rest)):'';}SPLIT.touched=true;splitRecalc();}
-function splitBolFillLbl(id){var t=saleTotal(),rest=t-_splitPaid()-_splitQarz()-(_splitBolSum()-_splitBolVal(id));if(rest<0)rest=0;
-  var e=document.getElementById('spb_'+id);if(e){e.value=rest?grp(Math.round(rest)):'';}SPLIT.touched=true;splitRecalc();}
+function splitFillQarz(){_spTake('sp_qarz');}
+function splitFillLbl(a){_spTake('sp_'+a);}
+function splitBolFillLbl(id){_spTake('spb_'+id);}
 function splitAutoCash(){ /* Billz kabi: hech narsa o'zi yozilmaydi — to'lov turini bosganda qolgan summa tushadi */
   return;
   if(SPLIT.touched)return;var e=document.getElementById('sp_naqd');if(!e)return;var t=Math.round(saleTotal());
@@ -9011,6 +9065,98 @@ function _trInit(){
   if(!window._trKcWrap&&typeof kcSave==='function'){var _ks=kcSave;kcSave=function(){var n=KCART.length,r=_ks.apply(this,arguments);if(n&&!KCART.length)setTimeout(function(){switchView('sotuv');setTimeout(function(){var q=document.getElementById('sq');if(q)try{q.focus({preventScroll:true});}catch(e){}},150);},600);return r;};window._trKcWrap=1;}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(_trInit,350);});else setTimeout(_trInit,350);
+</script>
+<script>
+/* To'lov oynasi: mijoz tepada, izoh/dostavka/chegirma tugmalari yashirin, to'lov kataklari tanlanganda ko'k */
+function _payBillz(){
+  var cf=document.getElementById('cartFoot'),sb=document.getElementById('splitBox'),cr=document.getElementById('custRow');
+  if(!cf||!sb)return;
+  if(cr&&cr.nextSibling!==sb&&sb.parentNode){
+    var ft=document.getElementById('finalTotal');var anchor=ft?ft.closest('.ct-row'):null;
+    if(anchor&&anchor.parentNode===sb.parentNode)sb.parentNode.insertBefore(cr,anchor.nextSibling);}
+  if(!document.getElementById('cfMore')){
+    cf.classList.add('cf-min');var b=document.createElement('button');b.id='cfMore';b.type='button';b.textContent='+ Chegirma foizi, izoh, dostavka';
+    b.onclick=function(){cf.classList.toggle('cf-min');b.textContent=cf.classList.contains('cf-min')?'+ Chegirma foizi, izoh, dostavka':'− Yashirish';};
+    var dq=document.getElementById('discQuick');if(dq&&dq.parentNode)dq.parentNode.insertBefore(b,dq);}
+  _payMark();
+}
+function _payMark(){var rs=document.querySelectorAll('#splitBox .sp-row');for(var i=0;i<rs.length;i++){var inp=rs[i].querySelector('input');rs[i].classList.toggle('on',!!(inp&&(_pf(inp.value)||0)>0));}}
+(function(){function w(){
+  if(typeof splitRecalc==='function'&&!window._pbRc){var o=splitRecalc;splitRecalc=function(){var r=o.apply(this,arguments);try{_payMark();}catch(e){}return r;};window._pbRc=1;}
+  if(typeof setSvPhase==='function'&&!window._pbPh){var o2=setSvPhase;setSvPhase=function(p){var r=o2.apply(this,arguments);if(p==='pay')try{_payBillz();}catch(e){}return r;};window._pbPh=1;}
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(w,500);});else setTimeout(w,500);})();
+</script>
+<script>
+/* ===== Tranzaksiyalar v2: Billz kabi filtr (to'lov turi, sotuvchi, summa, sana) ===== */
+var _TRF={pays:[],sellers:[],min:'',max:''},_TRDATE='';
+var _TRPAYS=[['naqd','Naqd'],['karta','Karta'],['payme1','Payme 1'],['payme2','Payme 2'],['bank','Hisob raqam'],['qarz','Qarz (mijoz)'],['bol:tunukafon','Tunukafon'],['bol:travertin','Travertin'],['bol:birja','Birja']];
+function _trSet(p){_TRP=p;_TRDATE='';renderTranz();}
+function _trIn(day){if(_TRDATE)return day===_TRDATE;var t=new Date(),d0=dayStr(t);if(_TRP==='bugun')return day===d0;var y=new Date(t);y.setDate(t.getDate()-1);if(_TRP==='kecha')return day===dayStr(y);var w=new Date(t);w.setDate(t.getDate()-6);return day>=dayStr(w)&&day<=d0;}
+function _trTypes(x){var pp=_payParts(x),o=[];['naqd','karta','payme1','payme2','bank'].forEach(function(k){if(Math.round(pp[k]||0))o.push(k);});if(Math.round(pp.qarz||0))o.push(x.bolim?('bol:'+x.bolim):'qarz');if(!o.length)o.push(x.pay||'naqd');return o;}
+function _trFCount(){return _TRF.pays.length+_TRF.sellers.length+((_TRF.min||_TRF.max)?1:0);}
+function renderTranz(){
+  var v=document.getElementById('view-tranz');if(!v)return;
+  if(!document.getElementById('trFiltBtn')){
+    v.innerHTML='<div class="tr-top"><div class="tr-h">Tranzaksiyalar <span id="trCnt" class="tr-cnt"></span></div>'+
+      '<div class="tr-srow"><input id="trQ" type="search" placeholder="Chek raqami, mijoz, sotuvchi" oninput="clearTimeout(window._trT);window._trT=setTimeout(renderTranz,200)">'+
+      '<button id="trFiltBtn" type="button" onclick="_trFiltOpen()">⏷<i id="trFN"></i></button></div>'+
+      '<div class="tr-chips"><button data-p="bugun" onclick="_trSet(\'bugun\')">Bugun</button><button data-p="kecha" onclick="_trSet(\'kecha\')">Kecha</button><button data-p="hafta" onclick="_trSet(\'hafta\')">7 kun</button>'+
+      '<label class="tr-date"><span id="trDateL">📅 Sana</span><input type="date" id="trDate" onchange="_TRDATE=this.value;renderTranz()"></label></div></div>'+
+      '<div id="trSum" class="tr-sum"></div><div id="trList"></div>';}
+  [].forEach.call(v.querySelectorAll('.tr-chips button'),function(b){b.classList.toggle('on',!_TRDATE&&b.getAttribute('data-p')===_TRP);});
+  var dl=document.getElementById('trDateL');if(dl){var lab=v.querySelector('.tr-date');if(_TRDATE){var p0=_TRDATE.split('-');dl.textContent='📅 '+p0[2]+'.'+p0[1]+'.'+p0[0];lab.classList.add('on');}else{dl.textContent='📅 Sana';lab.classList.remove('on');}}
+  var fn=document.getElementById('trFN'),fc=_trFCount();if(fn){fn.textContent=fc?fc:'';fn.style.display=fc?'':'none';}
+  document.getElementById('trFiltBtn').classList.toggle('on',fc>0);
+  var q=((document.getElementById('trQ')||{}).value||'').trim();
+  var L=document.getElementById('trList');L.innerHTML='<div class="tr-empty">⏳ Yuklanmoqda…</div>';
+  salesLoad(function(all){
+    var ql=_cnorm(q),mn=_pf(_TRF.min)||0,mx=_pf(_TRF.max)||0;
+    var sel=all.filter(function(x){if(!_trIn(x.day))return false;
+      if(ql&&_cnorm((x.customer||'')+' '+(x.seller||'')+' '+(x.bz||'')+' '+(x.id||'')).indexOf(ql)<0)return false;
+      if(_TRF.sellers.length&&_TRF.sellers.indexOf(x.seller||'—')<0)return false;
+      if(_TRF.pays.length){var ts=_trTypes(x),ok=false;for(var i=0;i<ts.length;i++)if(_TRF.pays.indexOf(ts[i])>=0){ok=true;break;}if(!ok)return false;}
+      var a=Math.abs(+x.total||0);if(mn&&a<mn)return false;if(mx&&a>mx)return false;return true;});
+    sel.sort(function(a,b){return String(b.ts||'')<String(a.ts||'')?-1:1;});
+    window._QB=sel;window._TRALL=all.filter(function(x){return _trIn(x.day);});
+    var tot=0,n=0;sel.forEach(function(x){tot+=+x.total||0;if(!x.isReturn)n++;});
+    var c=document.getElementById('trCnt');if(c)c.textContent=sel.length;
+    document.getElementById('trSum').innerHTML='<span>'+n+' ta sotuv'+(sel.length-n?' · '+(sel.length-n)+' vozvrat':'')+'</span><b>'+grp(Math.round(tot))+' UZS</b>';
+    if(!sel.length){L.innerHTML='<div class="tr-empty">Chek yo‘q</div>';return;}
+    var PN={},h='',lastDay='';_TRPAYS.forEach(function(p){PN[p[0]]=p[1];});
+    var PC={naqd:'#22A06B',karta:'#3B6FE0',payme1:'#14B8C6',payme2:'#0E7490',bank:'#6E56CF',qarz:'#E5484D'};
+    sel.forEach(function(x,i){
+      if(x.day!==lastDay){lastDay=x.day;var p=String(x.day).split('-');h+='<div class="tr-day">'+p[2]+'.'+p[1]+'.'+p[0]+'</div>';}
+      var t=new Date(typeof x.ts==='number'?x.ts:(x.ts||x.day)),pd=function(n){return ('0'+n).slice(-2);},hm=isNaN(t)?'':(pd(t.getHours())+':'+pd(t.getMinutes())+':'+pd(t.getSeconds()));
+      var u=0;(x.items||[]).forEach(function(it){u+=Math.abs(+it.qty||0);});u=Math.round(u*1000)/1000;
+      var ts=_trTypes(x),badges=ts.map(function(k){var col=k.indexOf('bol:')===0?'#E8833A':(PC[k]||'#667085');return '<span class="tr-pay" style="color:'+col+';background:'+col+'1a">'+esc(PN[k]||k)+'</span>';}).join(' ');
+      var no=x.bz?String(x.bz):String(x.id||'').slice(-8);
+      h+='<div class="tr-card" onclick="chekDetail('+i+')"><div class="tr-l">'+
+        '<div class="tr-no'+(x.isReturn?' ret':'')+'">'+(x.isReturn?'Vozvrat':'Sotuv')+' #'+esc(no)+'</div>'+
+        '<div class="tr-m"><span>'+hm+'</span><span class="tr-u">'+grp(u)+' ed.</span><span>'+esc(x.seller||'—')+'</span></div>'+
+        (x.customer?'<div class="tr-cu">👤 '+esc(x.customer)+'</div>':'')+'</div>'+
+        '<div class="tr-r"><b class="'+(x.isReturn?'ret':'')+'">'+grp(Math.round(x.total||0))+' UZS</b><div>'+badges+'</div></div></div>';});
+    L.innerHTML=h;
+  });
+}
+function _trFiltOpen(){
+  var all=window._TRALL||[],sm={};all.forEach(function(x){sm[x.seller||'—']=1;});var sl=Object.keys(sm).sort();
+  _TRF.sellers.forEach(function(s){if(sl.indexOf(s)<0)sl.push(s);});
+  var ck=function(grp_,val,lbl,on){return '<label class="tf-it"><input type="checkbox" data-g="'+grp_+'" value="'+esc(val)+'"'+(on?' checked':'')+'><span>'+esc(lbl)+'</span></label>';};
+  var o=document.createElement('div');o.id='trFiltOv';
+  o.innerHTML='<div class="tf-box"><div class="tf-hd"><button onclick="document.getElementById(\'trFiltOv\').remove()">←</button><b>Filtrlar</b><span></span></div><div class="tf-body">'+
+    '<div class="tf-sec"><div class="tf-t">To‘lov turi</div>'+_TRPAYS.map(function(p){return ck('p',p[0],p[1],_TRF.pays.indexOf(p[0])>=0);}).join('')+'</div>'+
+    '<div class="tf-sec"><div class="tf-t">Sotuvchi</div>'+(sl.length?sl.map(function(s){return ck('s',s,s,_TRF.sellers.indexOf(s)>=0);}).join(''):'<div class="tr-empty" style="padding:10px">Bu davrda sotuv yo‘q</div>')+'</div>'+
+    '<div class="tf-sec"><div class="tf-t">Chek summasi</div><div class="tf-mm"><input id="tfMin" inputmode="numeric" placeholder="Dan" value="'+esc(_TRF.min)+'"><input id="tfMax" inputmode="numeric" placeholder="Gacha" value="'+esc(_TRF.max)+'"></div></div>'+
+    '</div><div class="tf-ft"><button class="tf-r" onclick="_trFiltApply(1)">Tozalash</button><button class="tf-a" onclick="_trFiltApply(0)">Qo‘llash</button></div></div>';
+  document.body.appendChild(o);
+}
+function _trFiltApply(reset){
+  if(reset){_TRF={pays:[],sellers:[],min:'',max:''};}
+  else{var o=document.getElementById('trFiltOv');var g=function(k){return [].map.call(o.querySelectorAll('input[data-g="'+k+'"]:checked'),function(i){return i.value;});};
+    _TRF.pays=g('p');_TRF.sellers=g('s');_TRF.min=(document.getElementById('tfMin')||{}).value||'';_TRF.max=(document.getElementById('tfMax')||{}).value||'';}
+  var ov=document.getElementById('trFiltOv');if(ov)ov.remove();renderTranz();
+}
 </script>
 </body>
 </html>
