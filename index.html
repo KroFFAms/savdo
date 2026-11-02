@@ -3966,9 +3966,9 @@ function svSearch(){
   var q=_norm(document.getElementById('sq').value),el=document.getElementById('sv-results');
   var _qb=document.getElementById('quickBar');if(_qb)_qb.style.display=q?'none':'';
   if(!q){el.innerHTML='';return;}
-  var _all=_psearch(q,{noArx:true,stockFirst:true,limit:80});
+  var _all=_psearch(q,{noArx:true,stockFirst:true,limit:400});
   /* omborda qolmagan tovar sotuv qidiruvida ko'rsatilmaydi */
-  var res=_all.filter(function(p){return (+p.qoldiq||0)>0;}).slice(0,40),_yoq=_all.length-res.length;
+  var res=_all.filter(function(p){return (+p.qoldiq||0)>0;}).slice(0,150),_yoq=_all.length-res.length;
   if(!res.length){el.innerHTML='<div class="svr-empty">'+(_yoq?('Qoldig\u2018i 0 \u2014 kirim qilinmagan: '+_all.slice(0,3).map(function(p){return esc(p.nom);}).join(', ')):'Topilmadi')+'</div>';return;}
   var h='';res.forEach(function(p){var no=p.qoldiq<=0;
     h+='<button class="svr'+(no?' svr-no':'')+'" data-add="'+esc(String(p.id))+'"'+(no?' disabled':'')+'>'+
@@ -9625,6 +9625,65 @@ function _vbackAll(){var vs=document.querySelectorAll('.view');for(var i=0;i<vs.
   if(!v.querySelector(':scope > .vback')){var b=document.createElement('button');b.className='vback';b.type='button';b.innerHTML='<b>‹</b> Orqaga';b.onclick=function(){goBack();};v.insertBefore(b,v.firstChild);}}}
 (function(){function w(){_vbackAll();if(!window._vbW){var o=switchView;switchView=function(){var r=o.apply(this,arguments);try{_vbackAll();}catch(e){}return r;};window._vbW=1;}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(w,1200);});else setTimeout(w,1200);})();
+</script>
+<style>
+#kcMixRow{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+#kcMixRow .sw{width:46px;height:26px;border-radius:13px;background:#D0D5DD;position:relative;flex:none;transition:.15s}
+#kcMixRow .sw:after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:.15s}
+#kcMixRow.on .sw{background:#2E6BE6}#kcMixRow.on .sw:after{left:23px}
+#kcMixBox{display:none;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 6px}
+#kcMixBox.on{display:grid}
+#kcMixBox label{display:flex;flex-direction:column;gap:3px;background:#F7F8FA;border:1.5px solid #E4E7EC;border-radius:12px;padding:8px 10px;font-size:12.5px;font-weight:700;color:#475467}
+#kcMixBox label.has{border-color:#2E6BE6;background:#EEF4FF}
+#kcMixBox input{border:0;background:transparent;font-size:17px;font-weight:800;width:100%;padding:2px 0;outline:0}
+#kcMixInfo{grid-column:1/-1;font-size:12px;color:#667085}
+</style>
+<script>
+/* ===== Kirim: ARALASH TO'LOV (ta'minotchiga bir necha hisobdan) ===== */
+var _KCMIX=false,_KCACCS=[['naqd','💵 Naqd'],['karta','💳 Karta'],['payme1','📱 Payme 1'],['payme2','📱 Payme 2'],['bank','🏦 Hisob raqam']];
+function _kcMixInit(){var acc=document.getElementById('kcAcc');if(!acc||document.getElementById('kcMixRow'))return;
+  var row=acc.closest('.krow');
+  var t=document.createElement('div');t.className='krow';t.id='kcMixRow';t.innerHTML='<span>Aralash to‘lov (bir necha hisobdan)</span><span class="sw"></span>';t.onclick=_kcMixToggle;
+  var b=document.createElement('div');b.id='kcMixBox';
+  b.innerHTML=_KCACCS.map(function(a){return '<label id="kcmL_'+a[0]+'">'+a[1]+'<input id="kcm_'+a[0]+'" type="text" inputmode="numeric" placeholder="0" oninput="_kcMixCalc()"></label>';}).join('')+'<div id="kcMixInfo"></div>';
+  row.parentNode.insertBefore(t,row);row.parentNode.insertBefore(b,row.nextSibling);}
+function _kcMixToggle(){_KCMIX=!_KCMIX;var t=document.getElementById('kcMixRow'),b=document.getElementById('kcMixBox'),acc=document.getElementById('kcAcc'),pd=document.getElementById('kcPaid');
+  t.classList.toggle('on',_KCMIX);b.classList.toggle('on',_KCMIX);
+  if(acc)acc.closest('.krow').style.display=_KCMIX?'none':'';
+  if(pd){pd.readOnly=_KCMIX;pd.style.background=_KCMIX?'#F2F4F7':'';}
+  if(_KCMIX){var v=Math.round(_pf(pd&&pd.value)||0);_KCACCS.forEach(function(a){var e=document.getElementById('kcm_'+a[0]);if(e)e.value='';});
+    if(v>0){var e0=document.getElementById('kcm_'+(acc?acc.value:'naqd'));if(e0)e0.value=grp(v);}}
+  _kcMixCalc();}
+function _kcMixParts(){var o={},t=0;_KCACCS.forEach(function(a){var v=Math.round(_pf((document.getElementById('kcm_'+a[0])||{}).value)||0);if(v>0){o[a[0]]=v;t+=v;}});return {p:o,t:t};}
+function _kcMixCalc(){if(!_KCMIX)return;var m=_kcMixParts(),pd=document.getElementById('kcPaid');
+  _KCACCS.forEach(function(a){var l=document.getElementById('kcmL_'+a[0]);if(l)l.classList.toggle('has',!!m.p[a[0]]);});
+  if(pd){pd.value=m.t?grp(m.t):'';}try{renderKCart();}catch(e){}
+  var inf=document.getElementById('kcMixInfo'),sum=0;try{sum=kcSum();}catch(e){}
+  if(inf)inf.textContent=m.t>sum?('⚠️ To‘lov nakladnoy summasidan ko‘p ('+grp(sum)+')'):('Jami to‘lanadi: '+grp(m.t)+' · qarz qoladi: '+grp(Math.max(0,sum-m.t)));}
+(function(){function w(){_kcMixInit();
+  if(window._kcMixW||typeof kcSave!=='function')return;var o=kcSave;
+  kcSave=function(){
+    if(!_KCMIX)return o.apply(this,arguments);
+    var m=_kcMixParts(),sum=kcSum(),keys=Object.keys(m.p);
+    if(keys.length<=1){/* bitta hisob bo'lsa — oddiy yo'l */var acc=document.getElementById('kcAcc');if(acc&&keys[0])acc.value=keys[0];return o.apply(this,arguments);}
+    var supId=(document.getElementById('kSup')||{}).value||'';
+    if(!supId){toast('Aralash to‘lov uchun ta’minotchini tanlang');return;}
+    if(m.t>sum){toast('To‘lov nakladnoy summasidan ko‘p');return;}
+    var nm='';try{getSup().forEach(function(x){if(x.id===supId)nm=x.nom;});}catch(e){}
+    var big=keys.sort(function(a,b){return m.p[b]-m.p[a];})[0];
+    var pd=document.getElementById('kcPaid'),acc=document.getElementById('kcAcc');
+    if(acc)acc.value=big;if(pd)pd.value='0';
+    var n0=KCART.length;o.apply(this,arguments);
+    if(KCART.length===0&&n0){/* nakladnoy qarzga yozildi — endi to'lovni hisoblar bo'yicha ta'minotchiga yozamiz */
+      commitEvent('pay',{typ:'sup',id:supId,amount:m.t,split:m.p,method:big,note:'Nakladnoy (aralash)'});
+      keys.forEach(function(k){commitEvent('kassa',{dir:'out',acc:k,amount:m.p[k],cat:'Xarid',note:'Ta’minotchiga to‘lov · '+nm+' (nakladnoy)'});});
+      _KCACCS.forEach(function(a){var e=document.getElementById('kcm_'+a[0]);if(e)e.value='';});
+      if(_KCMIX)_kcMixToggle();
+      try{renderKirim();}catch(e){}if(typeof refresh==='function')try{refresh();}catch(e){}
+      toast('✅ Nakladnoy saqlandi · to‘lov: '+keys.map(function(k){return _accLabel(k)+' '+grp(m.p[k]);}).join(', '));}
+    else{if(pd)pd.value=grp(m.t);}
+  };window._kcMixW=1;}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(w,1300);});else setTimeout(w,1300);})();
 </script>
 </body>
 </html>
