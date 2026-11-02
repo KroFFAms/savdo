@@ -9407,14 +9407,14 @@ function _bzCmpXls(){var S=_bzCmpSets(),wb=XLSX.utils.book_new();
 </script>
 <style>
 html.sotuvchi .stats .stat:nth-child(n+3),html.sotuvchi #s_xarid,html.sotuvchi #s_foyda{display:none!important}
-html.sotuvchi [data-v="hisobot"]{display:none!important}
+html.sotuvchi [data-v="hisobot"],html.sotuvchi #bottomNav [data-v="katalog"],html.sotuvchi #ktCartBar{display:none!important}
 </style>
 <script>
 /* Sotuvchiga ortiqcha narsa ko'rinmaydi: Asosiy (foyda, ombor qiymati, qarzlar), tannarx, zaxira summalari — faqat admin uchun */
 (function(){function w(){if(typeof applyRole!=='function'||window._srWrap)return;var o=applyRole;
   applyRole=function(){var r=o.apply(this,arguments);try{var adm=(_role==='admin');document.documentElement.classList.toggle('sotuvchi',!adm);
-      if(!adm){var v=document.querySelector('.view.active');if(v&&v.id==='view-hisobot')switchView('sotuv');}}catch(e){}return r;};
-  var sv=switchView;switchView=function(v){if(v==='hisobot'&&_role!=='admin'){v='sotuv';arguments[0]='sotuv';arguments[1]=null;}return sv.apply(this,arguments);};
+      if(!adm){var v=document.querySelector('.view.active');if(v&&(v.id==='view-hisobot'||v.id==='view-katalog'))switchView('sotuv');}}catch(e){}return r;};
+  var sv=switchView;switchView=function(v){if((v==='hisobot'||v==='katalog')&&_role!=='admin'){v='sotuv';arguments[0]='sotuv';arguments[1]=null;}return sv.apply(this,arguments);};
   window._srWrap=1;try{applyRole();}catch(e){}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(w,800);});else setTimeout(w,800);})();
 </script>
@@ -9590,7 +9590,7 @@ function _drOpen(){var d=[];try{d=getDrafts();}catch(e){}
 <script>
 /* ===== Katalog = TOVAR KIRITISH (kirim). Qidirasiz -> tovarni bosasiz -> miqdor va narx -> kirim savatiga -> qidiruv tozalanadi ===== */
 function _ktgTap(el){var id=el.getAttribute('data-id');
-  if(typeof can==='function'&&!can('kirim')){toast('⛔ Kirim qilishga ruxsat yo‘q');return;}
+  if(_role!=='admin'){toast('⛔ Katalogdan kirimni faqat admin qiladi');return;}
   window._ktgBefore=JSON.stringify(KCART);kirimTap(id);
   setTimeout(function(){var q=document.getElementById('ktQty');if(q)try{q.focus();q.select();}catch(e){}},80);}
 (function(){function w(){if(window._ktgW||typeof _ktAdd!=='function')return;var o=_ktAdd;
