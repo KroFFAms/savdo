@@ -9056,7 +9056,7 @@ function renderTranz(){
 }
 /* sotuvdan keyin: chek oynasi o'zi yopiladi, sotuvchi yana qidiruvga qaytadi; chek kerak bo'lsa "🖨 Chek" tugmasi */
 function _svAfterOp(){
-  try{closeRcModal();}catch(e){}
+  /* chek oynasi YOPILMAYDI — sotuvchi chekni chiqaradi, keyin yopadi */
   try{if(typeof CURV!=='undefined'&&CURV!=='sotuv')switchView('sotuv');}catch(e){}
   try{if(SVPHASE==='pay')setSvPhase('cart');}catch(e){}
   setTimeout(function(){var q=document.getElementById('sq');if(q){try{q.focus({preventScroll:true});}catch(e){}}},150);
@@ -9186,6 +9186,7 @@ function _trFiltApply(reset){
 }
 </script>
 <style id="bzPay2Css">
+#rcModal button.btn[onclick="closeRcModal()"]{background:#2E6BE6!important;color:#fff!important;font-weight:800;padding:13px!important;border-radius:12px!important}
 .citem .cx{display:inline-flex!important;align-items:center;justify-content:center;flex:none;width:34px;height:34px;border-radius:50%;background:#FEE4E2!important;color:#D92D20!important;font-size:15px!important;font-weight:800;padding:0!important;margin-left:4px;border:0!important}
 .citem .cx:active{background:#FECDCA!important}
 .svr-zero{margin:6px 4px;padding:8px 12px;border-radius:10px;background:#FFF7E6;color:#9A6700;font-size:12.5px;line-height:1.4}
@@ -9789,6 +9790,39 @@ function _svRefresh(){_cartSave();toast('🔄 Yangilanyapti...');setTimeout(func
   if(bar&&mb&&!document.getElementById('svRefBtn')){var b=document.createElement('button');b.id='svRefBtn';b.type='button';b.title='Yangilash';b.textContent='🔄';b.onclick=_svRefresh;bar.insertBefore(b,mb);}
   _cartRestore();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(w,1800);});else setTimeout(w,1800);})();
+</script>
+<script>
+/* ===== Kirim savati va kiritilgan maydonlar ham yo'qolmasin (ilova qayta ochilsa tiklanadi) ===== */
+var _KKEY='kroff_kcart_live',_FKEY='kroff_fields_live';
+var _KEEPF=['kSup','kcYk','kcPaid','kcAcc','custSearch'];
+function _kcSaveLive(){try{if(KCART&&KCART.length)localStorage.setItem(_KKEY,JSON.stringify({ts:Date.now(),cart:KCART}));else localStorage.removeItem(_KKEY);}catch(e){}}
+function _fSave(){try{var o={ts:Date.now()},any=false;_KEEPF.forEach(function(id){var e=document.getElementById(id);if(e&&e.value){o[id]=e.value;if(e.tagName!=='SELECT')any=true;}});
+  var busy=((CART&&CART.length)||(KCART&&KCART.length));if(!busy){localStorage.removeItem(_FKEY);return;}if(any&&window._fRestDone)localStorage.setItem(_FKEY,JSON.stringify(o));}catch(e){}}
+function _fRestore(){window._fRestDone=1;try{var f=JSON.parse(localStorage.getItem(_FKEY)||'null');if(!f||Date.now()-(f.ts||0)>=12*3600*1000)return;var ch=false;
+  _KEEPF.forEach(function(id){var e=document.getElementById(id);if(e&&f[id]&&!e.value){e.value=f[id];ch=true;}else if(e&&f[id]&&e.tagName==='SELECT'&&e.value!==f[id]&&!window._fRestDone){e.value=f[id];ch=true;}});
+  window._fRestDone=1;if(ch)try{renderKCart();}catch(e){}}catch(e){}}
+function _kcRestore(){try{
+  var d=JSON.parse(localStorage.getItem(_KKEY)||'null');
+  if(d&&d.cart&&d.cart.length&&!(KCART&&KCART.length)&&Date.now()-(d.ts||0)<24*3600*1000){KCART=d.cart;try{renderKCart();}catch(e){}toast('♻️ Kirim savati tiklandi ('+KCART.length+' xil)');}
+  var f=JSON.parse(localStorage.getItem(_FKEY)||'null');
+  if(f&&Date.now()-(f.ts||0)<12*3600*1000){_KEEPF.forEach(function(id){var e=document.getElementById(id);if(e&&f[id]&&!e.value){e.value=f[id];}});try{renderKCart();}catch(e){}}
+}catch(e){}}
+(function(){function w(){
+  if(!window._kcLW&&typeof renderKCart==='function'){var o=renderKCart;renderKCart=function(){var r=o.apply(this,arguments);try{_kcSaveLive();_fSave();}catch(e){}return r;};window._kcLW=1;}
+  document.addEventListener('input',function(e){if(e.target&&_KEEPF.indexOf(e.target.id)>=0)_fSave();},true);
+  document.addEventListener('change',function(e){if(e.target&&_KEEPF.indexOf(e.target.id)>=0)_fSave();},true);
+  /* telefon ilovani fonda yopib qo'ysa ham — chiqishdan oldin saqlaymiz */
+  var sv=function(){try{_cartSave();_kcSaveLive();_fSave();}catch(e){}};
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')sv();});
+  window.addEventListener('pagehide',sv);window.addEventListener('beforeunload',sv);
+  _kcRestore();setTimeout(_fRestore,2500);
+  if(!window._fRW){var ov=switchView;switchView=function(v){var r=ov.apply(this,arguments);if(v==='sotuv'||v==='kirim')setTimeout(_fRestore,50);return r;};window._fRW=1;}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(w,2000);});else setTimeout(w,2000);})();
+</script>
+<script>
+/* chek oynasi yopilganda — Sotuvga, qidiruvga */
+(function(){function w(){if(window._rcW||typeof closeRcModal!=='function')return;var o=closeRcModal;closeRcModal=function(){var r=o.apply(this,arguments);try{if(typeof CURV!=='undefined'&&CURV!=='sotuv')switchView('sotuv');setTimeout(function(){var q=document.getElementById('sq');if(q)try{q.focus({preventScroll:true});}catch(e){}},120);}catch(e){}return r;};window._rcW=1;}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(w,1500);});else setTimeout(w,1500);})();
 </script>
 </body>
 </html>
