@@ -9760,5 +9760,35 @@ function renderSDash(){var v=document.getElementById('view-sdash');
     h+='<div class="ul-box" style="margin-top:12px"><div class="ul-h" style="display:flex;justify-content:space-between"><span>\ud83d\udcb3 To\u2018lov turlari</span><span>'+grp(pt)+'</span></div>'+(ph||'<div class="ul-s" style="padding:10px 0">Bu davrda savdo yo\u2018q</div>')+'</div>';
     var b=document.getElementById('sdBody');if(b)b.innerHTML=h;});});}
 </script>
+<style>
+/* pastga tortib yangilash (pull-to-refresh) o'chirildi — ma'lumot yo'qolmasin */
+html,body{overscroll-behavior-y:none!important}
+/* oxirgi qo'shilgan tovar savatning TEPASIDA turadi */
+#cart{display:flex;flex-direction:column-reverse}
+#svRefBtn{width:44px;height:44px;border-radius:50%;border:0;background:#EEF1F5;font-size:19px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;margin-left:auto;margin-right:8px}
+#svRefBtn:active{background:#DDE3EA}
+#view-sotuv .sv-bar>#svRefBtn{display:inline-flex!important}
+#view-sotuv .sv-bar>#svMoreBtn{margin-left:0!important}
+#citemNew{animation:cnew 1.2s ease}
+@keyframes cnew{0%{background:#E3EDFF}100%{background:#fff}}
+</style>
+<script>
+/* ===== Savat yo'qolmasin: har o'zgarishda saqlanadi, ilova qayta ochilsa tiklanadi ===== */
+var _CKEY='kroff_cart_live';
+function _cartSave(){try{if(CART&&CART.length)localStorage.setItem(_CKEY,JSON.stringify({ts:Date.now(),cart:CART,seller:(document.getElementById('seller')||{}).value||''}));else localStorage.removeItem(_CKEY);}catch(e){}}
+function _cartRestore(){try{if(CART&&CART.length)return;var d=JSON.parse(localStorage.getItem(_CKEY)||'null');if(!d||!d.cart||!d.cart.length)return;
+  if(Date.now()-(d.ts||0)>12*3600*1000){localStorage.removeItem(_CKEY);return;}
+  CART=d.cart;if(d.seller){var s=document.getElementById('seller');if(s){s.value=d.seller;}}
+  renderCart();toast('♻️ Savat tiklandi ('+CART.length+' xil tovar)');}catch(e){}}
+function _svRefresh(){_cartSave();toast('🔄 Yangilanyapti...');setTimeout(function(){location.reload();},250);}
+(function(){function w(){
+  if(!window._csW&&typeof renderCart==='function'){var o=renderCart;renderCart=function(){var n=(CART||[]).length,r=o.apply(this,arguments);try{_cartSave();
+      if(n>(window._cLastN||0)){var el=document.getElementById('cart');var last=el&&el.querySelectorAll('.citem');if(last&&last.length){var li=last[last.length-1];li.id='citemNew';try{el.scrollIntoView({block:'nearest'});}catch(e){}}}
+      window._cLastN=n;}catch(e){}return r;};window._csW=1;}
+  var bar=document.querySelector('#view-sotuv .sv-bar'),mb=document.getElementById('svMoreBtn');
+  if(bar&&mb&&!document.getElementById('svRefBtn')){var b=document.createElement('button');b.id='svRefBtn';b.type='button';b.title='Yangilash';b.textContent='🔄';b.onclick=_svRefresh;bar.insertBefore(b,mb);}
+  _cartRestore();}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(w,1800);});else setTimeout(w,1800);})();
+</script>
 </body>
 </html>
