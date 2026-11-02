@@ -763,6 +763,18 @@ var DEPLOY = {
    Telefonда hech narsa o'zgarmaydi — bu qoidalar faqat 1000px dan keng
    ekranlarda ishlaydi. */
 @media(min-width:1000px){
+  #dashMain{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+  #dashMain>.kgrid,#dashMain>.dpanels,#dashMain>.dwide,#dashMain>div[onclick]{grid-column:1/-1}
+  #dashMain>.dbox{margin-bottom:0}
+  #dashMain>.dpanels{grid-template-columns:1fr 1fr}
+}
+@media(min-width:1500px){
+  #dashMain{grid-template-columns:1fr 1fr 1fr}
+  #dashMain>.dpanels{grid-template-columns:1fr 1fr 1fr}
+}
+@media(max-width:480px){.num-big{font-size:17px!important}}
+</style>
+<style id="bzDashCss">
 #bzDash{margin-bottom:14px}
 .bzp-row,.bzp-bar{cursor:pointer}
 .bzp-row:hover .bzp-nm{color:#1F4E79;text-decoration:underline}
@@ -813,16 +825,6 @@ var DEPLOY = {
 .bz-mut{color:#98A2B3;font-size:13px}
 @media(max-width:900px){.bz-grid{grid-template-columns:1fr}.bz-tiles{grid-template-columns:repeat(2,1fr)}.bz-tiles .bz-tile:last-child{grid-column:1/-1}}
 
-  #dashMain{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
-  #dashMain>.kgrid,#dashMain>.dpanels,#dashMain>.dwide,#dashMain>div[onclick]{grid-column:1/-1}
-  #dashMain>.dbox{margin-bottom:0}
-  #dashMain>.dpanels{grid-template-columns:1fr 1fr}
-}
-@media(min-width:1500px){
-  #dashMain{grid-template-columns:1fr 1fr 1fr}
-  #dashMain>.dpanels{grid-template-columns:1fr 1fr 1fr}
-}
-@media(max-width:480px){.num-big{font-size:17px!important}}
 </style>
 </head>
 <body>
