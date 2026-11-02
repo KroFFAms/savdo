@@ -8985,6 +8985,7 @@ function _svMore(){
   it.push(['🏷️','Narx turi','toggleOptom()',(opt?opt.textContent:'')]);
   it.push(['📷','Kamera bilan skanerlash','openScan()']);
   it.push(['⚙️','Sotuvchilar ro‘yxati','editSellers()']);
+  it.push(['⚖️','Billz bilan qoldiqni solishtirish','_bzCmpOpen()']);
   o=document.createElement('div');o.id='svMoreOv';
   o.innerHTML='<div class="sm-box">'+it.map(function(x){return '<button class="sm-it" onclick="document.getElementById(\'svMoreOv\').remove();'+x[2]+'"><span>'+x[0]+'</span>'+x[1]+(x[3]?'<small>'+esc(x[3])+'</small>':'')+'</button>';}).join('')+'</div>';
   o.addEventListener('click',function(e){if(e.target===o)o.remove();});document.body.appendChild(o);
@@ -9326,6 +9327,83 @@ function _ruKb(s){var o='';s=String(s||'').toLowerCase();for(var i=0;i<s.length;
         a.concat(b).forEach(function(p){if(!seen[p.id]){seen[p.id]=1;m.push(p);}});r=m.slice(0,(opt&&opt.limit)||50);}}}
     return r;};window._kbWrap=1;}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(w,700);});else setTimeout(w,700);})();
+</script>
+<style>
+#bzCmpOv{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:100001;display:flex;align-items:flex-end;justify-content:center}
+#bzCmpOv .bc-box{background:#fff;width:100%;max-width:640px;max-height:92vh;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:hidden}
+#bzCmpOv .bc-hd{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid #EEF0F3}
+#bzCmpOv .bc-hd button{border:0;background:#F2F4F7;border-radius:50%;width:32px;height:32px;font-size:15px}
+#bzCmpOv .bc-bd{padding:12px 16px;overflow:auto;flex:1}
+#bzCmpOv .bc-step{font-size:13.5px;line-height:1.5;color:#344054;margin-bottom:10px}
+#bzCmpOv .bc-btn{display:block;width:100%;border:0;border-radius:12px;padding:13px;background:#2E6BE6;color:#fff;font-weight:700;font-size:15px;margin:6px 0}
+#bzCmpOv .bc-btn.g{background:#F2F4F7;color:#101828}
+#bzCmpOv .bc-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+#bzCmpOv .bc-tabs button{border:1.5px solid #D9E1EC;background:#fff;border-radius:20px;padding:6px 12px;font-size:13px;font-weight:600}
+#bzCmpOv .bc-tabs button.on{background:#2E6BE6;border-color:#2E6BE6;color:#fff}
+#bzCmpOv .bc-row{display:flex;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid #F2F4F7;font-size:13.5px}
+#bzCmpOv .bc-row .n{flex:1;min-width:0}
+#bzCmpOv .bc-row .n small{display:block;color:#98A2B3;font-size:11.5px}
+#bzCmpOv .bc-row .q{width:62px;text-align:right;font-weight:700}
+#bzCmpOv .bc-row .q.b{color:#2E6BE6}#bzCmpOv .bc-row .q.k{color:#101828}#bzCmpOv .bc-row .q.d{color:#E5484D}
+#bzCmpOv .bc-row.h{font-size:11.5px;color:#667085;font-weight:700;text-transform:uppercase}
+</style>
+<script>
+/* ===== Billz bilan qoldiqni solishtirish (faqat ko'rsatadi, hech narsani o'zgartirmaydi) ===== */
+var _BZC=null,_BZCT='zero';
+function _bzCmpOpen(){var o=document.getElementById('bzCmpOv');if(o)o.remove();o=document.createElement('div');o.id='bzCmpOv';
+  o.innerHTML='<div class="bc-box"><div class="bc-hd"><b>⚖️ Billz bilan qoldiq</b><button onclick="document.getElementById(\'bzCmpOv\').remove()">✕</button></div><div class="bc-bd" id="bzCmpBd"></div></div>';
+  o.addEventListener('click',function(e){if(e.target===o)o.remove();});document.body.appendChild(o);_bzCmpStart();}
+function _bzCmpStart(){var b=document.getElementById('bzCmpBd');if(!b)return;
+  b.innerHTML='<div class="bc-step"><b>1.</b> Billz → <b>Товары</b> → <b>Скачать / Экспорт</b> (Excel) — qoldiq (остаток) ustuni bilan.<br><b>2.</b> Shu faylni pastdagi tugma orqali tanlang.<br>Dastur tovarlarni shtrix-kod, artikul va nom bo‘yicha topib, qoldiqni solishtiradi. <b>Hech narsa o‘zgarmaydi</b> — faqat ro‘yxat chiqadi.</div>'+
+    '<button class="bc-btn" onclick="document.getElementById(\'bzCmpF\').click()">📂 Billz Excel faylini tanlash</button><input type="file" id="bzCmpF" accept=".xlsx,.xls,.csv" style="display:none" onchange="_bzCmpFile(this)">';}
+function _bzHdr(h,res){for(var i=0;i<res.length;i++){for(var j=0;j<h.length;j++){if(res[i].test(String(h[j]||'').toLowerCase()))return j;}}return -1;}
+function _bzCmpFile(inp){var f=inp.files&&inp.files[0];if(!f)return;var rd=new FileReader();
+  rd.onload=function(e){try{var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});var rows=[];
+      wb.SheetNames.forEach(function(n){rows=rows.concat(XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:''}));});
+      _bzCmpRun(rows);}catch(x){alert('Faylni o‘qib bo‘lmadi: '+x.message);}};
+  rd.readAsArrayBuffer(f);}
+function _bzCmpRun(rows){
+  var hi=-1,c={};
+  for(var r=0;r<Math.min(rows.length,15);r++){var h=rows[r]||[];
+    var nm=_bzHdr(h,[/наимен/,/назван/,/^name|product name/,/tovar|товар/]),
+        st=_bzHdr(h,[/общий остат|остаток/,/остат/,/qoldiq|stock|measurement value/,/колич|кол-во|в налич/]);
+    if(nm>=0&&st>=0){hi=r;c.nm=nm;c.st=st;c.bc=_bzHdr(h,[/штрих|barcode|баркод/]);c.sku=_bzHdr(h,[/артикул|sku|article/]);break;}}
+  if(hi<0){alert('Faylda "Наименование" va "Остаток" ustunlari topilmadi. Billz’dan tovarlar ro‘yxatini qoldiq bilan yuklab oling.');return;}
+  var byBc={},bySku={},byNm={};
+  PRODUCTS.forEach(function(p){if(p.arxiv)return;
+    String(p.barcode||'').split(/[,;\s]+/).forEach(function(b){if(b)byBc[b]=p;});
+    if(p.artikul)bySku[String(p.artikul).trim().toLowerCase()]=p;
+    var k=_cnorm(p.nom||'');if(k)byNm[k]=p;});
+  var seen={},out=[];
+  for(var i=hi+1;i<rows.length;i++){var R=rows[i]||[];var nom=String(R[c.nm]||'').trim();if(!nom)continue;
+    var bq=parseFloat(String(R[c.st]).replace(/\s/g,'').replace(',','.'))||0;
+    var bc=c.bc>=0?String(R[c.bc]||'').trim():'',sku=c.sku>=0?String(R[c.sku]||'').trim().toLowerCase():'';
+    var p=null;if(bc){bc.split(/[,;\s]+/).some(function(b){if(byBc[b]){p=byBc[b];return true;}});}
+    if(!p&&sku)p=bySku[sku]||null;if(!p)p=byNm[_cnorm(nom)]||null;
+    if(p){if(seen[p.id]){seen[p.id].bq+=bq;continue;}var o={nom:p.nom,bnom:nom,bc:bc,bq:bq,kq:+p.qoldiq||0,id:p.id};seen[p.id]=o;out.push(o);}
+    else out.push({nom:nom,bnom:nom,bc:bc,bq:bq,kq:null,id:null});}
+  out.forEach(function(o){o.d=o.kq==null?null:Math.round((o.bq-o.kq)*1000)/1000;});
+  _BZC=out;_BZCT='zero';_bzCmpShow();}
+function _bzCmpSets(){var A=_BZC||[];return {
+  zero:A.filter(function(o){return o.kq!=null&&o.bq>0&&o.kq<=0;}),
+  diff:A.filter(function(o){return o.kq!=null&&o.d!==0&&!(o.bq>0&&o.kq<=0);}),
+  yoq:A.filter(function(o){return o.kq==null&&o.bq>0;}),
+  ok:A.filter(function(o){return o.kq!=null&&o.d===0;})};}
+function _bzCmpShow(){var b=document.getElementById('bzCmpBd');if(!b)return;var S=_bzCmpSets();
+  var T=[['zero','Billz’da bor, bizda 0'],['diff','Qoldiq farqli'],['yoq','Bizda topilmadi'],['ok','Teng']];
+  var h='<div class="bc-tabs">'+T.map(function(t){return '<button class="'+(_BZCT===t[0]?'on':'')+'" onclick="_BZCT=\''+t[0]+'\';_bzCmpShow()">'+t[1]+' ('+S[t[0]].length+')</button>';}).join('')+'</div>';
+  var L=S[_BZCT].slice().sort(function(a,b){return Math.abs(b.d||b.bq)-Math.abs(a.d||a.bq);});
+  h+='<div class="bc-row h"><span class="n">Tovar</span><span class="q">Billz</span><span class="q">Bizda</span><span class="q">Farq</span></div>';
+  L.slice(0,500).forEach(function(o){h+='<div class="bc-row"><span class="n">'+esc(o.nom)+(o.bc?'<small>'+esc(o.bc)+'</small>':'')+'</span><span class="q b">'+grp(o.bq)+'</span><span class="q k">'+(o.kq==null?'—':grp(o.kq))+'</span><span class="q d">'+(o.d==null?'':(o.d>0?'+':'')+grp(o.d))+'</span></div>';});
+  if(!L.length)h+='<div class="bc-step" style="text-align:center;padding:20px">Bu ro‘yxat bo‘sh ✅</div>';
+  h+='<button class="bc-btn" onclick="_bzCmpXls()">📥 Excel qilib yuklab olish</button><button class="bc-btn g" onclick="_bzCmpStart()">Boshqa fayl tanlash</button>';
+  b.innerHTML=h;}
+function _bzCmpXls(){var S=_bzCmpSets(),wb=XLSX.utils.book_new();
+  [['zero','Billzda bor bizda 0'],['diff','Farqli'],['yoq','Bizda yoq'],['ok','Teng']].forEach(function(t){
+    var rows=[['Tovar (bizda)','Tovar (Billz)','Shtrix-kod','Billz qoldiq','Bizda qoldiq','Farq']];
+    S[t[0]].forEach(function(o){rows.push([o.nom,o.bnom,o.bc,o.bq,o.kq==null?'':o.kq,o.d==null?'':o.d]);});
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows),t[1]);});
+  XLSX.writeFile(wb,'billz_solishtirish_'+dayStr(new Date())+'.xlsx');}
 </script>
 </body>
 </html>
