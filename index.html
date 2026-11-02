@@ -8984,8 +8984,8 @@ function _svMore(){
   it.push(['💳','Bugungi savdolar','openSavdolar()']);
   it.push(['🏷️','Narx turi','toggleOptom()',(opt?opt.textContent:'')]);
   it.push(['📷','Kamera bilan skanerlash','openScan()']);
-  it.push(['⚙️','Sotuvchilar ro‘yxati','editSellers()']);
-  it.push(['⚖️','Billz bilan qoldiqni solishtirish','_bzCmpOpen()']);
+  if(_role==='admin'){it.push(['⚙️','Sotuvchilar ro‘yxati','editSellers()']);
+  it.push(['⚖️','Billz bilan qoldiqni solishtirish','_bzCmpOpen()']);}
   o=document.createElement('div');o.id='svMoreOv';
   o.innerHTML='<div class="sm-box">'+it.map(function(x){return '<button class="sm-it" onclick="document.getElementById(\'svMoreOv\').remove();'+x[2]+'"><span>'+x[0]+'</span>'+x[1]+(x[3]?'<small>'+esc(x[3])+'</small>':'')+'</button>';}).join('')+'</div>';
   o.addEventListener('click',function(e){if(e.target===o)o.remove();});document.body.appendChild(o);
@@ -9404,6 +9404,19 @@ function _bzCmpXls(){var S=_bzCmpSets(),wb=XLSX.utils.book_new();
     S[t[0]].forEach(function(o){rows.push([o.nom,o.bnom,o.bc,o.bq,o.kq==null?'':o.kq,o.d==null?'':o.d]);});
     XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows),t[1]);});
   XLSX.writeFile(wb,'billz_solishtirish_'+dayStr(new Date())+'.xlsx');}
+</script>
+<style>
+html.sotuvchi .stats .stat:nth-child(n+3),html.sotuvchi #s_xarid,html.sotuvchi #s_foyda{display:none!important}
+html.sotuvchi [data-v="hisobot"]{display:none!important}
+</style>
+<script>
+/* Sotuvchiga ortiqcha narsa ko'rinmaydi: Asosiy (foyda, ombor qiymati, qarzlar), tannarx, zaxira summalari — faqat admin uchun */
+(function(){function w(){if(typeof applyRole!=='function'||window._srWrap)return;var o=applyRole;
+  applyRole=function(){var r=o.apply(this,arguments);try{var adm=(_role==='admin');document.documentElement.classList.toggle('sotuvchi',!adm);
+      if(!adm){var v=document.querySelector('.view.active');if(v&&v.id==='view-hisobot')switchView('sotuv');}}catch(e){}return r;};
+  var sv=switchView;switchView=function(v){if(v==='hisobot'&&_role!=='admin'){v='sotuv';arguments[0]='sotuv';arguments[1]=null;}return sv.apply(this,arguments);};
+  window._srWrap=1;try{applyRole();}catch(e){}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(w,800);});else setTimeout(w,800);})();
 </script>
 </body>
 </html>
