@@ -5873,15 +5873,16 @@ function retRenderList(q){
     list=list.filter(function(x){var rm=_retReturned(all,x.id);var any=false;(x.items||[]).forEach(function(it){if((it.qty-(rm[it.id]||0))>0.0001)any=true;});return any;});
     if(q){var qn=_cnorm(q),qd=q.replace(/[^0-9]/g,'');list=list.filter(function(x){var num=String(x.id).replace(/\D/g,'');if(qd&&num.indexOf(qd)>=0)return true;if(qn){if(_cnorm(x.customer||'').indexOf(qn)>=0)return true;if(_cnorm(x.seller||'').indexOf(qn)>=0)return true;var hit=false;(x.items||[]).forEach(function(it){if(_cnorm(it.nom||'').indexOf(qn)>=0)hit=true;});if(hit)return true;}return false;});}
     list.sort(function(a,b){return (new Date(b.ts||b.day))-(new Date(a.ts||a.day));});
-    list=list.slice(0,40);
-    if(!list.length){el.innerHTML='<div class="cart-empty">Chek topilmadi</div>';return;}
+    list=list.slice(0,120);
+    var _more='<button class="btn btn-ghost" style="width:100%;margin:10px 0 4px" onclick="_retMore()">\u2b07\ufe0f Oldingi cheklarni ham ko\u2018rsatish (hozir: oxirgi '+(window._RETD||30)+' kun)</button>';
+    if(!list.length){el.innerHTML='<div class="cart-empty">Chek topilmadi</div>'+_more;return;}
     var h='';list.forEach(function(x){
       var t=new Date(x.ts||x.day),num=String(x.id).replace(/\D/g,'').slice(-6);
       var tm=('0'+t.getDate()).slice(-2)+'.'+('0'+(t.getMonth()+1)).slice(-2)+' '+('0'+t.getHours()).slice(-2)+':'+('0'+t.getMinutes()).slice(-2);
       var its=(x.items||[]).map(function(z){return esc(z.nom)+' \u00d7'+z.qty;}).join(', ')||'savdo';
       h+='<div class="cmrow" style="cursor:pointer" onclick="retPick(\''+x.id+'\')"><div class="cmr-l"><div class="cmr-d">#'+num+' \u00b7 '+tm+(x.customer?' \u00b7 \ud83d\udc64 '+esc(x.customer):'')+' \u00b7 '+payLbl(x.pay)+'</div><div class="cmr-t">'+its+'</div></div><div class="cmr-a" style="color:#1F4E79">'+grp(x.total)+'</div></div>';
     });
-    el.innerHTML=h;
+    el.innerHTML=h+_more;
   });
 }
 function retPick(id){
@@ -9243,7 +9244,7 @@ function _spTake(id){var e=document.getElementById(id);if(!e)return;var t=Math.r
     setTimeout(function(){try{e.focus();e.select();}catch(x){}},30);}
   SPLIT.touched=true;splitRecalc();}
 function _spX(ev,id){ev.stopPropagation();var e=document.getElementById(id);if(e)e.value='';SPLIT.touched=true;splitRecalc();}
-function _spDecor(){var b=document.getElementById('splitBox');if(!b||b._bz2)return;b._bz2=1;
+function _spDecor(){var b=document.getElementById('splitBox');if(!b||b.querySelector('.sp-mix'))return;
   b.classList.toggle('mix',_ARALASH);
   var m=document.createElement('div');m.className='sp-mix';m.innerHTML='<span>Aralash to‘lov</span><span class="sw"></span>';m.onclick=_spMixToggle;
   b.insertBefore(m,b.firstChild);
@@ -9842,6 +9843,17 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 <script>
 /* Chek logosi: telefonga yuklangan rasm bo'lsa — o'sha, bo'lmasa katta "KROFF" yozuvi */
 function _rcLogo(){try{return localStorage.getItem('kroff_logo')||'';}catch(e){return '';}}
+</script>
+<script>
+/* Qaytarish: faqat bugungi emas — oxirgi 30 kun (tugma bilan yana 30 kundan) cheklar serverdan olinadi */
+(function(){function w(){if(window._retW||typeof retRenderList!=='function')return;var o=retRenderList;
+  retRenderList=function(q){var a=arguments,self=this,d=window._RETD||(window._RETD=30);var el=document.getElementById('retBody');
+    var from=new Date();from.setHours(0,0,0,0);from.setDate(from.getDate()-d);
+    if(typeof MEM!=='undefined'&&DEPLOY.XOTIRA&&from.getTime()<MEM.from&&el)el.innerHTML='<div class="cart-empty">\u23f3 Oxirgi '+d+' kunlik cheklar yuklanmoqda\u2026</div>';
+    _memEnsure(from.getTime(),function(){o.apply(self,a);});};
+  window._retW=1;}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(w,1200);});else setTimeout(w,1200);})();
+function _retMore(){window._RETD=(window._RETD||30)+30;var q=((document.getElementById('retSearch')||{}).value||'').trim().toLowerCase();retRenderList(q);}
 </script>
 </body>
 </html>
