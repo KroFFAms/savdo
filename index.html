@@ -9311,5 +9311,18 @@ function _psearch(q,o){o=o||{};var raw=String(q||'').trim();if(!raw)return [];
   out.sort(function(a,b){if(b.s!==a.s)return b.s-a.s;if(o.stockFirst){var qa=(+a.p.qoldiq||0)>0?1:0,qb=(+b.p.qoldiq||0)>0?1:0;if(qa!==qb)return qb-qa;}return String(a.p.nom).length-String(b.p.nom).length;});
   return out.slice(0,o.limit||50).map(function(x){return x.p;});}
 </script>
+<script>
+/* Klaviatura rus tilida qolib yozilsa ("ыфьфкуя" = "samarez") — o'zi lotinga o'girib qidiradi */
+var _RUKB={'й':'q','ц':'w','у':'e','к':'r','е':'t','н':'y','г':'u','ш':'i','щ':'o','з':'p','х':'[','ъ':']','ф':'a','ы':'s','в':'d','а':'f','п':'g','р':'h','о':'j','л':'k','д':'l','ж':';','э':"'",'я':'z','ч':'x','с':'c','м':'v','и':'b','т':'n','ь':'m','б':',','ю':'.','ё':'`'};
+function _ruKb(s){var o='';s=String(s||'').toLowerCase();for(var i=0;i<s.length;i++){var c=s.charAt(i);o+=(_RUKB[c]!=null?_RUKB[c]:c);}return o;}
+(function(){function w(){if(typeof _psearch!=='function'||window._kbWrap)return;var o=_psearch;
+  _psearch=function(q,opt){var r=o.apply(this,arguments);
+    if(/[\u0400-\u04FF]/.test(String(q||''))){var q2=_ruKb(q);if(q2!==String(q).toLowerCase()){var r2=o.call(this,q2,opt),seen={};
+      if(r.length<5||r2.length){var m=[];/* asl natija oldin, o'girilgani keyin (agar asl kam bo'lsa — o'girilgani oldin) */
+        var a=r.length?r:r2,b=r.length?r2:[];if(r.length<3&&r2.length){a=r2;b=r;}
+        a.concat(b).forEach(function(p){if(!seen[p.id]){seen[p.id]=1;m.push(p);}});r=m.slice(0,(opt&&opt.limit)||50);}}}
+    return r;};window._kbWrap=1;}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(w,700);});else setTimeout(w,700);})();
+</script>
 </body>
 </html>
