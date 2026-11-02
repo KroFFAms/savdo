@@ -432,7 +432,7 @@ var DEPLOY = {
     body>*{display:none!important}
     #receiptArea{display:block!important;position:absolute;left:0;top:0;width:58mm;
       margin:0;padding:2mm 1.5mm;color:#000;background:#fff;
-      font-family:"Courier New",ui-monospace,monospace;font-size:12px;line-height:1.35}
+      font-family:"Courier New",ui-monospace,monospace;font-size:13px;line-height:1.35}
     @page{size:58mm auto;margin:0}
   }
   #receiptArea .r-c{text-align:center}
@@ -953,7 +953,7 @@ var DEPLOY = {
     <h1>KROFF <span class="dot">·</span> Savdo</h1>
     <div class="syncchip" id="syncChip" onclick="manualSync()">☁️ …</div>
     <button class="menu-btn" onclick="toggleMenu(event)" aria-label="Menyu">☰</button>
-    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v92</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)"><span class="mi-i">📦</span>Tovarlar</button><button class="menu-item" data-admin="1" onclick="openOps()"><span class="mi-i">🧾</span>Amaliyotlar</button><button class="menu-item" data-admin="1" onclick="openRetSup()"><span class="mi-i">↩️</span>Ta‘minotga qaytarish</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)"><span class="mi-i">🛒</span>Sotuv</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)"><span class="mi-i">📈</span>Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)"><span class="mi-i">🚚</span>Katalog</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)"><span class="mi-i">👤</span>Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)"><span class="mi-i">🔧</span>Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)"><span class="mi-i">💰</span>Kassa</button><button class="menu-item" data-v="ishhaqi" data-admin="1" onclick="switchView('ishhaqi',this)"><span class="mi-i">👷</span>Ish haqi</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)"><span class="mi-i">📋</span>Sanoq</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)"><span class="mi-i">⚙️</span>Sozlamalar</button><button class="menu-item" data-admin="1" onclick="manualSync()"><span class="mi-i">🔄</span>Yangilash (bulut)</button><button class="menu-item" onclick="prnSoz();menuOpen(false)"><span class="mi-i">🖨️</span>Printer</button><button class="menu-item" data-admin="1" onclick="publishCatalog(true);menuOpen(false)"><span class="mi-i">📤</span>Katalogga chiqarish</button><button class="menu-item" data-admin="1" onclick="openOnlOrders()"><span class="mi-i">🛍️</span>Onlayn buyurtmalar<span id="onlBadge" style="display:none;margin-left:auto;background:#e01438;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:800"></span></button><button class="menu-item" data-admin="1" onclick="editPins()"><span class="mi-i">🔑</span>Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)"><span class="mi-i">👥</span>Xodimlar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d"><span class="mi-i">🔒</span>Qulflash (chiqish)</button></div>
+    <div class="menu-back" id="menuBack" onclick="menuOpen(false)"></div><div class="menu-drop" id="menuDrop"><div class="menu-head"><span>Menyu · <span id="roleBadge" style="color:#1F4E79">—</span> · <b style="color:#1a7f37">v92</b></span><button class="menu-x" onclick="menuOpen(false)">✕</button></div><button class="menu-item active" data-v="tovarlar" onclick="switchView('tovarlar',this)"><span class="mi-i">📦</span>Tovarlar</button><button class="menu-item" data-admin="1" onclick="openOps()"><span class="mi-i">🧾</span>Amaliyotlar</button><button class="menu-item" data-admin="1" onclick="openRetSup()"><span class="mi-i">↩️</span>Ta‘minotga qaytarish</button><button class="menu-item" data-v="sotuv" onclick="switchView('sotuv',this)"><span class="mi-i">🛒</span>Sotuv</button><button class="menu-item" data-v="tranz" onclick="switchView('tranz',this)"><span class="mi-i">🧾</span>Tranzaksiyalar</button><button class="menu-item" data-v="katalog" data-admin="1" onclick="switchView('katalog',this)"><span class="mi-i">🗂️</span>Katalog</button><button class="menu-item" data-v="hisobot" data-admin="1" onclick="switchView('hisobot',this)"><span class="mi-i">📈</span>Hisobot</button><button class="menu-item" data-v="kirim" data-admin="1" onclick="switchView('kirim',this)"><span class="mi-i">🚚</span>Nakladnoy (kirim)</button><button class="menu-item" data-v="mijoz" data-admin="1" onclick="switchView('mijoz',this)"><span class="mi-i">👤</span>Mijozlar</button><button class="menu-item" data-v="arenda" data-admin="1" onclick="switchView('arenda',this)"><span class="mi-i">🔧</span>Arenda</button><button class="menu-item" data-v="kassa" data-admin="1" onclick="switchView('kassa',this)"><span class="mi-i">💰</span>Kassa</button><button class="menu-item" data-v="ishhaqi" data-admin="1" onclick="switchView('ishhaqi',this)"><span class="mi-i">👷</span>Ish haqi</button><button class="menu-item" data-v="sanoq" data-admin="1" onclick="switchView('sanoq',this)"><span class="mi-i">📋</span>Sanoq</button><button class="menu-item" data-v="boshqaruv" data-admin="1" onclick="switchView('boshqaruv',this)"><span class="mi-i">⚙️</span>Sozlamalar</button><button class="menu-item" data-admin="1" onclick="manualSync()"><span class="mi-i">🔄</span>Yangilash (bulut)</button><button class="menu-item" onclick="prnSoz();menuOpen(false)"><span class="mi-i">🖨️</span>Printer</button><button class="menu-item" data-admin="1" onclick="publishCatalog(true);menuOpen(false)"><span class="mi-i">📤</span>Katalogga chiqarish</button><button class="menu-item" data-admin="1" onclick="openOnlOrders()"><span class="mi-i">🛍️</span>Onlayn buyurtmalar<span id="onlBadge" style="display:none;margin-left:auto;background:#e01438;color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:800"></span></button><button class="menu-item" data-admin="1" onclick="editPins()"><span class="mi-i">🔑</span>Parollar</button><button class="menu-item" data-v="devices" data-admin="1" onclick="switchView('devices',this)"><span class="mi-i">👥</span>Xodimlar</button><button class="menu-item" onclick="lockApp()" style="color:#a32d2d"><span class="mi-i">🔒</span>Qulflash (chiqish)</button></div>
     <div class="stats" id="stats">
       <div class="stat"><div class="v" id="s_tovar">0</div><div class="l">Tovar turi</div></div>
       <div class="stat"><div class="v" id="s_qty">0</div><div class="l">Qoldiq (dona)</div></div>
@@ -1855,6 +1855,7 @@ function printReceipt(sale){
   var payMap={naqd:'Naqd',karta:'Karta',payme1:'Payme',payme2:'Payme',qarz:'Qarzga'};
   var payL=payMap[sale.pay]||payLbl(sale.pay);
   var h='';
+  h+='<div class="r-logo">'+(_rcLogo()?'<img src="'+_rcLogo()+'" alt="">':'<span>'+esc(SHOP.name||'KROFF')+'</span>')+'</div>';
   h+='<div class="r-line"></div>';
   h+='<div class="r-b">Sotuv: #'+recNo+(isR?' (QAYTARISH)':'')+'</div>';
   h+='<div class="r-b">Store '+esc(SHOP.name)+'</div>';
@@ -1879,7 +1880,7 @@ function printReceipt(sale){
   if(sale.disc)h+=_dash('Chegirma', '\u2212'+_money(sale.disc)+' UZS');
   if(sale.dost)h+=_dash('Dostavka'+(sale.dost.manzil?(' ('+sale.dost.manzil+')'):''), sale.dost.haq?(_money(sale.dost.haq)+' UZS'):'Bepul');
   h+='<div class="r-b">'+_dash('JAMI', _money(tot)+' UZS')+'</div>';
-  if(sale.split){var _spn2={naqd:'\ud83d\udcb5 Naqd',karta:'\ud83d\udcb3 Karta',payme1:'\ud83d\udcf1 Payme 1',payme2:'\ud83d\udcf1 Payme 2',bank:'\ud83c\udfe6 Hisob raqam'};
+  if(sale.split){var _spn2={naqd:'Naqd',karta:'Karta',payme1:'Payme 1',payme2:'Payme 2',bank:'Hisob raqam'};
     for(var _sk3 in sale.split){if(sale.split[_sk3]>0)h+=_dash(_spn2[_sk3]||_sk3, _money(sale.split[_sk3])+' UZS');}}
   if(sale.pay==='qarz'){
     if(sale.given&&!sale.split){var _pm={naqd:'Naqd',karta:'Karta',payme1:'Payme1',payme2:'Payme2'}[sale.paidMethod]||'To\u2018langan';h+=_dash('Berilgan ('+_pm+')', _money(sale.given)+' UZS');}
@@ -1916,7 +1917,7 @@ function _prnMode(m){
   }else{
     var w=c.chek,pw=(w>=80?72:48),pad=(w-pw)/2;
     s.textContent='@media print{@page{size:'+w+'mm auto;margin:0}'+
-      '#receiptArea{width:'+pw+'mm!important;padding:2mm '+pad+'mm!important;font-size:'+(w>=80?13:12)+'px!important}'+
+      '#receiptArea{width:'+pw+'mm!important;padding:2mm '+pad+'mm!important;font-size:'+(w>=80?14.5:13)+'px!important;font-weight:700!important}'+
       '#receiptArea svg#rcBar{max-width:'+(pw-2)+'mm!important}}';
   }
 }
@@ -7616,7 +7617,7 @@ try{
    Huquqlar (data-admin) ham asl banddan ko'chiriladi. */
 (function(){
   var GROUPS=[
-    ['Asosiy',      ['tovarlar','sotuv']],
+    ['Asosiy',      ['sotuv','tranz','katalog','tovarlar']],
     ['Onlayn',      ['kirim','fn:publishCatalog','fn:openOnlOrders']],
     ['Savdo va pul',['hisobot','kassa','mijoz','ishhaqi','arenda']],
     ['Ombor',       ['fn:openOps','fn:openRetSup','sanoq']],
@@ -9159,7 +9160,8 @@ function renderTranz(){
         '<div class="tr-no'+(x.isReturn?' ret':'')+'">'+(x.isReturn?'Vozvrat':'Sotuv')+' #'+esc(no)+'</div>'+
         '<div class="tr-m"><span>'+hm+'</span><span class="tr-u">'+grp(u)+' ed.</span><span>'+esc(x.seller||'—')+'</span></div>'+
         (x.customer?'<div class="tr-cu">👤 '+esc(x.customer)+'</div>':'')+'</div>'+
-        '<div class="tr-r"><b class="'+(x.isReturn?'ret':'')+'">'+grp(Math.round(x.total||0))+' UZS</b><div>'+badges+'</div></div></div>';});
+        '<div class="tr-r"><b class="'+(x.isReturn?'ret':'')+'">'+grp(Math.round(x.total||0))+' UZS</b><div>'+badges+'</div></div>'+
+        '<button class="tr-prn" title="Chekni chiqarish" onclick="event.stopPropagation();printReceipt(window._QB['+i+'])">\ud83d\udda8\ufe0f</button></div>';});
     L.innerHTML=h;
   });});
 }
@@ -9186,6 +9188,12 @@ function _trFiltApply(reset){
 }
 </script>
 <style id="bzPay2Css">
+/* to'lov oynasi uzun — yopishib qolmasin, sahifa bilan birga pastga tushsin */
+#view-sotuv .cart-foot{position:static!important}
+#view-sotuv{padding-bottom:130px}
+.tr-card{position:relative}
+.tr-prn{flex:none;align-self:center;width:42px;height:42px;border-radius:12px;border:1.5px solid #D9E1EC;background:#fff;font-size:18px;margin-left:10px;cursor:pointer}
+.tr-prn:hover{background:#EEF4FF;border-color:#2E6BE6}
 #rcModal button.btn[onclick="closeRcModal()"]{background:#2E6BE6!important;color:#fff!important;font-weight:800;padding:13px!important;border-radius:12px!important}
 .citem .cx{display:inline-flex!important;align-items:center;justify-content:center;flex:none;width:34px;height:34px;border-radius:50%;background:#FEE4E2!important;color:#D92D20!important;font-size:15px!important;font-weight:800;padding:0!important;margin-left:4px;border:0!important}
 .citem .cx:active{background:#FECDCA!important}
@@ -9823,6 +9831,17 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 /* chek oynasi yopilganda — Sotuvga, qidiruvga */
 (function(){function w(){if(window._rcW||typeof closeRcModal!=='function')return;var o=closeRcModal;closeRcModal=function(){var r=o.apply(this,arguments);try{if(typeof CURV!=='undefined'&&CURV!=='sotuv')switchView('sotuv');setTimeout(function(){var q=document.getElementById('sq');if(q)try{q.focus({preventScroll:true});}catch(e){}},120);}catch(e){}return r;};window._rcW=1;}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(w,1500);});else setTimeout(w,1500);})();
+</script>
+<style>
+#receiptArea .r-logo,#rcPaper .r-logo,.r-logo{text-align:center;margin:0 0 4px}
+.r-logo span{display:inline-block;font-family:Arial Black,Arial,Helvetica,sans-serif;font-weight:900;font-size:30px;letter-spacing:4px;line-height:1.1;color:#000;border-top:3px solid #000;border-bottom:3px solid #000;padding:2px 8px}
+.r-logo img{max-width:44mm;max-height:22mm;filter:grayscale(1) contrast(1.4)}
+#receiptArea,#receiptArea *{color:#000!important}
+#receiptArea{font-weight:700}
+</style>
+<script>
+/* Chek logosi: telefonga yuklangan rasm bo'lsa — o'sha, bo'lmasa katta "KROFF" yozuvi */
+function _rcLogo(){try{return localStorage.getItem('kroff_logo')||'';}catch(e){return '';}}
 </script>
 </body>
 </html>
