@@ -775,6 +775,7 @@ var DEPLOY = {
 @media(max-width:480px){.num-big{font-size:17px!important}}
 </style>
 <style id="bzDashCss">
+.plclk{cursor:pointer}.plclk:active{background:#F2F6FB}.plclk span::after{content:' \203A';color:#B0B8C4}
 #bzDash{margin-bottom:14px}
 .bzp-row,.bzp-bar{cursor:pointer}
 .bzp-row:hover .bzp-nm{color:#1F4E79;text-decoration:underline}
@@ -2819,14 +2820,12 @@ function _dashTop(all){
       '<b style="font-size:14px;color:#1F4E79">\ud83d\udcca Dashboard</b>'+
       '<span style="flex:1;height:1px;background:#e6ebf2"></span>'+
       '<span style="font-size:11.5px;color:#9aa4b2">'+_periodLabel()+'</span></div>'+
-    '<div id="bzDash"></div>'+
     '<div id="dashMain"></div>'+
     '<div style="display:flex;align-items:center;gap:8px;margin:14px 0 8px">'+
       '<b style="font-size:13px;color:#1F4E79">\ud83d\udcc5 Kunlik pul kirimi</b>'+
       '<span style="flex:1;height:1px;background:#e6ebf2"></span></div>'+
     '<div id="dashKun"></div>'+
     '<div style="height:1px;background:#e6ebf2;margin:14px 0 16px"></div>';
-  try{ _bzDash(all); }catch(e){ try{console.error('bzDash',e);}catch(_){} }
   try{ renderH_dashboard(document.getElementById('dashMain'),all); }catch(e){}
   try{ renderH_magkun(document.getElementById('dashKun'),all); }catch(e){}
 }
@@ -3134,7 +3133,7 @@ function renderH_dashboard(el,all){
   var sel=all.filter(function(x){return inPeriod(x.day);});
   if(!sel.length){el.innerHTML=_hEmpty();return;}
   var rev=0,cost=0,bp={naqd:0,karta:0,payme1:0,payme2:0,qarz:0},bs={},pm={},days={},bbol={};
-  sel.forEach(function(x){rev+=x.total;var _pp=_payParts(x);for(var _pk in _pp){if(_pp[_pk])bp[_pk]=(bp[_pk]||0)+_pp[_pk];}bs[x.seller||'\u2014']=(bs[x.seller||'\u2014']||0)+x.total;days[x.day]=(days[x.day]||0)+x.total;if(x.bolim)bbol[x.bolim]=(bbol[x.bolim]||0)+x.total;(x.items||[]).forEach(function(it){cost+=(it.xarid||0)*it.qty;pm[it.nom]=(pm[it.nom]||0)+(it.narx||0)*it.qty;});});
+  sel.forEach(function(x){rev+=x.total;var _pp=_payParts(x);for(var _pk in _pp){if(_pp[_pk])bp[_pk]=(bp[_pk]||0)+_pp[_pk];}bs[x.seller||'\u2014']=(bs[x.seller||'\u2014']||0)+x.total;days[x.day]=(days[x.day]||0)+x.total;if(x.bolim)bbol[x.bolim]=(bbol[x.bolim]||0)+(_payParts(x).qarz||0);(x.items||[]).forEach(function(it){cost+=(it.xarid||0)*it.qty;pm[it.nom]=(pm[it.nom]||0)+(it.narx||0)*it.qty;});});
   var foyda=rev-cost,avg=Math.round(rev/sel.length);
   var _lowN=0,_outN=0; if(window.PRODUCTS){PRODUCTS.forEach(function(p){if(p.arxiv)return;var q=p.qoldiq||0; if(q<=0)_outN++; else if(q<=3)_lowN++;});}
   var h='';
@@ -3151,9 +3150,10 @@ function renderH_dashboard(el,all){
   var segs=[];['naqd','karta','payme1','payme2','qarz'].forEach(function(k){if(bp[k]>0)segs.push({label:plbl[k],value:bp[k],color:pcols[k]});});
   var tot=rev||1;
   var units=0,retN=0;sel.forEach(function(x){(x.items||[]).forEach(function(it){units+=Math.abs(it.qty);});if(x.isReturn)retN++;});
+  _BZSEL=sel;var _h0=h;h='';
   h+='<div class="dpanels">';
   h+='<div class="dbox"><div class="pl-h">To\u2018lovlar</div><div class="pl-big">'+grp(rev)+'</div>';
-  var _bolSum=0;for(var _bk in bbol)_bolSum+=bbol[_bk];[['naqd','Naqd','#375623'],['karta','Karta','#1F4E79'],['payme1','Payme1','#2E75B6'],['payme2','Payme2','#7030A0']].forEach(function(k){if(bp[k[0]])h+='<div class="plrow"><span><i style="background:'+k[2]+'"></i>'+k[1]+'</span><b>'+grp(bp[k[0]])+'</b></div>';});var _qc=(bp.qarz||0)-_bolSum;if(_qc>0)h+='<div class="plrow"><span><i style="background:#a32d2d"></i>Qarz (mijoz)</span><b>'+grp(_qc)+'</b></div>';Object.keys(bbol).forEach(function(bk){h+='<div class="plrow"><span><i style="background:#C65911"></i>'+esc(bolimNom(bk))+'</span><b>'+grp(bbol[bk])+'</b></div>';});
+  var _bolSum=0;for(var _bk in bbol)_bolSum+=bbol[_bk];[['naqd','Naqd','#375623'],['karta','Karta','#1F4E79'],['payme1','Payme1','#2E75B6'],['payme2','Payme2','#7030A0']].forEach(function(k){if(bp[k[0]])h+='<div class="plrow plclk" onclick="_bzPayList(\''+k[0]+'\',\''+k[1]+'\')"><span><i style="background:'+k[2]+'"></i>'+k[1]+'</span><b>'+grp(bp[k[0]])+'</b></div>';});var _qc=(bp.qarz||0)-_bolSum;if(_qc>0)h+='<div class="plrow plclk" onclick="_bzPayList(\'qmij\',\'Qarz (mijoz)\')"><span><i style="background:#a32d2d"></i>Qarz (mijoz)</span><b>'+grp(_qc)+'</b></div>';Object.keys(bbol).forEach(function(bk){h+='<div class="plrow plclk" onclick="_bzPayList(\'bol:'+bk+'\',\''+String(bolimNom(bk)).replace(/'/g,'')+'\')"><span><i style="background:#C65911"></i>'+esc(bolimNom(bk))+'</span><b>'+grp(bbol[bk])+'</b></div>';});
   h+='</div>';
   h+='<div class="dbox"><div class="pl-h">Cheklar</div><div class="pl-big">'+sel.length+' ta</div>';
   h+='<div class="plrow"><span>Sotilgan tovar</span><b>'+grp(Math.round(units))+'</b></div>';
@@ -3165,6 +3165,7 @@ function renderH_dashboard(el,all){
   else if(_perSpan()>92){var mm={};sel.forEach(function(x){var m=(x.day||'').slice(0,7);if(m)mm[m]=(mm[m]||0)+x.total;});var mk=Object.keys(mm).sort();var UZ=['Yan','Fev','Mar','Apr','May','Iyun','Iyul','Avg','Sen','Okt','Noy','Dek'];mk.forEach(function(k){var d=k.split('-');lab.push(UZ[(+d[1])-1]);val.push(mm[k]);});}
   else{var dk=Object.keys(days).sort();dk.forEach(function(k){var d=k.split('-');lab.push(d[2]+'.'+d[1]);val.push(days[k]);});}
   h+='<div class="dbox"><div class="dbox-t">Savdo grafigi</div><div style="overflow-x:auto">'+_lineChart(lab,val)+'</div></div>';
+  h+=_h0;
   var parr=Object.keys(pm).map(function(k){return {label:k,value:pm[k]};}).sort(function(a,b){return b.value-a.value;}).slice(0,10);
   if(parr.length)h+='<div class="dbox"><div class="dbox-t">Sotilgan tovarlar</div>'+_hbars(parr,'#1F4E79')+'</div>';
   h+=_sellerPanel(sel);
