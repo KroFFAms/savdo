@@ -1866,8 +1866,7 @@ function printReceipt(sale){
   if(sale.bolim)h+='<div class="r-b">Bo\u2018lim: '+esc(bolimNom(sale.bolim))+'</div>';
   if(sale.customer){
     h+='<div class="r-b">Mijoz: '+esc(sale.customer)+'</div>';
-    var ph=_custPhone(sale.customer);
-    if(ph)h+='<div class="r-b">Kontaktlar: '+esc(ph)+'</div>';
+    /* mijoz telefoni chekka chiqmaydi — chekda faqat do'kon aloqasi */
   }
   h+='<div class="r-line"></div>';
   (sale.items||[]).forEach(function(it,ix){
