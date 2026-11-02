@@ -3969,12 +3969,14 @@ function svSearch(){
   var _all=_psearch(q,{noArx:true,stockFirst:true,limit:80});
   /* omborda qolmagan tovar sotuv qidiruvida ko'rsatilmaydi */
   var res=_all.filter(function(p){return (+p.qoldiq||0)>0;}).slice(0,40),_yoq=_all.length-res.length;
-  if(!res.length){el.innerHTML='<div class="svr-empty">'+(_yoq?('Omborda qolmagan ('+_yoq+' ta tovar mos keldi, qoldig\u2018i 0)'):'Topilmadi')+'</div>';return;}
+  if(!res.length){el.innerHTML='<div class="svr-empty">'+(_yoq?('Qoldig\u2018i 0 \u2014 kirim qilinmagan: '+_all.slice(0,3).map(function(p){return esc(p.nom);}).join(', ')):'Topilmadi')+'</div>';return;}
   var h='';res.forEach(function(p){var no=p.qoldiq<=0;
     h+='<button class="svr'+(no?' svr-no':'')+'" data-add="'+esc(String(p.id))+'"'+(no?' disabled':'')+'>'+
       (p.img?'<img class="svr-img" src="'+esc(p.img)+'" loading="lazy" onerror="this.style.visibility=\'hidden\'">':'<span class="svr-img svr-img0">\ud83d\udce6</span>')+
       '<span class="svr-n" style="flex:1;min-width:0">'+esc(p.nom)+'</span>'+
       '<span class="svr-r">'+grp(p.sotuv)+' \u00b7 <i>'+(no?'yo\u2018q':grp(p.qoldiq)+' '+(p.olchov||'dona'))+'</i></span></button>';});
+  if(_yoq){var _z=_all.filter(function(p){return (+p.qoldiq||0)<=0;}).slice(0,3).map(function(p){return esc(p.nom);});
+    h+='<div class="svr-zero">\u26a0\ufe0f Qoldig\u2018i 0 (kirim qilinmagan): '+_z.join(', ')+(_yoq>3?(' va yana '+(_yoq-3)+' ta'):'')+'</div>';}
   el.innerHTML=h;
 }
 function getDrafts(){try{var d=JSON.parse(localStorage.getItem('kroff_drafts'));return (d&&d.length)?d:[];}catch(e){return [];}}
@@ -9183,6 +9185,7 @@ function _trFiltApply(reset){
 }
 </script>
 <style id="bzPay2Css">
+.svr-zero{margin:6px 4px;padding:8px 12px;border-radius:10px;background:#FFF7E6;color:#9A6700;font-size:12.5px;line-height:1.4}
 #splitBox .sp-tip,#splitBox .sp-sec{display:none!important}
 #splitBox .sp-mix{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;background:#F2F4F7;border-radius:16px;padding:12px 16px;font-weight:700;font-size:15px;color:#344054;cursor:pointer;user-select:none}
 #splitBox .sp-mix .sw{width:48px;height:28px;border-radius:14px;background:#D0D5DD;position:relative;transition:.15s;flex:none}
