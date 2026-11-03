@@ -10125,12 +10125,16 @@ function _qpXls(){if(!_xlsOk())return;var p2=function(n){return ('0'+n).slice(-2
 #kxOv .kx-hint{font-size:12.5px;color:#D92D20;text-align:center;margin-bottom:6px;min-height:16px}
 #kxOv .kx-save{width:100%;border:0;border-radius:14px;padding:16px;font:inherit;font-size:17px;font-weight:800;background:#16A34A;color:#fff}
 #kxOv .kx-save:disabled{background:#D0D5DD;color:#fff}
+#kxOv .kx-mix{margin-top:10px}#kxOv .kx-mix small{color:#667085;font-weight:600;display:block;margin-bottom:4px}
+#kxOv .kx-mr{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0}#kxOv .kx-mr span{font-weight:700;font-size:14.5px}
+#kxOv .kx-mr input{width:55%;height:44px;border:2px solid #D0D5DD;border-radius:12px;padding:0 10px;font-size:17px;font-weight:800;text-align:right}
+#kxOv .kx-mt{font-weight:700;font-size:13.5px;color:#344054;margin-top:6px;text-align:right}
 #kxOv .kx-sl input{width:100%;box-sizing:border-box;height:46px;border:2px solid #2E6BE6;border-radius:12px;padding:0 12px;font-size:16px;margin-bottom:8px}
 #kxOv .kx-sl button.s{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid #F2F4F7;background:#fff;padding:12px 4px;font:inherit;font-size:15.5px}
 #kxOv .kx-sl button.add{color:#2E6BE6;font-weight:800}
 </style>
 <script>
-var _KX={sup:'',paid:null,acc:'naqd',amt:0,pick:false,q:'',busy:false};
+var _KX={sup:'',paid:null,acc:'naqd',amt:0,pick:false,q:'',busy:false,mix:false,parts:{}};
 var _KXACC=[['naqd','💵 Naqd'],['karta','💳 Karta'],['payme1','📱 Payme 1'],['payme2','📱 Payme 2'],['bank','🏦 Hisob raqam']];
 function _kxOpen(){if(!KCART.length){toast('Avval tovar qo‘shing');return;}var o=document.getElementById('kxOv');if(!o){o=document.createElement('div');o.id='kxOv';document.body.appendChild(o);}
   if(!_KX.sup){try{var ks=document.getElementById('kSup');if(ks&&ks.value)_KX.sup=ks.value;}catch(e){}}
@@ -10149,31 +10153,40 @@ function _kxR(){var o=document.getElementById('kxOv');if(!o)return;var sum=Math.
   var sn=_kxSupName(_KX.sup);
   h+='<div class="kx-card"><div class="kx-q">1. Kimdan keldi?</div><button class="kx-sup'+(sn?' on':'')+'" onclick="_KX.pick=true;_kxR()"><span>'+(sn?esc(sn):'Ta’minotchini tanlang')+'</span><span>›</span></button></div>';
   h+='<div class="kx-card"><div class="kx-q">2. Pul berildimi?</div><div class="kx-two"><button class="'+(_KX.paid===true?'on':'')+'" onclick="_KX.paid=true;_KX.amt='+sum+';_kxR()">✅ Ha, berildi</button><button class="'+(_KX.paid===false?'on':'')+'" onclick="_KX.paid=false;_kxR()">📝 Yo‘q, qarzga</button></div>';
-  if(_KX.paid===true){h+='<div class="kx-acc">'+_KXACC.map(function(a){return '<button class="'+(_KX.acc===a[0]?'on':'')+'" onclick="_KX.acc=\''+a[0]+'\';_kxR()">'+a[1]+'</button>';}).join('')+'</div>'+
-      '<div class="kx-amt"><small>Qancha berildi?</small><input id="kxAmt" inputmode="numeric" value="'+grp(_KX.amt)+'" onfocus="this.select()" oninput="_KX.amt=Math.round(_pf(this.value)||0);_kxHint()"></div>';}
+  if(_KX.paid===true){h+='<div class="kx-acc">'+_KXACC.map(function(a){return '<button class="'+(!_KX.mix&&_KX.acc===a[0]?'on':'')+'" onclick="_KX.mix=false;_KX.acc=\''+a[0]+'\';_kxR()">'+a[1]+'</button>';}).join('')+
+      '<button class="'+(_KX.mix?'on':'')+'" onclick="_KX.mix=true;_kxR()">🔀 Aralash</button></div>';
+    if(!_KX.mix)h+='<div class="kx-amt"><small>Qancha berildi?</small><input id="kxAmt" inputmode="numeric" value="'+grp(_KX.amt)+'" onfocus="this.select()" oninput="_KX.amt=Math.round(_pf(this.value)||0);_kxHint()"></div>';
+    else h+='<div class="kx-mix"><small>Har bir hisobdan qancha berildi?</small>'+_KXACC.map(function(a){var v=_KX.parts[a[0]]||0;return '<label class="kx-mr"><span>'+a[1]+'</span><input inputmode="numeric" placeholder="0" value="'+(v?grp(v):'')+'" onfocus="this.select()" oninput="_KX.parts[\''+a[0]+'\']=Math.round(_pf(this.value)||0);_kxHint()"></label>';}).join('')+'<div class="kx-mt" id="kxMT"></div></div>';}
   h+='</div></div><div class="kx-foot"><div class="kx-hint" id="kxHint"></div><button class="kx-save" id="kxSave" onclick="_kxSave()">💾 Saqlash</button></div>';
   o.innerHTML=h;_kxHint();}
+function _kxMixT(){var t=0;for(var k in _KX.parts)if(_KX.parts.hasOwnProperty(k))t+=(+_KX.parts[k]||0);return Math.round(t);}
 function _kxHint(){var sum=Math.round(kcSum()),e=document.getElementById('kxHint'),b=document.getElementById('kxSave'),msg='',ok=true;
-  var paid=_KX.paid===true?Math.min(_KX.amt||0,sum):0;
+  var mt=_kxMixT(),paid=_KX.paid===true?(_KX.mix?mt:Math.min(_KX.amt||0,sum)):0;
+  var me=document.getElementById('kxMT');if(me)me.textContent=_KX.mix?('Jami berildi: '+grp(mt)+(mt<sum?' · qarz qoladi: '+grp(sum-mt):'')):'';
   if(_KX.paid===null){msg='Pul berildimi — tanlang';ok=false;}
+  else if(_KX.paid===true&&_KX.mix&&mt>sum){msg='Berilgan pul ('+grp(mt)+') jamidan ('+grp(sum)+') ko‘p';ok=false;}
+  else if(_KX.paid===true&&_KX.mix&&!(mt>0)){msg='Summalarni yozing';ok=false;}
+  else if(_KX.paid===true&&_KX.mix&&!_KX.sup){msg='Aralash to‘lovda kimdan kelganini tanlang';ok=false;}
   else if(!_KX.sup&&paid<sum){msg='Qarz qoladi — kimdan kelganini tanlang';ok=false;}
-  else if(_KX.paid===true&&!(_KX.amt>0)){msg='Qancha berilganini yozing';ok=false;}
+  else if(_KX.paid===true&&!_KX.mix&&!(_KX.amt>0)){msg='Qancha berilganini yozing';ok=false;}
   else if(_KX.paid===true&&paid<sum)msg='Qolgan '+grp(sum-paid)+' ta’minotchiga qarz bo‘ladi';
   if(e){e.textContent=msg;e.style.color=ok?'#667085':'#D92D20';}if(b)b.disabled=!ok;}
 function _kxAddSup(){var n=(_KX.q||'').trim();var _pr=window.prompt,first=true;
   window.prompt=function(m,d){if(first){first=false;var v=_pr.call(window,m,n||'');return v;}return _pr.apply(window,arguments);};
   try{addSup();}finally{window.prompt=_pr;}var ks=document.getElementById('kSup');if(ks&&ks.value){_KX.sup=ks.value;_KX.pick=false;_KX.q='';}_kxR();}
-function _kxSave(){if(_KX.busy)return;var sum=Math.round(kcSum());var paid=_KX.paid===true?Math.min(_KX.amt||0,sum):0;
-  if(_KX.paid===null||(!_KX.sup&&paid<sum))return;_KX.busy=true;var b=document.getElementById('kxSave');if(b){b.disabled=true;b.textContent='Saqlanmoqda…';}
+function _kxSave(){if(_KX.busy)return;var sum=Math.round(kcSum());var mt=_kxMixT(),paid=_KX.paid===true?(_KX.mix?mt:Math.min(_KX.amt||0,sum)):0;
+  if(_KX.paid===null||(!_KX.sup&&paid<sum))return;if(_KX.paid===true&&_KX.mix&&(mt>sum||!(mt>0)||!_KX.sup))return;_KX.busy=true;var b=document.getElementById('kxSave');if(b){b.disabled=true;b.textContent='Saqlanmoqda…';}
   try{try{renderKirim();}catch(e){}
     var ks=document.getElementById('kSup');if(ks)ks.value=_KX.sup||'';
     var yk=document.getElementById('kcYk');if(yk)yk.value='';
     if(typeof _KCMIX!=='undefined'&&_KCMIX&&typeof _kcMixToggle==='function')_kcMixToggle();
-    var pd=document.getElementById('kcPaid');if(pd)pd.value=paid>0?grp(paid):'';
+    var pd=document.getElementById('kcPaid');if(pd)pd.value=(!_KX.mix&&paid>0)?grp(paid):'';
+    if(_KX.paid===true&&_KX.mix){/* mavjud "aralash to'lov" yo'li orqali */if(typeof _kcMixToggle==='function'&&!_KCMIX)_kcMixToggle();
+      _KXACC.forEach(function(a){var e=document.getElementById('kcm_'+a[0]);if(e)e.value=(_KX.parts[a[0]]||0)>0?grp(_KX.parts[a[0]]):'';});try{_kcMixCalc();}catch(e){}}
     var ac=document.getElementById('kcAcc');if(ac)ac.value=_KX.acc||'naqd';
     var n=KCART.length,_cf=window.confirm;window.confirm=function(){return true;};
     try{kcSave();}finally{window.confirm=_cf;}
-    if(n&&!KCART.length){_kxClose();_KX={sup:'',paid:null,acc:'naqd',amt:0,pick:false,q:'',busy:false};
+    if(n&&!KCART.length){_kxClose();_KX={sup:'',paid:null,acc:'naqd',amt:0,pick:false,q:'',busy:false,mix:false,parts:{}};
       setTimeout(function(){try{switchView('katalog');var q=document.getElementById('ktQ');if(q)q.focus();}catch(e){}},750);}
   }finally{_KX.busy=false;var b2=document.getElementById('kxSave');if(b2){b2.textContent='💾 Saqlash';_kxHint();}}}
 /* Katalogdagi pastki tugma endi shu oynani ochadi */
