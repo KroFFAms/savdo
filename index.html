@@ -9188,6 +9188,11 @@ function _trFiltApply(reset){
 }
 </script>
 <style id="bzPay2Css">
+/* Android tez ishlashi uchun: shaffof "blur" effektlari o'chirildi (telefonda aylantirishni sekinlashtiradi) */
+*,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.bottomnav{background:#fff!important}
+.toolbar{background:#F2F5F9!important}
+#toast{background:#13233A!important}
 /* to'lov oynasi uzun — yopishib qolmasin, sahifa bilan birga pastga tushsin */
 #view-sotuv .cart-foot{position:static!important}
 #view-sotuv{padding-bottom:130px}
@@ -9899,7 +9904,8 @@ function _psearch(q,o){o=o||{};var raw=String(q||'').trim();if(!raw)return [];
 <script>
 /* qidiruv lug'atini oldindan tayyorlab qo'yamiz — birinchi qidiruv ham tez bo'lsin */
 (function(){function pre(){try{if(PRODUCTS&&PRODUCTS.length)_pvBuild();}catch(e){}}
-  setTimeout(pre,5000);setTimeout(pre,15000);setInterval(pre,120000);})();
+  var idle=function(f){if(window.requestIdleCallback)requestIdleCallback(f,{timeout:4000});else setTimeout(f,50);};
+  setTimeout(function(){idle(pre);},6000);setTimeout(function(){idle(pre);},20000);setInterval(function(){idle(pre);},180000);})();
 </script>
 </body>
 </html>
