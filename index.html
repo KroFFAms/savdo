@@ -10235,5 +10235,21 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   calcDisc=function(){var e=document.getElementById('discInp');if(e&&/%/.test(e.value)){e.value='';toast('Foiz ishlatilmaydi \u2014 sotiladigan summani yozing');}return oC.apply(this,arguments);};
 })();
 </script>
+<script>
+/* ⋯ menyuda "Kechiktirish" to'g'ridan-to'g'ri */
+(function(){
+  if(window._kechW||typeof _svMore!=='function')return;window._kechW=1;
+  var o=_svMore;
+  _svMore=function(){var r=o.apply(this,arguments);
+    try{var box=document.querySelector('#svMoreOv .bh-box');if(box&&!document.getElementById('bhKech')){
+      var dr=box.querySelector('.bh-it[onclick^="_drOpen"]');var has=!!(CART&&CART.length);
+      var b=document.createElement('button');b.id='bhKech';b.className='bh-it';b.type='button';
+      b.innerHTML='<span class="ic">\u23f8\ufe0f</span><span class="tx">'+(has?'Savatni kechiktirish':'<small>Savat bo\u2018sh</small>Savatni kechiktirish')+'</span>';
+      if(!has)b.style.opacity='.55';
+      b.onclick=function(){if(!(CART&&CART.length)){toast('Savat bo\u2018sh \u2014 avval tovar qo\u2018shing');return;}_bhClose();holdSale('kechik');};
+      if(dr)box.insertBefore(b,dr);else box.insertBefore(b,box.querySelector('.bh-back'));}}catch(e){}
+    return r;};
+})();
+</script>
 </body>
 </html>
