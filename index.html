@@ -9980,7 +9980,7 @@ function _qpMerge(box,rowCls,q,sel){
       row.innerHTML='<span><i style="background:'+(_QPCOL[k]||'#667085')+'"></i>'+_QPN[k]+'</span><b>0</b>';
       var ref=box.querySelector('.'+rowCls+'[onclick*="qmij"],.'+rowCls+'[onclick*="bol:"]');if(ref)ref.parentNode.insertBefore(row,ref);else{var w=box.querySelector('.qp-wrap');if(w)box.insertBefore(row,w);else box.appendChild(row);}}
     var b=row.querySelector('b');if(!b)return;
-    b.className='qp-amt';b.innerHTML=grp(sv+dq)+(dq?'<small class="qp-sub">qarzdan yig\u2018ildi: '+grp(dq)+'</small>':'');});
+    b.className='qp-amt';b.innerHTML=grp(sv+dq)+(dq?'<small class="qp-sub">savdodan: '+grp(sv)+'</small><small class="qp-sub">qarzdan yig\u2018ildi: '+grp(dq)+'</small>':'');});
   var cash=0;['naqd','karta','payme1','payme2','bank'].forEach(function(k){cash+=(sales[k]||0)+(q.parts[k]||0);});cash=Math.round(cash);
   var rev=0;(sel||[]).forEach(function(x){rev+=(+x.total||0);});
   var big=box.querySelector('.pl-big');
