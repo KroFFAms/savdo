@@ -4833,7 +4833,7 @@ function _ovBack(){
   for(var i=0;i<d.length;i++){
     var el=d[i];
     if(!/Ov$/.test(el.id||'')) continue;
-    if(/^(cpOv|qpOv|svMoreOv|bzCmpOv|trCalOv|trFiltOv|bzPayOv)$/.test(el.id)) continue;   /* o'z yopish tugmasi bor */
+    if(/^(cpOv|qpOv|svMoreOv|bzCmpOv|trCalOv|trFiltOv|bzPayOv|kcChkOv|kxOv)$/.test(el.id)) continue;   /* o'z yopish tugmasi bor */
     if(el.getAttribute('data-bk')) continue;
     el.setAttribute('data-bk','1');
     var b=document.createElement('button');
@@ -10094,6 +10094,93 @@ function _qpXls(){if(!_xlsOk())return;var p2=function(n){return ('0'+n).slice(-2
   var R=[['Sana','Vaqt','Mijoz','Naqd','Karta','Payme 1','Payme 2','Hisob raqam','Jami','Sotuvchi']];
   (_QPL||[]).forEach(function(x){var t=new Date(x.ts),m=x.mp||{};R.push([p2(t.getDate())+'.'+p2(t.getMonth()+1)+'.'+t.getFullYear(),p2(t.getHours())+':'+p2(t.getMinutes()),x.nom,Math.round(m.naqd||0),Math.round(m.karta||0),Math.round(m.payme1||0),Math.round(m.payme2||0),Math.round(m.bank||0),Math.round(x.a||0),x.seller||'']);});
   var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(R),'Qarz tolovlari');XLSX.writeFile(wb,'qarz_tolovlari_'+dayStr(new Date())+'.xlsx');toast('✅ Excel yuklandi');}
+</script>
+<style>
+/* ===== Yangi oddiy kirim: Katalog -> "Kirimni yakunlash" ===== */
+#kxOv{position:fixed;inset:0;z-index:100004;background:#F2F4F7;display:flex;flex-direction:column}
+#kxOv .kx-top{background:#fff;padding:12px 14px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;box-shadow:0 2px 8px rgba(16,24,40,.06)}
+#kxOv .kx-top b{font-size:18px;text-align:center}
+#kxOv .kx-back{border:0;background:none;color:#2E6BE6;font-weight:700;font-size:16px;padding:6px 2px}
+#kxOv .kx-body{flex:1;overflow:auto;padding:12px 14px 140px}
+#kxOv .kx-card{background:#fff;border-radius:16px;padding:12px 14px;margin-bottom:12px}
+#kxOv .kx-q{font-size:16px;font-weight:800;margin:2px 0 10px}
+#kxOv .kx-it{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #F2F4F7}
+#kxOv .kx-it:last-child{border-bottom:0}
+#kxOv .kx-it .n{flex:1;min-width:0;font-size:14.5px;font-weight:600}
+#kxOv .kx-it .n small{display:block;color:#98A2B3;font-weight:500;font-size:12.5px}
+#kxOv .kx-it .n small.bad{color:#D92D20;font-weight:700}
+#kxOv .kx-it .x{border:0;background:#FEE4E2;color:#D92D20;width:30px;height:30px;border-radius:50%;font-weight:800}
+#kxOv .kx-tot{display:flex;justify-content:space-between;font-weight:800;font-size:17px;padding-top:8px}
+#kxOv .kx-sup{display:flex;align-items:center;justify-content:space-between;width:100%;border:2px solid #D9E1EC;background:#fff;border-radius:14px;padding:14px;font:inherit;font-size:16px;font-weight:700;color:#344054;text-align:left}
+#kxOv .kx-sup.on{border-color:#2E6BE6;background:#EEF4FF;color:#1D4ED8}
+#kxOv .kx-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#kxOv .kx-two button,#kxOv .kx-acc button{border:2px solid #D9E1EC;background:#fff;border-radius:14px;padding:14px 8px;font:inherit;font-size:15.5px;font-weight:800;color:#344054}
+#kxOv .kx-two button.on,#kxOv .kx-acc button.on{border-color:#2E6BE6;background:#EEF4FF;color:#1D4ED8}
+#kxOv .kx-acc{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+#kxOv .kx-acc button{padding:10px 4px;font-size:13.5px}
+#kxOv .kx-amt{margin-top:10px}
+#kxOv .kx-amt small{color:#667085;font-weight:600}
+#kxOv .kx-amt input{width:100%;box-sizing:border-box;height:48px;border:2px solid #D0D5DD;border-radius:12px;padding:0 12px;font-size:20px;font-weight:800;text-align:right;margin-top:4px}
+#kxOv .kx-foot{position:fixed;left:0;right:0;bottom:0;background:#fff;padding:12px 14px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -4px 14px rgba(16,24,40,.08)}
+#kxOv .kx-hint{font-size:12.5px;color:#D92D20;text-align:center;margin-bottom:6px;min-height:16px}
+#kxOv .kx-save{width:100%;border:0;border-radius:14px;padding:16px;font:inherit;font-size:17px;font-weight:800;background:#16A34A;color:#fff}
+#kxOv .kx-save:disabled{background:#D0D5DD;color:#fff}
+#kxOv .kx-sl input{width:100%;box-sizing:border-box;height:46px;border:2px solid #2E6BE6;border-radius:12px;padding:0 12px;font-size:16px;margin-bottom:8px}
+#kxOv .kx-sl button.s{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid #F2F4F7;background:#fff;padding:12px 4px;font:inherit;font-size:15.5px}
+#kxOv .kx-sl button.add{color:#2E6BE6;font-weight:800}
+</style>
+<script>
+var _KX={sup:'',paid:null,acc:'naqd',amt:0,pick:false,q:'',busy:false};
+var _KXACC=[['naqd','💵 Naqd'],['karta','💳 Karta'],['payme1','📱 Payme 1'],['payme2','📱 Payme 2'],['bank','🏦 Hisob raqam']];
+function _kxOpen(){if(!KCART.length){toast('Avval tovar qo‘shing');return;}var o=document.getElementById('kxOv');if(!o){o=document.createElement('div');o.id='kxOv';document.body.appendChild(o);}
+  if(!_KX.sup){try{var ks=document.getElementById('kSup');if(ks&&ks.value)_KX.sup=ks.value;}catch(e){}}
+  _KX.amt=Math.round(kcSum());_kxR();}
+function _kxClose(){var o=document.getElementById('kxOv');if(o)o.remove();_KX.pick=false;}
+function _kxSupName(id){var n='';try{getSup().forEach(function(x){if(x.id===id)n=x.nom;});}catch(e){}return n;}
+function _kxR(){var o=document.getElementById('kxOv');if(!o)return;var sum=Math.round(kcSum());
+  if(_KX.pick){var q=_cnorm(_KX.q||''),L=(getSup()||[]).filter(function(x){return !q||_cnorm(x.nom||'').indexOf(q)>=0;});
+    o.innerHTML='<div class="kx-top"><button class="kx-back" onclick="_KX.pick=false;_kxR()">‹ Orqaga</button><b>Kimdan keldi?</b><span></span></div><div class="kx-body"><div class="kx-card kx-sl"><input id="kxSQ" placeholder="Ta’minotchi nomi..." value="'+esc(_KX.q||'')+'" oninput="_KX.q=this.value;_kxR();var e=document.getElementById(\'kxSQ\');if(e){e.focus();e.setSelectionRange(e.value.length,e.value.length);}">'+
+      '<button class="s add" onclick="_kxAddSup()">+ Yangi ta’minotchi qo‘shish</button>'+L.map(function(x){return '<button class="s" onclick="_KX.sup=\''+x.id+'\';_KX.pick=false;_KX.q=\'\';_kxR()">'+esc(x.nom)+'</button>';}).join('')+'</div></div>';
+    setTimeout(function(){var e=document.getElementById('kxSQ');if(e&&document.activeElement!==e)e.focus();},50);return;}
+  var h='<div class="kx-top"><button class="kx-back" onclick="_kxClose()">‹ Orqaga</button><b>Kirimni yakunlash</b><span></span></div><div class="kx-body">';
+  h+='<div class="kx-card"><div class="kx-q">Kelgan tovarlar ('+KCART.length+')</div>';
+  KCART.forEach(function(c){var ln=Math.round(c.qty*c.narx);h+='<div class="kx-it"><span class="n">'+esc(c.nom)+(c.narx>0?'<small>'+grp(c.qty)+' × '+grp(c.narx)+' = '+grp(ln)+'</small>':'<small class="bad">'+grp(c.qty)+' ta · narxi yozilmagan</small>')+'</span><button class="x" onclick="kcDel(\''+c.id+'\');if(!KCART.length){_kxClose();}else _kxR()">✕</button></div>';});
+  h+='<div class="kx-tot"><span>Jami</span><span>'+grp(sum)+'</span></div></div>';
+  var sn=_kxSupName(_KX.sup);
+  h+='<div class="kx-card"><div class="kx-q">1. Kimdan keldi?</div><button class="kx-sup'+(sn?' on':'')+'" onclick="_KX.pick=true;_kxR()"><span>'+(sn?esc(sn):'Ta’minotchini tanlang')+'</span><span>›</span></button></div>';
+  h+='<div class="kx-card"><div class="kx-q">2. Pul berildimi?</div><div class="kx-two"><button class="'+(_KX.paid===true?'on':'')+'" onclick="_KX.paid=true;_KX.amt='+sum+';_kxR()">✅ Ha, berildi</button><button class="'+(_KX.paid===false?'on':'')+'" onclick="_KX.paid=false;_kxR()">📝 Yo‘q, qarzga</button></div>';
+  if(_KX.paid===true){h+='<div class="kx-acc">'+_KXACC.map(function(a){return '<button class="'+(_KX.acc===a[0]?'on':'')+'" onclick="_KX.acc=\''+a[0]+'\';_kxR()">'+a[1]+'</button>';}).join('')+'</div>'+
+      '<div class="kx-amt"><small>Qancha berildi?</small><input id="kxAmt" inputmode="numeric" value="'+grp(_KX.amt)+'" onfocus="this.select()" oninput="_KX.amt=Math.round(_pf(this.value)||0);_kxHint()"></div>';}
+  h+='</div></div><div class="kx-foot"><div class="kx-hint" id="kxHint"></div><button class="kx-save" id="kxSave" onclick="_kxSave()">💾 Saqlash</button></div>';
+  o.innerHTML=h;_kxHint();}
+function _kxHint(){var sum=Math.round(kcSum()),e=document.getElementById('kxHint'),b=document.getElementById('kxSave'),msg='',ok=true;
+  var paid=_KX.paid===true?Math.min(_KX.amt||0,sum):0;
+  if(_KX.paid===null){msg='Pul berildimi — tanlang';ok=false;}
+  else if(!_KX.sup&&paid<sum){msg='Qarz qoladi — kimdan kelganini tanlang';ok=false;}
+  else if(_KX.paid===true&&!(_KX.amt>0)){msg='Qancha berilganini yozing';ok=false;}
+  else if(_KX.paid===true&&paid<sum)msg='Qolgan '+grp(sum-paid)+' ta’minotchiga qarz bo‘ladi';
+  if(e){e.textContent=msg;e.style.color=ok?'#667085':'#D92D20';}if(b)b.disabled=!ok;}
+function _kxAddSup(){var n=(_KX.q||'').trim();var _pr=window.prompt,first=true;
+  window.prompt=function(m,d){if(first){first=false;var v=_pr.call(window,m,n||'');return v;}return _pr.apply(window,arguments);};
+  try{addSup();}finally{window.prompt=_pr;}var ks=document.getElementById('kSup');if(ks&&ks.value){_KX.sup=ks.value;_KX.pick=false;_KX.q='';}_kxR();}
+function _kxSave(){if(_KX.busy)return;var sum=Math.round(kcSum());var paid=_KX.paid===true?Math.min(_KX.amt||0,sum):0;
+  if(_KX.paid===null||(!_KX.sup&&paid<sum))return;_KX.busy=true;var b=document.getElementById('kxSave');if(b){b.disabled=true;b.textContent='Saqlanmoqda…';}
+  try{try{renderKirim();}catch(e){}
+    var ks=document.getElementById('kSup');if(ks)ks.value=_KX.sup||'';
+    var yk=document.getElementById('kcYk');if(yk)yk.value='';
+    if(typeof _KCMIX!=='undefined'&&_KCMIX&&typeof _kcMixToggle==='function')_kcMixToggle();
+    var pd=document.getElementById('kcPaid');if(pd)pd.value=paid>0?grp(paid):'';
+    var ac=document.getElementById('kcAcc');if(ac)ac.value=_KX.acc||'naqd';
+    var n=KCART.length,_cf=window.confirm;window.confirm=function(){return true;};
+    try{kcSave();}finally{window.confirm=_cf;}
+    if(n&&!KCART.length){_kxClose();_KX={sup:'',paid:null,acc:'naqd',amt:0,pick:false,q:'',busy:false};
+      setTimeout(function(){try{switchView('katalog');var q=document.getElementById('ktQ');if(q)q.focus();}catch(e){}},750);}
+  }finally{_KX.busy=false;var b2=document.getElementById('kxSave');if(b2){b2.textContent='💾 Saqlash';_kxHint();}}}
+/* Katalogdagi pastki tugma endi shu oynani ochadi */
+(function(){function w(){if(window._kxW||typeof _ktBar!=='function')return;var o=_ktBar;
+  _ktBar=function(){var r=o.apply(this,arguments);var b=document.getElementById('ktCartBar');if(b&&b.style.display!=='none'){b.onclick=_kxOpen;var t=0;KCART.forEach(function(c){t+=(+c.qty||0)*(+c.narx||0);});b.innerHTML='<span>📥 '+KCART.length+' xil tovar · '+grp(Math.round(t))+'</span><span>Yakunlash ›</span>';}return r;};
+  window._kxW=1;}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(w,1900);});else setTimeout(w,1900);})();
 </script>
 </body>
 </html>
