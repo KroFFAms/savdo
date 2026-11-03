@@ -9108,8 +9108,8 @@ function _payBillz(){
     var ft=document.getElementById('finalTotal');var anchor=ft?ft.closest('.ct-row'):null;
     if(anchor&&anchor.parentNode===sb.parentNode)sb.parentNode.insertBefore(cr,anchor.nextSibling);}
   if(!document.getElementById('cfMore')){
-    cf.classList.add('cf-min');var b=document.createElement('button');b.id='cfMore';b.type='button';b.textContent='+ Chegirma foizi, izoh, dostavka';
-    b.onclick=function(){cf.classList.toggle('cf-min');b.textContent=cf.classList.contains('cf-min')?'+ Chegirma foizi, izoh, dostavka':'− Yashirish';};
+    cf.classList.add('cf-min');var b=document.createElement('button');b.id='cfMore';b.type='button';b.textContent='+ Izoh, dostavka';
+    b.onclick=function(){cf.classList.toggle('cf-min');b.textContent=cf.classList.contains('cf-min')?'+ Izoh, dostavka':'− Yashirish';};
     var dq=document.getElementById('discQuick');if(dq&&dq.parentNode)dq.parentNode.insertBefore(b,dq);}
   _payMark();
 }
@@ -10222,6 +10222,17 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     try{if(n&&!KCART.length&&snap.length){var c=0;snap.forEach(function(x){var p=findProd(x.pid);if(p&&x.sot>0&&x.sot!==(p.sotuv||0)){commitEvent('reprice',{pid:x.pid,sotuv:x.sot,xarid:p.xarid||0,minn:p.minn||0,nom:p.nom});c++;}});
       if(c)setTimeout(function(){toast('🏷️ Sotuv narxi yangilandi: '+c+' ta tovar');},300);}}catch(e){}
     return r;};
+})();
+</script>
+<script>
+/* Sotuvda chegirma faqat summa bilan (% yo'q) */
+(function(){
+  if(window._noPctW)return;window._noPctW=1;
+  var st=document.createElement('style');st.textContent='#discQuick button[onclick*="%"]{display:none!important}';document.head.appendChild(st);
+  function ph(){var e=document.getElementById('discInp');if(e)e.placeholder='Sotiladigan summa (chegirma o\u2018zi hisoblanadi)';}
+  ph();document.addEventListener('DOMContentLoaded',ph);
+  var oC=calcDisc;
+  calcDisc=function(){var e=document.getElementById('discInp');if(e&&/%/.test(e.value)){e.value='';toast('Foiz ishlatilmaydi \u2014 sotiladigan summani yozing');}return oC.apply(this,arguments);};
 })();
 </script>
 </body>
