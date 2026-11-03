@@ -10195,5 +10195,34 @@ function _kxSave(){if(_KX.busy)return;var sum=Math.round(kcSum());var mt=_kxMixT
   window._kxW=1;}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(w,1900);});else setTimeout(w,1900);})();
 </script>
+<script>
+/* Kirim oynasida Sotuv narxi */
+(function(){
+  if(window._ktSotW)return;window._ktSotW=1;
+  function inKC(pid){for(var i=0;i<KCART.length;i++)if(KCART[i].id===pid)return KCART[i];return null;}
+  window._ktSotM=function(){var s=document.getElementById('ktSot'),n=document.getElementById('ktNarx'),m=document.getElementById('ktSotM');if(!s||!n||!m)return;
+    var sv=Math.round(_pf(s.value)||0),nv=Math.round(_pf(n.value)||0);
+    if(!sv){m.textContent='';return;}var f=sv-nv;
+    m.style.color=f<0?'#dc2626':'#6b7280';
+    m.textContent=f<0?('⚠️ Sotuv narxi tan narxidan past ('+grp(f)+')'):('Foyda: '+grp(f)+(nv?(' ('+Math.round(f*100/nv)+'%)'):''));};
+  var oT=kirimTap;
+  kirimTap=function(pid){var r=oT.apply(this,arguments);try{var p=findProd(pid),n=document.getElementById('ktNarx');
+    if(p&&n&&!document.getElementById('ktSot')){var it=inKC(pid),v=(it&&it.sot!=null)?it.sot:(p.sotuv||0);
+      n.insertAdjacentHTML('afterend','<label style="font-size:12px;color:#6b7280">Sotuv narxi (1 dona)</label><input id="ktSot" class="kf-inp" inputmode="numeric" value="'+v+'" oninput="_ktSotM()"><div id="ktSotM" style="font-size:12px;color:#6b7280;margin:0 2px 4px"></div>');
+      n.addEventListener('input',_ktSotM);_ktSotM();}}catch(e){}return r;};
+  var oA=_ktAdd;
+  _ktAdd=function(pid){var el=document.getElementById('ktSot'),sv=el?Math.round(_pf(el.value)||0):null;
+    var r=oA.apply(this,arguments);
+    try{if(sv!=null&&!document.getElementById('kirimTapOv')){var it=inKC(pid),p=findProd(pid);
+      if(it&&p){if(sv>0&&sv!==(p.sotuv||0))it.sot=sv;else delete it.sot;}}}catch(e){}
+    return r;};
+  var oS=kcSave;
+  kcSave=function(){var snap=[];try{KCART.forEach(function(k){if(k.sot!=null)snap.push({pid:k.id,sot:k.sot});});}catch(e){}
+    var n=KCART.length,r=oS.apply(this,arguments);
+    try{if(n&&!KCART.length&&snap.length){var c=0;snap.forEach(function(x){var p=findProd(x.pid);if(p&&x.sot>0&&x.sot!==(p.sotuv||0)){commitEvent('reprice',{pid:x.pid,sotuv:x.sot,xarid:p.xarid||0,minn:p.minn||0,nom:p.nom});c++;}});
+      if(c)setTimeout(function(){toast('🏷️ Sotuv narxi yangilandi: '+c+' ta tovar');},300);}}catch(e){}
+    return r;};
+})();
+</script>
 </body>
 </html>
