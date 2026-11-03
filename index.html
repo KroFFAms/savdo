@@ -9772,7 +9772,10 @@ function renderSDash(){var v=document.getElementById('view-sdash');
     var ph='',pt=0;K.forEach(function(k){var v=0;sel.forEach(function(x){v+=_bzPart(x,k[0]);});v=Math.round(v);if(!v)return;pt+=v;
       ph+='<div class="sd-pr" onclick="_bzPayList(\''+k[0]+'\',\''+esc(k[1]).replace(/'/g,'')+'\')"><span><i style="background:'+k[2]+'"></i>'+esc(k[1])+'</span><b>'+grp(v)+' \u203a</b></div>';});
     h+='<div class="ul-box" style="margin-top:12px"><div class="ul-h" style="display:flex;justify-content:space-between"><span>\ud83d\udcb3 To\u2018lov turlari</span><span>'+grp(pt)+'</span></div>'+(ph||'<div class="ul-s" style="padding:10px 0">Bu davrda savdo yo\u2018q</div>')+'</div>';
-    var b=document.getElementById('sdBody');if(b)b.innerHTML=h;});});}
+    var b=document.getElementById('sdBody');if(b)b.innerHTML=h;
+    try{var cash=0;sel.forEach(function(x){var pp=_payParts(x);cash+=(pp.naqd||0)+(pp.karta||0)+(pp.payme1||0)+(pp.payme2||0)+(pp.bank||0);});
+      _qpCollect(function(d){return d>=f&&d<=t;},function(q){_QPL=q.list;var bx=document.querySelectorAll('#sdBody .ul-box');var box=bx[bx.length-1];if(!box)return;var d=document.createElement('div');d.className='qp-wrap';d.innerHTML=_qpHtml(q,cash).replace(/class="plrow/g,'class="sd-pr');box.appendChild(d);});}catch(e){}
+  });});}
 </script>
 <style>
 /* pastga tortib yangilash (pull-to-refresh) o'chirildi — ma'lumot yo'qolmasin */
@@ -9906,6 +9909,44 @@ function _psearch(q,o){o=o||{};var raw=String(q||'').trim();if(!raw)return [];
 (function(){function pre(){try{if(PRODUCTS&&PRODUCTS.length)_pvBuild();}catch(e){}}
   var idle=function(f){if(window.requestIdleCallback)requestIdleCallback(f,{timeout:4000});else setTimeout(f,50);};
   setTimeout(function(){idle(pre);},6000);setTimeout(function(){idle(pre);},20000);setInterval(function(){idle(pre);},180000);})();
+</script>
+<style>
+.qp-sep{border-top:1px dashed #D0D5DD;margin:8px 0 4px}
+.qp-h{font-size:12px;color:#667085;font-weight:700;margin:4px 0 2px}
+.qp-tot{display:flex;justify-content:space-between;font-weight:800;font-size:15px;padding:8px 0 2px;color:#101828}
+#qpOv{position:fixed;inset:0;z-index:100002;background:rgba(15,23,42,.45);display:flex;align-items:flex-end;justify-content:center}
+#qpOv .qb{background:#fff;width:100%;max-width:560px;max-height:85vh;overflow:auto;border-radius:18px 18px 0 0;padding:14px 16px}
+#qpOv .qr{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid #F2F4F7;font-size:14px}
+#qpOv .qr small{display:block;color:#98A2B3;font-size:12px}
+</style>
+<script>
+/* ===== Mijozlar qarzidan to'langan pul — Asosiy sahifada To'lovlar ichida ko'rinadi ===== */
+var _QPL=[];
+function _qpCollect(inFn,cb){evAll(function(evs){var cm={};try{getCust().forEach(function(c){cm[c.id]=c.nom;});}catch(e){}
+  var parts={},tot=0,L=[];
+  evs.forEach(function(e){var pl=e.payload;if(e.kind!=='pay'||!pl||(pl.typ!=='cust'&&pl.typ!=='bolim')||pl.skidka)return;if(typeof VOID!=='undefined'&&VOID[e.id])return;
+    var d=dayStr(new Date(e.ts));if(!inFn(d))return;var mp=_payMParts(pl),a=0;for(var k in mp){if(!mp.hasOwnProperty(k))continue;parts[k]=(parts[k]||0)+(+mp[k]||0);a+=(+mp[k]||0);}
+    tot+=a;L.push({ts:e.ts,nom:pl.typ==='bolim'?((typeof bolimNom==='function'?bolimNom(pl.id):pl.id)+' (bo‘lim)'):(cm[pl.id]||pl.nom||'Mijoz'),a:a,mp:mp,seller:e.seller||''});});
+  L.sort(function(a,b){return b.ts-a.ts;});cb({parts:parts,tot:Math.round(tot),list:L});});}
+var _QPN={naqd:'Naqd',karta:'Karta',payme1:'Payme 1',payme2:'Payme 2',bank:'Hisob raqam',ichki:'Ichki kassa'};
+function _qpHtml(r,salesCash){var h='<div class="qp-sep"></div><div class="plrow plclk" onclick="_qpList()"><span><i style="background:#16A34A"></i>Qarzdan to‘landi</span><b style="color:#16A34A">+'+grp(r.tot)+'</b></div>';
+  Object.keys(r.parts).forEach(function(k){if(r.parts[k])h+='<div class="plrow" style="padding-left:18px;font-size:12.5px;color:#667085"><span>'+(_QPN[k]||k)+'</span><b>'+grp(Math.round(r.parts[k]))+'</b></div>';});
+  h+='<div class="qp-tot"><span>Kassaga jami tushdi</span><span>'+grp(Math.round(salesCash+r.tot))+'</span></div><div style="font-size:11.5px;color:#98A2B3">sotuvdan tushgan pul + qarzdan to‘langan pul (yangi qarzga berilgani kirmaydi)</div>';
+  return h;}
+function _qpList(){var o=document.getElementById('qpOv');if(o)o.remove();o=document.createElement('div');o.id='qpOv';
+  var h='<div class="qb"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b style="font-size:17px">Qarzdan to‘langanlar</b><button style="border:0;background:#F2F4F7;border-radius:50%;width:32px;height:32px" onclick="document.getElementById(\'qpOv\').remove()">✕</button></div>';
+  if(!_QPL.length)h+='<div style="color:#98A2B3;padding:20px 0;text-align:center">Bu davrda qarz to‘lovi yo‘q</div>';
+  _QPL.forEach(function(x){var t=new Date(x.ts),p2=function(n){return ('0'+n).slice(-2);};var m=Object.keys(x.mp).filter(function(k){return x.mp[k];}).map(function(k){return (_QPN[k]||k);}).join(' + ');
+    h+='<div class="qr"><span>'+esc(x.nom)+'<small>'+p2(t.getDate())+'.'+p2(t.getMonth()+1)+' '+p2(t.getHours())+':'+p2(t.getMinutes())+' · '+esc(m)+(x.seller?' · '+esc(x.seller):'')+'</small></span><b style="color:#16A34A">+'+grp(Math.round(x.a))+'</b></span></div>';});
+  o.innerHTML=h+'</div>';o.addEventListener('click',function(e){if(e.target===o)o.remove();});document.body.appendChild(o);}
+(function(){function w(){if(window._qpW||typeof renderH_dashboard!=='function')return;var o=renderH_dashboard;
+  renderH_dashboard=function(el,all){var r=o.apply(this,arguments);try{
+      var sel=(all||[]).filter(function(x){return inPeriod(x.day);}),cash=0;sel.forEach(function(x){var pp=_payParts(x);cash+=(pp.naqd||0)+(pp.karta||0)+(pp.payme1||0)+(pp.payme2||0)+(pp.bank||0);});
+      var _rr=null;try{_rr=_hRange();}catch(e){}var _ft=_rr&&_rr.from?new Date(_rr.from+'T00:00:00').getTime():Date.now();
+      _memEnsure(_ft,function(){_qpCollect(inPeriod,function(q){_QPL=q.list;var box=el.querySelector('.dpanels .dbox');if(!box)return;var old=box.querySelector('.qp-wrap');if(old)old.remove();
+        var d=document.createElement('div');d.className='qp-wrap';d.innerHTML=_qpHtml(q,cash);box.appendChild(d);});});
+    }catch(e){}return r;};window._qpW=1;}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(w,1300);});else setTimeout(w,1300);})();
 </script>
 </body>
 </html>
