@@ -2166,7 +2166,7 @@ function completeSale(){_QK_IDS=null;_RPT_CACHE=null;
   var factor=sub>0?(_fBase/sub):1;
   var _PAYV=PAY;
   if(SPLIT.on)_PAYV=(_SPdebt>0)?'qarz':_splitBiggest(_SPM);
-  var sale={id:'s'+now.getTime(),day:dayStr(now),ts:now.toISOString(),seller:seller,pay:_PAYV,total:total,
+  var sale={id:'s'+now.getTime()+String(Math.floor(Math.random()*1000)).padStart(3,'0'),day:dayStr(now),ts:now.toISOString(),seller:seller,pay:_PAYV,total:total,
     items:CART.map(function(c){return {id:c.id,nom:c.nom,narx:_r4(c.narx*factor),narx0:c.narx,xarid:c.xarid||0,qty:c.qty};})};
   if(disc>0){sale.disc=disc;sale.sub=sub;}
   if(sale_chegirmaKam>0)sale.chegirmaKam=sale_chegirmaKam;if(typeof _bonUsed!=='undefined'&&_bonUsed>0)sale.bonusUsed=_bonUsed;
@@ -4145,7 +4145,7 @@ function setBolim(b){lsSet('kroff_bolim',b);}
 function bolimNom(id){var b=getBolim();for(var i=0;i<b.length;i++)if(b[i].id===id)return b[i].nom;return id;}
 function getSup(){return lsGet('kroff_sup',[]);}function setSup(v){lsSet('kroff_sup',v);}
 function getCust(){return lsGet('kroff_cust',[]);}function setCust(v){lsSet('kroff_cust',v);}
-function uid(pre){return pre+Date.now()+Math.floor(Math.random()*1000);}
+function uid(pre){return pre+Date.now()+Math.floor(Math.random()*1000)+Math.random().toString(36).slice(2,6);}
 
 /* ---- TA'MINOTCHILAR + KIRIM ---- */
 function addSup(){var n=prompt('Ta\u2019minotchi nomi:');if(!n)return;var p=prompt('Telefon (ixtiyoriy):','')||'';var _sid=uid('sup');commitEvent('sup',{id:_sid,nom:n.trim(),phone:p.trim()});renderKirim();var _ks=document.getElementById('kSup');if(_ks)_ks.value=_sid;toast('\u2705 Ta\u2019minotchi qo\u2019shildi');}
