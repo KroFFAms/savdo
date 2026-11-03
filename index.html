@@ -3162,7 +3162,7 @@ function renderH_foydatovar(el,all){
   });});
   evAll(function(evs){
     var kQty=0,kSum=0,qSk=0;
-    evs.forEach(function(e){if(e.kind==='pay'&&e.payload&&e.payload.skidka&&!VOID[e.id]){var _sd=dayStr(new Date(e.ts));if(inPeriod(_sd))qSk+=(e.payload.amount||0);}});
+    evs.forEach(function(e){if(e.kind==='pay'&&e.payload&&e.payload.skidka&&!e.payload.oldin&&!VOID[e.id]){var _sd=dayStr(new Date(e.ts));if(inPeriod(_sd))qSk+=(e.payload.amount||0);}});
     evs.forEach(function(e){if(e.kind!=='kirim'||!e.payload)return;var ds=dayStr(new Date(e.ts));if(!inPeriod(ds))return;kQty+=(e.payload.qty||0);kSum+=(e.payload.summa||0);});
     var arr=Object.keys(m).map(function(k){var r=m[k];r.profit=r.rev-r.cost;r.pct=r.cost>0?Math.round(r.profit/r.cost*1000)/10:(r.rev>0?100:0);return r;});
     var prof=arr.filter(function(r){return r.profit>=0;}).sort(function(a,b){return b.profit-a.profit;});
@@ -4176,7 +4176,7 @@ function supBulkSave(){
 }
 function pickAccountSup(msg,cb){var ov=document.getElementById('accPickOv');if(ov)ov.remove();window._accPickCb=cb;var d=document.createElement('div');d.id='accPickOv';d.style.cssText='position:fixed;inset:0;background:rgba(20,30,50,.5);z-index:400;display:flex;align-items:center;justify-content:center;padding:18px';function b(m,l){return '<button onclick="_accPick(\''+m+'\')" style="padding:16px 10px;border:1.5px solid #d7deea;background:#fff;border-radius:12px;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit">'+l+'</button>';}d.innerHTML='<div style="background:#fff;border-radius:16px;max-width:360px;width:100%;padding:20px;box-shadow:0 12px 40px rgba(0,0,0,.25)"><div style="font-size:15px;font-weight:800;margin-bottom:14px;text-align:center">'+esc(msg||'To\u2018lov usuli?')+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+b('naqd','\ud83d\udcb5 Naqd')+b('ichki','\ud83c\udfe0 Ichki kassa')+b('payme1','\ud83d\udcf1 Payme 1')+b('payme2','\ud83d\udcf1 Payme 2')+b('bank','\ud83c\udfe6 Hisob raqam')+'</div><button onclick="_accPick(null)" style="width:100%;margin-top:12px;padding:11px;border:1px solid #e5e7eb;background:#fff;border-radius:10px;font-weight:700;color:#6b7280;cursor:pointer;font-family:inherit">Bekor</button></div>';document.body.appendChild(d);}
 function _payMParts(pl){if(pl&&pl.skidka)return {};if(pl&&pl.split){var o={},t=0;for(var k in pl.split){if(pl.split.hasOwnProperty(k)){o[k]=pl.split[k];t+=pl.split[k];}}if(t>0)return o;}var m={};m[(pl&&pl.method)||'naqd']=(pl&&pl.amount)||0;return m;}
-function _spayLbl(k){return {naqd:'\ud83d\udcb5 Naqd',karta:'\ud83d\udcb3 Karta',ichki:'\ud83c\udfe0 Ichki kassa',payme1:'\ud83d\udcf1 Payme 1',payme2:'\ud83d\udcf1 Payme 2',bank:'\ud83c\udfe6 Hisob raqam',skidka:'\ud83c\udff7\ufe0f Skidka (chegirma)'}[k]||k;}
+function _spayLbl(k){return {naqd:'\ud83d\udcb5 Naqd',karta:'\ud83d\udcb3 Karta',ichki:'\ud83c\udfe0 Ichki kassa',payme1:'\ud83d\udcf1 Payme 1',payme2:'\ud83d\udcf1 Payme 2',bank:'\ud83c\udfe6 Hisob raqam',skidka:'\ud83c\udff7\ufe0f Skidka (chegirma)',oldin:'\u2714\ufe0f Avval to\u2018langan'}[k]||k;}
 function spayOpen(cfg){var ov=document.getElementById('supPayOv');if(ov)ov.remove();window._SPAY=cfg;var rows='';for(var k=0;k<cfg.accs.length;k++){var key=cfg.accs[k];rows+='<div class="spy-row"><span class="spy-lb" onclick="spayFill(\''+key+'\')">'+_spayLbl(key)+'</span><input class="spy-in" id="spy_'+key+'" type="text" inputmode="numeric" autocomplete="off" placeholder="0" oninput="spayCalc()"></div>';}var d=document.createElement('div');d.id='supPayOv';d.className='spy-ov';d.innerHTML='<div class="spy-box"><div class="spy-head"><div><div class="spy-nom">'+(cfg.icon||'')+' '+esc(cfg.nom||'')+'</div><div class="spy-sub">Joriy qarz: <b>'+grp(cfg.debt||0)+'</b> so\u2018m</div></div><button type="button" class="spy-x" onclick="spayClose()">\u2715</button></div><div class="spy-body"><div class="spy-hint">Bir nechta hisobdan bo\u2018lib to\u2018lash mumkin. Nomiga bosilsa \u2014 qolgan summa tushadi.</div>'+rows+'<div class="spy-foot"><span>Jami to\u2018lov</span><b id="spyTot">0</b></div><div class="spy-foot2"><span>To\u2018lovdan keyin qarz</span><b id="spyLeft">'+grp(cfg.debt||0)+'</b></div></div><div class="spy-btns"><button type="button" class="spy-c" onclick="spayClose()">Bekor</button><button type="button" class="spy-ok" onclick="spaySave()">\u2705 To\u2018lash</button></div></div>';document.body.appendChild(d);var f=document.getElementById('spy_'+cfg.accs[0]);if(f&&f.focus)setTimeout(function(){try{f.focus();}catch(e){}},80);}
 function spayClose(){var o=document.getElementById('supPayOv');if(o)o.remove();window._SPAY=null;}
 function _spaySum(){var S=window._SPAY;if(!S)return {total:0,parts:{}};var t=0,parts={};for(var i=0;i<S.accs.length;i++){var el=document.getElementById('spy_'+S.accs[i]);var v=el?Math.round(_pf(el.value)||0):0;if(v>0){parts[S.accs[i]]=v;t+=v;}}return {total:t,parts:parts};}
@@ -4547,16 +4547,19 @@ function bolimRename(id){var b=getBolim();for(var i=0;i<b.length;i++)if(b[i].id=
 function bolimDel(id){var b=getBolim();for(var i=0;i<b.length;i++)if(b[i].id===id){if((b[i].debt||0)>0){toast('Qarzi bor bo\u2018limni o\u2018chirib bo\u2018lmaydi');return;}if(!confirm(b[i].nom+' o\u2019chirilsinmi?'))return;b.splice(i,1);setBolim(b);renderMijoz();break;}}
 function bolimPay(id){var bl=getBolim();for(var i=0;i<bl.length;i++)if(bl[i].id===id){var _bn=bl[i].nom;spayOpen({icon:'\ud83c\udfec',nom:_bn,debt:Math.round(bl[i].debt||0),accs:['naqd','karta','payme1','payme2','bank'],onSave:function(parts,total){commitEvent('pay',{typ:'bolim',id:id,amount:total,split:parts,method:_spayBig(parts)});renderMijoz();_spayToast('\u2705 To\u2019lov: ',total,parts);}});break;}}
 function _custPaySave(id,nm,parts,total){
-  var sk=Math.round(parts.skidka||0), cash=0, cp={};
-  for(var k in parts){if(parts.hasOwnProperty(k)&&k!=='skidka'){cp[k]=parts[k];cash+=parts[k];}}
+  var sk=Math.round(parts.skidka||0), old=Math.round(parts.oldin||0), cash=0, cp={};
+  for(var k in parts){if(parts.hasOwnProperty(k)&&k!=='skidka'&&k!=='oldin'){cp[k]=parts[k];cash+=parts[k];}}
   if(cash>0){commitEvent('pay',{typ:'cust',id:id,nom:nm,amount:cash,split:cp,method:_spayBig(cp)});for(var k2 in cp){if(cp.hasOwnProperty(k2))commitEvent('kassa',{dir:'in',acc:k2,amount:cp[k2],cat:'Qarz to\u2019lovi',note:nm});}}
   if(sk>0)commitEvent('pay',{typ:'cust',id:id,nom:nm,amount:sk,method:'skidka',skidka:true});
+  /* avval to'langan qarz: qarz kamayadi, lekin kassaga ham, skidkaga ham kirmaydi */
+  if(old>0)commitEvent('pay',{typ:'cust',id:id,nom:nm,amount:old,method:'oldin',skidka:true,oldin:true,note:'Avval to\u2018langan qarz'});
   var l=[];for(var q in cp){if(cp.hasOwnProperty(q))l.push(_accLabel(q)+' '+grp(cp[q]));}
   if(sk>0)l.push('\ud83c\udff7\ufe0f skidka '+grp(sk));
+  if(old>0)l.push('\u2714\ufe0f avval to\u2018langan '+grp(old));
   toast('\u2705 Qarz to\u2019lovi: '+grp(total)+(l.length?' \u00b7 '+l.join(' + '):''));
 }
-function custPay(id){var c=getCust();for(var i=0;i<c.length;i++)if(c[i].id===id){var _cn=c[i].nom;spayOpen({icon:'\ud83d\udc64',nom:_cn,debt:Math.round(c[i].debt||0),accs:['naqd','karta','payme1','payme2','bank','skidka'],onSave:function(parts,total){_custPaySave(id,_cn,parts,total);renderMijoz();}});break;}}
-function _accLabel(m){return m==='skidka'?'Skidka':m==='ichki'?'Ichki kassa':(m==='karta'?'Karta':(m==='payme1'?'Payme 1':(m==='payme2'?'Payme 2':(m==='bank'?'Hisob raqam':'Naqd'))));}
+function custPay(id){var c=getCust();for(var i=0;i<c.length;i++)if(c[i].id===id){var _cn=c[i].nom;spayOpen({icon:'\ud83d\udc64',nom:_cn,debt:Math.round(c[i].debt||0),accs:['naqd','karta','payme1','payme2','bank','skidka','oldin'],onSave:function(parts,total){_custPaySave(id,_cn,parts,total);renderMijoz();}});break;}}
+function _accLabel(m){return m==='oldin'?'Avval to\u2018langan':m==='skidka'?'Skidka':m==='ichki'?'Ichki kassa':(m==='karta'?'Karta':(m==='payme1'?'Payme 1':(m==='payme2'?'Payme 2':(m==='bank'?'Hisob raqam':'Naqd'))));}
 function custDel(id){if(!confirm('Mijoz o\u2019chirilsinmi?'))return;commitEvent('custdel',{id:id,nom:((_custById(id)||{}).nom||'')});renderMijoz();}
 function custDelFromDetail(){if(!_cmId)return;var _cn='';var _cl=getCust();for(var _i=0;_i<_cl.length;_i++)if(_cl[_i].id===_cmId)_cn=_cl[_i].nom;if(!confirm('\"'+_cn+'\" mijozini butunlay o\u2019chirasizmi?\n\nQarz tarixi ham o\u2019chadi. Bu amalni qaytarib bo\u2019lmaydi.'))return;commitEvent('custdel',{id:_cmId,nom:((_custById(_cmId)||{}).nom||'')});closeCust();renderMijoz();toast('Mijoz o\u2019chirildi');}
 function renderCustSel(){var inp=document.getElementById('custSearch');if(inp)inp.value='';var hid=document.getElementById('custSel');if(hid)hid.value='';custSearchFn();}
@@ -5962,7 +5965,7 @@ function custVoidPay(pid,ev){if(ev&&ev.stopPropagation)ev.stopPropagation();if(_
     custDetail(cid);renderMijoz();
   });
 }
-function custPayFromDetail(){if(!_cmId)return;var _cn='',_cd=0,_cl=getCust();for(var _ci=0;_ci<_cl.length;_ci++)if(_cl[_ci].id===_cmId){_cn=_cl[_ci].nom;_cd=Math.round(_cl[_ci].debt||0);}var _cid=_cmId;spayOpen({icon:'\ud83d\udc64',nom:_cn,debt:_cd,accs:['naqd','karta','payme1','payme2','bank','skidka'],onSave:function(parts,total){_custPaySave(_cid,_cn,parts,total);custDetail(_cid);renderMijoz();}});}
+function custPayFromDetail(){if(!_cmId)return;var _cn='',_cd=0,_cl=getCust();for(var _ci=0;_ci<_cl.length;_ci++)if(_cl[_ci].id===_cmId){_cn=_cl[_ci].nom;_cd=Math.round(_cl[_ci].debt||0);}var _cid=_cmId;spayOpen({icon:'\ud83d\udc64',nom:_cn,debt:_cd,accs:['naqd','karta','payme1','payme2','bank','skidka','oldin'],onSave:function(parts,total){_custPaySave(_cid,_cn,parts,total);custDetail(_cid);renderMijoz();}});}
 
 /* ---- SHTRIX SKANER (kamera) ---- */
 var _scanStream=null,_scanRAF=null,_scanRAF2=null,_scanDet=null,_scanLast=0,_zxMFR=null,_zxCanvas=null,_zxHints=null,_scanN=0,_zxReader=null;
@@ -10070,14 +10073,21 @@ function _xlsOk(){if(typeof XLSX==='undefined'){toast('Excel kutubxonasi hali yu
 function _trXls(){if(!_xlsOk())return;var L=window._QB||[];if(!L.length){toast('Ro‘yxat bo‘sh');return;}
   var p2=function(n){return ('0'+n).slice(-2);};
   var R=[['Sana','Vaqt','Chek №','Turi','Mijoz','Sotuvchi','Tovar (dona)','Summa','Naqd','Karta','Payme 1','Payme 2','Hisob raqam','Qarz','Bo‘lim']];
-  var I=[['Sana','Vaqt','Chek №','Turi','Mijoz','Sotuvchi','Tovar','Miqdor','Narx','Summa']];
+  /* Tovarlar varag'i — Billz "Список транзакций в разбивке по товарам" kabi */
+  var I=[['Sana','Chek №','Turi','Do\u2018kon','Mijoz','Mijoz telefoni','Sotuvchi','Tovar nomi','Artikul','Shtrix-kod','O\u2018lchov','Sotilgan soni','Qaytarilgan soni','Tushum','Qaytarish summasi','Sof tushum','Izoh','Narx']];
   L.forEach(function(x){var t=new Date(typeof x.ts==='number'?x.ts:(x.ts||x.day)),tm=isNaN(t)?'':(p2(t.getHours())+':'+p2(t.getMinutes())+':'+p2(t.getSeconds()));
     var no=x.bz?String(x.bz):String(x.id||'').replace(/\D/g,'').slice(-12),tur=x.isReturn?'Vozvrat':'Sotuv',pp=_payParts(x),u=0;
-    (x.items||[]).forEach(function(it){u+=Math.abs(+it.qty||0);I.push([x.day,tm,no,tur,x.customer||'',x.seller||'',it.nom||'',+it.qty||0,Math.round(+it.narx||0),Math.round((+it.narx||0)*(+it.qty||0))]);});
+    var _ph='';try{_ph=x.customer&&typeof _custPhone==='function'?(_custPhone(x.customer)||''):'';}catch(e){}
+    (x.items||[]).forEach(function(it){var q=Math.abs(+it.qty||0),sm=Math.round((+it.narx||0)*q);u+=q;var pr=(typeof findProd==='function'?findProd(it.id):null)||{};
+      var ret=!!x.isReturn||(+it.qty||0)<0;
+      I.push([x.day+' '+tm,no,ret?'Qaytarish':'Sotuv',(window.SHOP&&SHOP.name)||'KROFF',x.customer||'',_ph,x.seller||'',it.nom||pr.nom||'',pr.artikul||'',pr.barcode||'',it.olchov||pr.olchov||'dona',ret?0:q,ret?q:0,ret?0:sm,ret?sm:0,ret?-sm:sm,x.izoh||'',Math.round(+it.narx||0)]);});
     R.push([x.day,tm,no,tur,x.customer||'',x.seller||'',Math.round(u*1000)/1000,Math.round(+x.total||0),Math.round(pp.naqd||0),Math.round(pp.karta||0),Math.round(pp.payme1||0),Math.round(pp.payme2||0),Math.round(pp.bank||0),Math.round(pp.qarz||0),x.bolim?(typeof bolimNom==='function'?bolimNom(x.bolim):x.bolim):'']);});
   var sum=function(c){var s=0;for(var i=1;i<R.length;i++)s+=(+R[i][c]||0);return s;};
   R.push(['JAMI','','','','','','',sum(7),sum(8),sum(9),sum(10),sum(11),sum(12),sum(13),'']);
-  var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(R),'Cheklar');XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(I),'Tovarlar');
+  var si=function(c){var t=0;for(var i=1;i<I.length;i++)t+=(+I[i][c]||0);return Math.round(t*1000)/1000;};
+  I.push(['JAMI','','','','','','','','','','',si(11),si(12),si(13),si(14),si(15),'','']);
+  var wb=XLSX.utils.book_new();var wsI=XLSX.utils.aoa_to_sheet(I);wsI['!cols']=[{wch:19},{wch:14},{wch:10},{wch:12},{wch:22},{wch:15},{wch:18},{wch:36},{wch:12},{wch:15},{wch:8},{wch:9},{wch:9},{wch:12},{wch:12},{wch:12},{wch:16},{wch:10}];
+  XLSX.utils.book_append_sheet(wb,wsI,'Tovarlar bo\u2018yicha');XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(R),'Cheklar va to\u2018lov');
   var q=((document.getElementById('trQ')||{}).value||'').trim().replace(/[^\wЀ-ӿ ]+/g,'').slice(0,30);
   XLSX.writeFile(wb,'tranzaksiyalar_'+(_TRFROM||'')+(_TRTO&&_TRTO!==_TRFROM?'_'+_TRTO:'')+(q?'_'+q:'')+'.xlsx');toast('✅ Excel yuklandi');}
 function _qpXls(){if(!_xlsOk())return;var p2=function(n){return ('0'+n).slice(-2);};
