@@ -9139,7 +9139,7 @@ function _trFCount(){return _TRF.pays.length+_TRF.sellers.length+((_TRF.min||_TR
 function renderTranz(){
   var v=document.getElementById('view-tranz');if(!v)return;
   if(!document.getElementById('trFiltBtn')){
-    v.innerHTML='<div class="tr-top"><div class="tr-h">Tranzaksiyalar <span id="trCnt" class="tr-cnt"></span></div>'+
+    v.innerHTML='<div class="tr-top"><div class="tr-h" style="display:flex;align-items:center;gap:8px"><span>Tranzaksiyalar</span> <span id="trCnt" class="tr-cnt"></span><button id="trXls" type="button" onclick="_trXls()" style="margin-left:auto;border:1.5px solid #16A34A;background:#fff;color:#16A34A;border-radius:12px;padding:8px 12px;font-weight:700;font-size:14px;cursor:pointer">\ud83d\udce5 Excel</button></div>'+
       '<div class="tr-srow"><input id="trQ" type="search" placeholder="Chek raqami, mijoz, sotuvchi" oninput="clearTimeout(window._trT);window._trT=setTimeout(renderTranz,200)">'+
       '<button id="trFiltBtn" type="button" onclick="_trFiltOpen()">⏷<i id="trFN"></i></button></div>'+
       '<div class="tr-chips"><button data-p="bugun" onclick="_trSet(\'bugun\')">Bugun</button><button data-p="kecha" onclick="_trSet(\'kecha\')">Kecha</button><button data-p="hafta" onclick="_trSet(\'hafta\')">7 kun</button>'+
@@ -9952,6 +9952,7 @@ function _qpHtml(r,salesCash){var h='<div class="qp-sep"></div><div class="plrow
   return h;}
 function _qpList(){var o=document.getElementById('qpOv');if(o)o.remove();o=document.createElement('div');o.id='qpOv';
   var h='<div class="qb"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b style="font-size:17px">Qarzdan to‘langanlar</b><button style="border:0;background:#F2F4F7;border-radius:50%;width:32px;height:32px" onclick="document.getElementById(\'qpOv\').remove()">✕</button></div>';
+  if(_QPL.length)h+='<button type="button" onclick="_qpXls()" style="border:1.5px solid #16A34A;background:#fff;color:#16A34A;border-radius:12px;padding:8px 12px;font-weight:700;margin:2px 0 8px">\ud83d\udce5 Excel</button>';
   if(!_QPL.length)h+='<div style="color:#98A2B3;padding:20px 0;text-align:center">Bu davrda qarz to‘lovi yo‘q</div>';
   _QPL.forEach(function(x){var t=new Date(x.ts),p2=function(n){return ('0'+n).slice(-2);};var m=Object.keys(x.mp).filter(function(k){return x.mp[k];}).map(function(k){return (_QPN[k]||k);}).join(' + ');
     h+='<div class="qr"><span>'+esc(x.nom)+'<small>'+p2(t.getDate())+'.'+p2(t.getMonth()+1)+' '+p2(t.getHours())+':'+p2(t.getMinutes())+' · '+esc(m)+(x.seller?' · '+esc(x.seller):'')+'</small></span><b style="color:#16A34A">+'+grp(Math.round(x.a))+'</b></span></div>';});
@@ -10062,6 +10063,27 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     var ins=document.querySelectorAll('#splitBox input.sp-in'),on=null;for(var i=0;i<ins.length;i++){if((_pf(ins[i].value)||0)>0){on=ins[i];break;}}
     if(on){var t=Math.round(saleTotal());on.value=t>0?grp(t):'';splitRecalc();}}catch(e){}},0);});}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(w,1700);});else setTimeout(w,1700);})();
+</script>
+<script>
+/* ===== Excel: Tranzaksiyalar (ekranda ko'rinib turgan ro'yxat — sana, qidiruv, filtr bo'yicha) ===== */
+function _xlsOk(){if(typeof XLSX==='undefined'){toast('Excel kutubxonasi hali yuklanmadi — 2-3 soniyadan keyin qayta bosing');return false;}return true;}
+function _trXls(){if(!_xlsOk())return;var L=window._QB||[];if(!L.length){toast('Ro‘yxat bo‘sh');return;}
+  var p2=function(n){return ('0'+n).slice(-2);};
+  var R=[['Sana','Vaqt','Chek №','Turi','Mijoz','Sotuvchi','Tovar (dona)','Summa','Naqd','Karta','Payme 1','Payme 2','Hisob raqam','Qarz','Bo‘lim']];
+  var I=[['Sana','Vaqt','Chek №','Turi','Mijoz','Sotuvchi','Tovar','Miqdor','Narx','Summa']];
+  L.forEach(function(x){var t=new Date(typeof x.ts==='number'?x.ts:(x.ts||x.day)),tm=isNaN(t)?'':(p2(t.getHours())+':'+p2(t.getMinutes())+':'+p2(t.getSeconds()));
+    var no=x.bz?String(x.bz):String(x.id||'').replace(/\D/g,'').slice(-12),tur=x.isReturn?'Vozvrat':'Sotuv',pp=_payParts(x),u=0;
+    (x.items||[]).forEach(function(it){u+=Math.abs(+it.qty||0);I.push([x.day,tm,no,tur,x.customer||'',x.seller||'',it.nom||'',+it.qty||0,Math.round(+it.narx||0),Math.round((+it.narx||0)*(+it.qty||0))]);});
+    R.push([x.day,tm,no,tur,x.customer||'',x.seller||'',Math.round(u*1000)/1000,Math.round(+x.total||0),Math.round(pp.naqd||0),Math.round(pp.karta||0),Math.round(pp.payme1||0),Math.round(pp.payme2||0),Math.round(pp.bank||0),Math.round(pp.qarz||0),x.bolim?(typeof bolimNom==='function'?bolimNom(x.bolim):x.bolim):'']);});
+  var sum=function(c){var s=0;for(var i=1;i<R.length;i++)s+=(+R[i][c]||0);return s;};
+  R.push(['JAMI','','','','','','',sum(7),sum(8),sum(9),sum(10),sum(11),sum(12),sum(13),'']);
+  var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(R),'Cheklar');XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(I),'Tovarlar');
+  var q=((document.getElementById('trQ')||{}).value||'').trim().replace(/[^\wЀ-ӿ ]+/g,'').slice(0,30);
+  XLSX.writeFile(wb,'tranzaksiyalar_'+(_TRFROM||'')+(_TRTO&&_TRTO!==_TRFROM?'_'+_TRTO:'')+(q?'_'+q:'')+'.xlsx');toast('✅ Excel yuklandi');}
+function _qpXls(){if(!_xlsOk())return;var p2=function(n){return ('0'+n).slice(-2);};
+  var R=[['Sana','Vaqt','Mijoz','Naqd','Karta','Payme 1','Payme 2','Hisob raqam','Jami','Sotuvchi']];
+  (_QPL||[]).forEach(function(x){var t=new Date(x.ts),m=x.mp||{};R.push([p2(t.getDate())+'.'+p2(t.getMonth()+1)+'.'+t.getFullYear(),p2(t.getHours())+':'+p2(t.getMinutes()),x.nom,Math.round(m.naqd||0),Math.round(m.karta||0),Math.round(m.payme1||0),Math.round(m.payme2||0),Math.round(m.bank||0),Math.round(x.a||0),x.seller||'']);});
+  var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(R),'Qarz tolovlari');XLSX.writeFile(wb,'qarz_tolovlari_'+dayStr(new Date())+'.xlsx');toast('✅ Excel yuklandi');}
 </script>
 </body>
 </html>
