@@ -10545,23 +10545,98 @@ function _nkPut(){var map=_nkMap(),add=0,skip=0;
   setTimeout(function(){try{ensure();}catch(e){}},1500);})();
 </script>
 <style>
-.sv-addm{display:none;align-items:center;justify-content:center;gap:10px;width:100%;margin:10px 0 6px;padding:16px;border:2px dashed #2E6BE6;border-radius:16px;background:#EEF4FF;color:#1F4E79;font:inherit;font-weight:800;font-size:18px;cursor:pointer}
-.sv-addm b{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:#2E6BE6;color:#fff;font-size:26px;line-height:1}
-#cartFoot .sv-addm{margin:0 0 10px}
+#svAddFab{position:fixed;right:16px;z-index:150;display:none;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;border:0;background:#2E6BE6;color:#fff;font-size:40px;font-weight:400;line-height:1;box-shadow:0 6px 18px rgba(46,107,230,.45);cursor:pointer;padding:0}
+#svAddFab:active{transform:scale(.94)}
+#view-sotuv #cart{margin-bottom:84px}
 </style>
 <script>
-/* ===== Sotuv: katta "+ Yana tovar qo'shish" tugmasi ===== */
+/* ===== Sotuv: burchakda katta "+" — yana tovar qo'shish ===== */
 (function(){
   if(window._svAddW)return;window._svAddW=1;
   window._svAddMore=function(){try{if(typeof SVPHASE!=='undefined'&&SVPHASE!=='cart')setSvPhase('cart');}catch(e){}
     var q=document.getElementById('sq');try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){window.scrollTo(0,0);}
     if(q){q.value='';try{q.focus({preventScroll:true});}catch(e){q.focus();}}};
-  function mk(id){var b=document.createElement('button');b.type='button';b.id=id;b.className='sv-addm';b.innerHTML='<b>+</b> Yana tovar qo‘shish';b.onclick=_svAddMore;return b;}
-  function upd(){try{var has=!!(CART&&CART.length),ph=(typeof SVPHASE!=='undefined')?SVPHASE:'cart';
-    var c=document.getElementById('cart');if(c&&c.parentNode){var a=document.getElementById('svAddM1');if(!a){a=mk('svAddM1');}if(a.previousSibling!==c)c.parentNode.insertBefore(a,c.nextSibling);a.style.display=(has&&ph!=='pay')?'flex':'none';}
-    var f=document.getElementById('cartFoot');if(f){var b2=document.getElementById('svAddM2');if(!b2){b2=mk('svAddM2');var back=f.querySelector('button[onclick*="setSvPhase(\'cart\')"]');if(back&&back.nextSibling)f.insertBefore(b2,back.nextSibling);else f.insertBefore(b2,f.firstChild);}b2.style.display=has?'flex':'none';}}catch(e){}}
+  function upd(){try{var b=document.getElementById('svAddFab');
+    if(!b){b=document.createElement('button');b.type='button';b.id='svAddFab';b.title='Yana tovar qo\u2018shish';b.textContent='+';b.onclick=_svAddMore;document.body.appendChild(b);}
+    var v=document.getElementById('view-sotuv'),act=v&&v.classList.contains('active'),has=!!(CART&&CART.length),ph=(typeof SVPHASE!=='undefined')?SVPHASE:'cart';if(ph==='pay')has=false;
+    if(!(act&&has)){b.style.display='none';return;}
+    /* pastdagi tugmalar ustida turadi */
+    var off=12,ids=['svBottom','bottomNav'];for(var i=0;i<ids.length;i++){var e=document.getElementById(ids[i]);if(e&&e.offsetHeight>0&&getComputedStyle(e).display!=='none'&&getComputedStyle(e).position==='fixed'){var r=e.getBoundingClientRect();off=Math.max(off,window.innerHeight-r.top+12);}}
+    b.style.bottom=off+'px';b.style.display='flex';}catch(e){}}
+  window._svAddUpd=upd;
   var oR=renderCart;renderCart=function(){var r=oR.apply(this,arguments);upd();return r;};
+  if(typeof setSvPhase==='function'){var oP=setSvPhase;setSvPhase=function(){var r=oP.apply(this,arguments);upd();return r;};}
+  if(typeof switchView==='function'){var oV=switchView;switchView=function(){var r=oV.apply(this,arguments);setTimeout(upd,60);return r;};}
+  window.addEventListener('resize',function(){setTimeout(upd,100);});
   setTimeout(upd,1200);
+})();
+</script>
+<style>
+#kxOv .kx-fb{display:flex;gap:10px}
+#kxOv .kx-fb .kx-save{flex:1}
+#kxOv .kx-kech{flex:none;border:1.5px solid #D0D5DD;background:#fff;border-radius:14px;padding:0 14px;font:inherit;font-size:15px;font-weight:800;color:#344054;cursor:pointer}
+.kd-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:6px 0 2px;padding:11px;border:1.5px solid #FEC84B;border-radius:14px;background:#FFFAEB;color:#93370D;font:inherit;font-weight:800;font-size:15px;cursor:pointer}
+#kdOvl{position:fixed;inset:0;z-index:265;background:rgba(16,24,40,.45);display:flex;align-items:flex-end;justify-content:center}
+#kdOvl .kd-box{background:#fff;width:100%;max-width:560px;max-height:85vh;overflow:auto;border-radius:20px 20px 0 0;padding:16px 14px calc(16px + env(safe-area-inset-bottom))}
+#kdOvl .kd-t{font-size:18px;font-weight:800;text-align:center;margin-bottom:12px}
+#kdOvl .kd-r{display:flex;align-items:center;gap:8px;background:#F9FAFB;border-radius:14px;padding:12px;margin-bottom:8px}
+#kdOvl .kd-r .n{flex:1;font-weight:800;font-size:15px;color:#101828}
+#kdOvl .kd-r .n small{display:block;font-weight:500;font-size:12px;color:#667085;margin-top:2px}
+#kdOvl .kd-r .op{border:0;background:#2E6BE6;color:#fff;border-radius:10px;padding:9px 14px;font:inherit;font-weight:800;cursor:pointer}
+#kdOvl .kd-r .dl{border:0;background:#FEE4E2;color:#D92D20;border-radius:10px;padding:9px 11px;font:inherit;font-weight:800;cursor:pointer}
+#kdOvl .kd-back{width:100%;border:0;background:#F2F4F7;border-radius:14px;padding:13px;font:inherit;font-weight:700;margin-top:6px;cursor:pointer}
+</style>
+<script>
+/* ===== Nakladnoyni kechiktirish (hamma telefonlarda — kdraft/kdraftdel hodisalari) ===== */
+var _KDKEY='kroff_kdrafts';
+function _kdList(){try{var a=JSON.parse(localStorage.getItem(_KDKEY)||'[]');return Array.isArray(a)?a:[];}catch(e){return [];}}
+function _kdSet(a){try{localStorage.setItem(_KDKEY,JSON.stringify(a));}catch(e){toast('Saqlab bo‘lmadi');}}
+function _kdDel0(o){try{if(o){var k=Object.keys(o);if(k.length>300){var n={};k.slice(-300).forEach(function(x){n[x]=1;});o=n;}localStorage.setItem('kroff_kdrafts_del',JSON.stringify(o));return o;}return JSON.parse(localStorage.getItem('kroff_kdrafts_del')||'{}')||{};}catch(e){return {};}}
+function _kdSum(c){var t=0;(c||[]).forEach(function(x){t+=(+x.qty||0)*(+x.narx||0);});return Math.round(t);}
+function _kdHold(silent){if(!KCART||!KCART.length){toast('Savat bo‘sh');return false;}
+  var sup=(typeof _KX!=='undefined'&&_KX.sup)||'';
+  /* hamma telefonlarda ko'rinsin — hodisa sifatida yoziladi */
+  commitEvent('kdraft',{id:'kd'+Date.now()+Math.floor(Math.random()*1000),ts:Date.now(),cart:JSON.parse(JSON.stringify(KCART)),sup:sup});
+  KCART.length=0;try{renderKCart();}catch(e){}
+  try{_KX.sup='';_KX.paid=null;_KX.mix=false;_KX.parts={};_KX.amt=0;_KX.pick=false;}catch(e){}
+  try{var ks=document.getElementById('kSup');if(ks)ks.value='';}catch(e){}
+  try{_kxClose();}catch(e){}try{renderKatalog();}catch(e){}
+  if(!silent)toast('⏸️ Nakladnoy kechiktirildi — Katalogda “Kechiktirilgan nakladnoylar” ichida');return true;}
+function _kdOpen(){var a=_kdList();var o=document.getElementById('kdOvl');if(o)o.remove();if(!a.length){_kdBtn();return;}
+  o=document.createElement('div');o.id='kdOvl';
+  var h='<div class="kd-box"><div class="kd-t">⏸️ Kechiktirilgan nakladnoylar</div>';
+  a.forEach(function(d){var sn='';try{sn=_kxSupName(d.sup);}catch(e){}var dt=new Date(d.ts),who=d.seller?(' \u00b7 '+esc(d.seller)):'',tm=('0'+dt.getDate()).slice(-2)+'.'+('0'+(dt.getMonth()+1)).slice(-2)+' '+('0'+dt.getHours()).slice(-2)+':'+('0'+dt.getMinutes()).slice(-2);
+    h+='<div class="kd-r"><span class="n">'+(sn?esc(sn):'Ta’minotchi tanlanmagan')+'<small>'+d.cart.length+' xil tovar · '+grp(_kdSum(d.cart))+' so‘m · '+tm+who+'</small></span>'+
+      '<button class="op" onclick="_kdResume(\''+d.id+'\')">Ochish</button><button class="dl" onclick="_kdDel(\''+d.id+'\')">✕</button></div>';});
+  h+='<button class="kd-back" onclick="document.getElementById(\'kdOvl\').remove()">Yopish</button></div>';
+  o.innerHTML=h;o.addEventListener('click',function(e){if(e.target===o)o.remove();});document.body.appendChild(o);}
+function _kdDel(id){if(!confirm('Bu kechiktirilgan nakladnoy o‘chirilsinmi?'))return;commitEvent('kdraftdel',{id:id});_kdBtn();_kdOpen();}
+function _kdResume(id){var a=_kdList(),d=null;a.forEach(function(x){if(x.id===id)d=x;});if(!d)return;
+  if(KCART&&KCART.length){if(!confirm('Hozirgi savatda '+KCART.length+' xil tovar bor. Ular ham kechiktirilsinmi?'))return;_kdHold(true);a=_kdList();}
+  commitEvent('kdraftdel',{id:id});
+  KCART.length=0;d.cart.forEach(function(c){KCART.push(c);});
+  try{_KX.sup=d.sup||'';_KX.paid=null;_KX.mix=false;_KX.parts={};}catch(e){}
+  try{renderKCart();}catch(e){}var o=document.getElementById('kdOvl');if(o)o.remove();
+  try{if(!document.getElementById('view-katalog').classList.contains('active'))switchView('katalog');}catch(e){}
+  try{renderKatalog();}catch(e){}
+  toast('📥 Nakladnoy ochildi: '+d.cart.length+' xil tovar — davom ettiring');}
+function _kdBtn(){var top=document.querySelector('#view-katalog .kt-top');if(!top)return;var b=document.getElementById('kdBtn'),n=_kdList().length;
+  if(!b){b=document.createElement('button');b.id='kdBtn';b.type='button';b.className='kd-btn';b.onclick=_kdOpen;var nk=document.getElementById('nkBtn');if(nk&&nk.nextSibling)top.insertBefore(b,nk.nextSibling);else top.appendChild(b);}
+  b.innerHTML='⏸️ Kechiktirilgan nakladnoylar ('+n+')';b.style.display=n?'flex':'none';}
+(function(){if(window._kdW)return;window._kdW=1;
+  /* boshqa telefonlardan kelgan hodisalar */
+  var oE=applyEvent;applyEvent=function(ev){
+    if(ev&&(ev.kind==='kdraft'||ev.kind==='kdraftdel')){try{var pl=ev.payload||{},a=_kdList().filter(function(d){return d.id!==pl.id;});
+        if(ev.kind==='kdraft'){var dl=_kdDel0();if(!dl[pl.id]){a.push({id:pl.id,ts:pl.ts||ev.ts,cart:pl.cart||[],sup:pl.sup||'',seller:ev.seller||'',ev:1});a.sort(function(x,y){return (y.ts||0)-(x.ts||0);});}}
+        else{var dd=_kdDel0();dd[pl.id]=1;_kdDel0(dd);}
+        _kdSet(a);setTimeout(function(){try{_kdBtn();if(document.getElementById('kdOvl'))_kdOpen();}catch(e){}},0);}catch(e){}return;}
+    return oE.apply(this,arguments);};
+  /* oldin faqat shu telefonda saqlanganlarini ham hammaga yuboramiz */
+  setTimeout(function(){try{_kdList().forEach(function(d){if(!d.ev){commitEvent('kdraft',{id:d.id,ts:d.ts,cart:d.cart,sup:d.sup||''});}});}catch(e){}},9000);
+  var oK=_kxR;_kxR=function(){var r=oK.apply(this,arguments);try{if(!_KX.pick){var f=document.querySelector('#kxOv .kx-foot'),s=document.getElementById('kxSave');
+      if(f&&s&&!f.querySelector('.kx-fb')){var w=document.createElement('div');w.className='kx-fb';var k=document.createElement('button');k.type='button';k.className='kx-kech';k.textContent='⏸️ Kechiktirish';
+        k.onclick=function(){_kdHold();};f.insertBefore(w,s);w.appendChild(k);w.appendChild(s);}}}catch(e){}return r;};
+  var oR=renderKatalog;renderKatalog=function(){var r=oR.apply(this,arguments);try{_kdBtn();}catch(e){}return r;};
 })();
 </script>
 </body>
