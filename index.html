@@ -3984,13 +3984,14 @@ function svSearch(){
   if(!q){el.innerHTML='';return;}
   var _all=_psearch(q,{noArx:true,stockFirst:true,limit:400});
   /* omborda qolmagan tovar sotuv qidiruvida ko'rsatilmaydi */
-  var res=_all.filter(function(p){return (+p.qoldiq||0)>0;}).slice(0,150),_yoq=_all.length-res.length;
+  /* qoldig'i 0 bo'lsa ham ko'rsatiladi (pastroqda, qizil "0 dona") */
+  var res=_all.slice(0,150),_yoq=0;
   if(!res.length){el.innerHTML='<div class="svr-empty">'+(_yoq?('Qoldig\u2018i 0 \u2014 kirim qilinmagan: '+_all.slice(0,3).map(function(p){return esc(p.nom);}).join(', ')):'Topilmadi')+'</div>';return;}
   var h='';res.forEach(function(p){var no=p.qoldiq<=0;
-    h+='<button class="svr'+(no?' svr-no':'')+'" data-add="'+esc(String(p.id))+'"'+(no?' disabled':'')+'>'+
+    h+='<button class="svr'+(no?' svr-no':'')+'" data-add="'+esc(String(p.id))+'">'+
       (p.img?'<img class="svr-img" src="'+esc(p.img)+'" loading="lazy" onerror="this.style.visibility=\'hidden\'">':'<span class="svr-img svr-img0">\ud83d\udce6</span>')+
       '<span class="svr-n" style="flex:1;min-width:0">'+esc(p.nom)+'</span>'+
-      '<span class="svr-r">'+grp(p.sotuv)+' \u00b7 <i>'+(no?'yo\u2018q':grp(p.qoldiq)+' '+(p.olchov||'dona'))+'</i></span></button>';});
+      '<span class="svr-r">'+grp(p.sotuv)+' \u00b7 <i'+(no?' style="color:#D92D20;font-weight:800"':'')+'>'+grp(p.qoldiq||0)+' '+(p.olchov||'dona')+'</i></span></button>';});
   if(_yoq){var _z=_all.filter(function(p){return (+p.qoldiq||0)<=0;}).slice(0,3).map(function(p){return esc(p.nom);});
     h+='<div class="svr-zero">\u26a0\ufe0f Qoldig\u2018i 0 (kirim qilinmagan): '+_z.join(', ')+(_yoq>3?(' va yana '+(_yoq-3)+' ta'):'')+'</div>';}
   el.innerHTML=h;
@@ -10692,6 +10693,181 @@ function _nkAI(){_NK.aiErr='';if(!_NK.img||_NK.busy)return;_NK.busy=true;_NK.st=
      _NK.st=null;_nkR();if(!rows.length)toast('AI rasmdan tovar qatorlarini topmadi');})
    .catch(function(e){if(done)return;done=true;clearTimeout(tm);_NK.busy=false;_nkAIerr('❌ AI bilan bog‘lanib bo‘lmadi: '+(e&&e.message||e));});}
 (function(){if(window._nkAIW)return;window._nkAIW=1;var o=_nkLoad;_nkLoad=function(){_NK.ai=false;return o.apply(this,arguments);};})();
+</script>
+<style>
+#drOvl{position:fixed;inset:0;z-index:255;background:#F2F4F7;display:flex;flex-direction:column}
+#drOvl .dr-hd{display:flex;align-items:center;gap:8px;padding:12px 12px 8px;background:#fff}
+#drOvl .dr-hd b{flex:1;text-align:center;font-size:17px;font-weight:800;color:#101828}
+#drOvl .dr-bk{border:0;background:none;font-size:28px;line-height:1;color:#2E6BE6;padding:0 8px;cursor:pointer}
+#drOvl .dr-top{background:#fff;padding:0 12px 12px;border-radius:0 0 20px 20px}
+#drOvl .dr-q{width:100%;box-sizing:border-box;border:0;background:#F2F4F7;border-radius:14px;padding:13px 14px;font:inherit;font-size:15px}
+#drOvl .dr-tb{display:flex;gap:10px;margin-top:10px}
+#drOvl .dr-tb button{flex:1;border:1.5px solid #E4E7EC;background:#fff;border-radius:22px;padding:10px;font:inherit;font-weight:700;color:#475467;cursor:pointer}
+#drOvl .dr-tb button.on{background:#EEF4FF;border-color:#EEF4FF;color:#2E6BE6}
+#drOvl .dr-bd{flex:1;overflow:auto;padding:10px 10px 24px;-webkit-overflow-scrolling:touch}
+#drOvl .dr-day{background:#fff;border-radius:18px;margin-bottom:10px;overflow:hidden}
+#drOvl .dr-dh{padding:14px 16px;font-size:18px;font-weight:800;color:#101828;border-bottom:1px solid #F2F4F7}
+#drOvl .dr-it{padding:12px 16px;border-bottom:1px solid #F2F4F7;cursor:pointer}
+#drOvl .dr-it:last-child{border-bottom:0}
+#drOvl .dr-l1{display:flex;align-items:center;gap:8px;font-weight:700;color:#2E6BE6;font-size:15px}
+#drOvl .dr-l1 .dot{width:12px;height:12px;border-radius:50%;background:#2E6BE6;flex:none}
+#drOvl .dr-l1 .dot.old{background:#F04438}
+#drOvl .dr-l1 .sm{margin-left:auto;white-space:nowrap}
+#drOvl .dr-l2{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:14px;color:#344054}
+#drOvl .dr-l2 .u{background:#F2F4F7;border-radius:10px;padding:2px 8px;font-size:13px}
+#drOvl .dr-l2 .s{margin-left:auto;color:#475467}
+#drOvl .dr-cu{display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:#F2F4F7;border-radius:12px;padding:5px 10px;font-size:13px;font-weight:600;color:#344054}
+#drOvl .dr-act{display:flex;gap:8px;margin-top:10px}
+#drOvl .dr-act button{flex:1;border:0;border-radius:10px;padding:10px;font:inherit;font-weight:800;cursor:pointer}
+#drOvl .dr-act .op{background:#2E6BE6;color:#fff}
+#drOvl .dr-act .dl{flex:none;background:#FEE4E2;color:#D92D20;padding:10px 14px}
+#drOvl .dr-emp{text-align:center;color:#98A2B3;padding:40px 0}
+#drOvl .dr-now{margin:10px 0 0;width:100%;border:1.5px dashed #2E6BE6;background:#EEF4FF;color:#1F4E79;border-radius:14px;padding:12px;font:inherit;font-weight:800;cursor:pointer}
+</style>
+<script>
+/* ===== Qoralamalar / Kechiktirilganlar — Billz kabi ro'yxat ===== */
+(function(){
+  if(window._drlW)return;window._drlW=1;
+  var _drQ='',_drOpenId='';
+  function num(id){var d=String(id||'').replace(/\D/g,'');return d.slice(-9);}
+  function sum(x){var s=0;(x.cart||[]).forEach(function(c){s+=(+c.narx||0)*(+c.qty||0);});return Math.round(s);}
+  function units(x){var n=0;(x.cart||[]).forEach(function(c){n+=(+c.qty||0);});return Math.round(n*1000)/1000;}
+  function dd(ts){var d=new Date(ts||0);return ('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear();}
+  function tm(ts){var d=new Date(ts||0);return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+':'+('0'+d.getSeconds()).slice(-2);}
+  window._drClose=function(){var o=document.getElementById('drOvl');if(o)o.remove();};
+  window._drR=function(){var o=document.getElementById('drOvl');if(!o)return;
+    var all=[];try{all=getDrafts();}catch(e){}
+    var kn=all.filter(function(x){return (x.type||'kechik')!=='qoralama';}),qn=all.filter(function(x){return x.type==='qoralama';});
+    var L=(_drT==='qoralama'?qn:kn).slice().sort(function(a,b){return (b.ts||0)-(a.ts||0);});
+    var q=(_drQ||'').toLowerCase().trim();
+    if(q)L=L.filter(function(x){var t=(num(x.id)+' '+(x.cust||'')+' '+(x.label||'')+' '+(x.seller||'')+' '+(x.cart||[]).map(function(c){return c.nom;}).join(' ')).toLowerCase();return t.indexOf(q)>=0;});
+    var nm=_drT==='qoralama'?'Qoralama':'Kechiktirilgan',h='',day='',old=Date.now()-2*86400000;
+    if(CART&&CART.length)h+='<button class="dr-now" onclick="_drClose();holdSale(\''+(_drT==='qoralama'?'qoralama':'kechik')+'\')">'+(_drT==='qoralama'?'📝 Hozirgi savatni qoralama qilish':'⏸️ Hozirgi savatni kechiktirish')+' ('+CART.length+' ta tovar)</button>';
+    if(!L.length)h+='<div class="dr-emp">'+(q?'Topilmadi':'Hozircha yo‘q')+'</div>';
+    L.forEach(function(x){var d=dd(x.ts);if(d!==day){if(day)h+='</div>';day=d;h+='<div class="dr-day"><div class="dr-dh">'+d+'</div>';}
+      var op=_drOpenId===x.id;
+      h+='<div class="dr-it" onclick="_drTog(\''+x.id+'\')"><div class="dr-l1"><span class="dot'+((x.ts||0)<old?' old':'')+'"></span>'+nm+' #'+num(x.id)+'<span class="sm">'+grp(sum(x))+' UZS</span></div>'+
+        '<div class="dr-l2">'+tm(x.ts)+'<span class="u">'+grp(units(x))+' birlik</span><span class="s">'+esc(x.seller||'')+'</span></div>'+
+        (x.cust?'<div class="dr-cu">👤 '+esc(x.cust)+'</div>':'')+
+        (op?'<div style="margin-top:8px;font-size:13px;color:#475467">'+(x.cart||[]).map(function(c){return esc(c.nom)+' × '+grp(c.qty)+' = '+grp(Math.round((+c.narx||0)*(+c.qty||0)));}).join('<br>')+'</div>'+
+          '<div class="dr-act"><button class="op" onclick="event.stopPropagation();_drClose();resumeDraft(\''+x.id+'\')">▶️ Ochish</button><button class="dl" onclick="event.stopPropagation();if(confirm(\'O‘chirilsinmi?\')){commitEvent(\'draftdel\',{id:\''+x.id+'\'});try{renderDrafts();}catch(e){}_drR();}">✕</button></div>':'')+
+        '</div>';});
+    if(day)h+='</div>';
+    document.getElementById('drBd').innerHTML=h;
+    var tb=o.querySelectorAll('.dr-tb button');if(tb.length===2){tb[0].className=_drT==='qoralama'?'on':'';tb[1].className=_drT!=='qoralama'?'on':'';tb[0].textContent='Qoralamalar ('+qn.length+')';tb[1].textContent='Kechiktirilganlar ('+kn.length+')';}};
+  window._drTog=function(id){_drOpenId=(_drOpenId===id)?'':id;_drR();};
+  _drOpen=function(){try{_bhClose();}catch(e){}_drClose();_drOpenId='';var o=document.createElement('div');o.id='drOvl';
+    o.innerHTML='<div class="dr-hd"><button class="dr-bk" onclick="_drClose()">‹</button><b>Qoralamalar / Kechiktirilganlar</b><span style="width:36px"></span></div>'+
+      '<div class="dr-top"><input class="dr-q" id="drQ" placeholder="🔍 ID, mijoz, xodim, tovar" value="'+esc(_drQ)+'" oninput="window._drSetQ(this.value)">'+
+      '<div class="dr-tb"><button onclick="_drT=\'qoralama\';_drR()">Qoralamalar</button><button onclick="_drT=\'kechik\';_drR()">Kechiktirilganlar</button></div></div><div class="dr-bd" id="drBd"></div>';
+    document.body.appendChild(o);_drR();};
+  window._drSetQ=function(v){_drQ=v||'';_drR();};
+  /* kechiktirilgandan keyin mijoz ham tozalanadi — keyingi savdoga o'tib ketmasin */
+  var oH=holdSale;holdSale=function(){var n=(CART&&CART.length)||0,r=oH.apply(this,arguments);
+    try{if(n&&!(CART&&CART.length)){var hid=document.getElementById('custSel'),inp=document.getElementById('custSearch');if(hid)hid.value='';if(inp)inp.value='';try{_fSave();}catch(e){}try{if(typeof splitRecalc==='function')splitRecalc();}catch(e){}}}catch(e){}
+    try{if(document.getElementById('drOvl'))_drR();}catch(e){}return r;};
+})();
+</script>
+<style>
+#view-sotuv #draftBar{display:none!important}
+#svMoreBtn{position:relative}
+#svMoreBtn .dr-bdg{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:#F04438;color:#fff;font-size:11px;font-weight:800;line-height:18px;text-align:center;box-sizing:border-box}
+</style>
+<script>
+/* Sotuv ekranida "Kutayotgan savdolar" ochiq turmaydi — faqat ⋯ ichida; ⋯ ustida soni ko'rinadi */
+(function(){
+  if(window._dbarW)return;window._dbarW=1;
+  function bdg(){try{var b=document.getElementById('svMoreBtn');if(!b)return;var n=0;try{n=getDrafts().length;}catch(e){}
+    var s=b.querySelector('.dr-bdg');if(!n){if(s)s.remove();return;}if(!s){s=document.createElement('span');s.className='dr-bdg';b.appendChild(s);}s.textContent=n>99?'99+':n;}catch(e){}}
+  window._drBadge=bdg;
+  var oR=renderDrafts;renderDrafts=function(){var r=oR.apply(this,arguments);bdg();return r;};
+  setInterval(function(){window._drBadge();},4000);setTimeout(function(){window._drBadge();},1500);
+})();
+</script>
+<style>
+#mudOvl{position:fixed;inset:0;z-index:270;background:rgba(16,24,40,.45);display:flex;align-items:flex-end;justify-content:center}
+#mudOvl .mb{background:#fff;width:100%;max-width:520px;border-radius:22px 22px 0 0;padding:18px 14px calc(16px + env(safe-area-inset-bottom))}
+#mudOvl .mt{font-size:18px;font-weight:800;text-align:center;margin-bottom:4px}
+#mudOvl .ms{font-size:13px;color:#667085;text-align:center;margin-bottom:12px}
+#mudOvl .mg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#mudOvl .mg button{border:1.5px solid #E4E7EC;background:#fff;border-radius:14px;padding:14px 8px;font:inherit;font-size:15px;font-weight:800;color:#101828;cursor:pointer}
+#mudOvl .mg button small{display:block;font-weight:500;font-size:12px;color:#667085;margin-top:2px}
+#mudOvl .mx{width:100%;margin-top:10px;border:0;background:#F2F4F7;border-radius:14px;padding:12px;font:inherit;font-weight:700;cursor:pointer}
+#drOvl .dr-it.late{background:#FEF3F2}
+#drOvl .dr-mud{display:inline-flex;align-items:center;gap:4px;margin:8px 0 0 6px;border-radius:12px;padding:5px 10px;font-size:13px;font-weight:700;background:#EEF4FF;color:#1F4E79}
+#drOvl .dr-it.late .dr-mud{background:#F04438;color:#fff}
+#svMoreBtn .dr-bdg.ok{background:#2E6BE6}
+</style>
+<script>
+/* ===== Kechiktirishga muddat: vaqti o'tgani qizil bo'ladi ===== */
+(function(){
+  if(window._mudW)return;window._mudW=1;
+  window._HOLDMUD=0;
+  function hm(ts){var d=new Date(ts);return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);}
+  function eod(add){var d=new Date();d.setDate(d.getDate()+(add||0));d.setHours(add?18:20,0,0,0);return d.getTime();}
+  /* draft hodisasiga muddatni qo'shamiz */
+  var oC=commitEvent;commitEvent=function(kind,payload){if(kind==='draft'&&payload&&window._HOLDMUD&&payload.muddat==null){payload.muddat=window._HOLDMUD;}return oC.apply(this,arguments);};
+  /* qabul qilishda muddat yo'qolmasin */
+  var oA=applyEvent;applyEvent=function(ev){var r=oA.apply(this,arguments);
+    try{if(ev&&ev.kind==='draft'&&ev.payload&&ev.payload.muddat){var d=getDrafts(),ch=false;for(var i=0;i<d.length;i++){if(d[i].id===ev.payload.id&&d[i].muddat!==ev.payload.muddat){d[i].muddat=ev.payload.muddat;ch=true;}}if(ch)setDrafts(d);}}catch(e){}
+    return r;};
+  var oH=holdSale;
+  holdSale=function(type){
+    if(type!=='kechik'||!CART||!CART.length||window._mudGo){return oH.apply(this,arguments);}
+    var o=document.getElementById('mudOvl');if(o)o.remove();o=document.createElement('div');o.id='mudOvl';
+    var now=Date.now(),opts=[[30*60000,'30 daqiqa'],[3600000,'1 soat'],[2*3600000,'2 soat'],[3*3600000,'3 soat'],[eod(0)-now,'Bugun kechgacha'],[eod(1)-now,'Ertaga']];
+    o.innerHTML='<div class="mb"><div class="mt">⏸️ Qancha vaqtga kechiktiramiz?</div><div class="ms">Vaqti o‘tsa, ro‘yxatda qizil bo‘lib chiqadi</div><div class="mg">'+
+      opts.filter(function(x){return x[0]>0;}).map(function(x){return '<button onclick="_mudPick('+Math.round(now+x[0])+')">'+x[1]+'<small>'+hm(now+x[0])+(x[1]==='Ertaga'?' (ertaga)':'')+' gacha</small></button>';}).join('')+
+      '</div><button class="mx" onclick="_mudPick(0)">Muddatsiz</button><button class="mx" style="background:none;color:#667085" onclick="document.getElementById(\'mudOvl\').remove()">Bekor</button></div>';
+    o.addEventListener('click',function(e){if(e.target===o)o.remove();});document.body.appendChild(o);};
+  window._mudPick=function(ts){var o=document.getElementById('mudOvl');if(o)o.remove();window._HOLDMUD=ts||0;window._mudGo=1;
+    try{holdSale('kechik');}finally{window._mudGo=0;window._HOLDMUD=0;}
+    if(ts)setTimeout(function(){toast('⏰ '+hm(ts)+' gacha kechiktirildi');},900);};
+  window._mudLate=function(x){return !!(x&&x.muddat&&(x.type||'kechik')!=='qoralama'&&Date.now()>x.muddat);};
+  /* ro'yxatda: muddat va qizil */
+  var oR=_drR;_drR=function(){var r=oR.apply(this,arguments);
+    try{var all=getDrafts(),map={};all.forEach(function(x){map[x.id]=x;});
+      var its=document.querySelectorAll('#drOvl .dr-it');for(var i=0;i<its.length;i++){var it=its[i],m=(it.getAttribute('onclick')||'').match(/_drTog\('([^']+)'\)/);if(!m)continue;var x=map[m[1]];if(!x||!x.muddat)continue;
+        var late=_mudLate(x),dot=it.querySelector('.dot');it.classList.toggle('late',late);if(dot)dot.classList.toggle('old',late);
+        var mu=document.createElement('span');mu.className='dr-mud';var dd=new Date(x.muddat),td=new Date();var sameDay=dd.toDateString()===td.toDateString();
+        mu.textContent=late?('⏰ Vaqti o‘tdi · '+hm(x.muddat)+' edi'):('⏰ '+(sameDay?'':('0'+dd.getDate()).slice(-2)+'.'+('0'+(dd.getMonth()+1)).slice(-2)+' ')+hm(x.muddat)+' gacha');
+        var cu=it.querySelector('.dr-cu');if(cu)cu.parentNode.insertBefore(mu,cu.nextSibling);else{var l2=it.querySelector('.dr-l2');if(l2)l2.parentNode.insertBefore(mu,l2.nextSibling);}}}catch(e){}
+    return r;};
+  /* ⋯ belgisidagi son: vaqti o'tgan bo'lsa qizil, bo'lmasa ko'k */
+  function bdgColor(){try{var s=document.querySelector('#svMoreBtn .dr-bdg');if(!s)return;var late=getDrafts().some(_mudLate);s.classList.toggle('ok',!late);
+      var ov=document.getElementById('drOvl');if(ov&&!ov._mt){ov._mt=1;}}catch(e){}}
+  if(typeof _drBadge==='function'){var oB=_drBadge;_drBadge=function(){var r=oB.apply(this,arguments);bdgColor();return r;};}
+  setInterval(function(){bdgColor();try{if(document.getElementById('drOvl')&&!document.activeElement.matches('#drQ'))_drR();}catch(e){}},30000);
+  setTimeout(bdgColor,1800);
+})();
+</script>
+<script>
+/* ===== Katalog: admin tovar narxini kirimsiz o'zgartira oladi ===== */
+(function(){
+  if(window._npW)return;window._npW=1;
+  var oT=kirimTap;
+  kirimTap=function(pid){var r=oT.apply(this,arguments);
+    try{if(_role!=='admin')return r;var ov=document.getElementById('kirimTapOv'),p=findProd(pid);if(!ov||!p||document.getElementById('ktNP'))return r;
+      var btns=ov.querySelectorAll('button'),last=btns[btns.length-1],row=last&&last.parentNode;if(!row)return r;
+      var b=document.createElement('button');b.type='button';b.id='ktNP';
+      b.style.cssText='display:block;width:100%;margin-top:10px;padding:12px;border:1.5px solid #2E6BE6;background:#EEF4FF;color:#1F4E79;border-radius:10px;font-weight:800;cursor:pointer;font-family:inherit;font-size:14px';
+      b.textContent='🏷️ Faqat narxni saqlash (kirimsiz)';
+      b.onclick=function(){_npSave(pid);};
+      row.parentNode.insertBefore(b,row.nextSibling);}catch(e){}
+    return r;};
+  window._npSave=function(pid){var p=findProd(pid);if(!p)return;
+    var sE=document.getElementById('ktSot'),nE=document.getElementById('ktNarx');
+    var s=sE?Math.round(_pf(sE.value)||0):(p.sotuv||0),x=nE?Math.round(_pf(nE.value)||0):(p.xarid||0);
+    if(!(s>0)){toast('Sotuv narxini yozing');return;}
+    if(s===(p.sotuv||0)&&x===(p.xarid||0)){toast('Narx o‘zgarmadi');return;}
+    if(x>0&&s<x&&!confirm('Sotuv narxi ('+grp(s)+') tan narxidan ('+grp(x)+') past. Baribir saqlansinmi?'))return;
+    var old='Sotuv: '+grp(p.sotuv||0)+' → '+grp(s)+(x!==(p.xarid||0)?('\nTan narxi: '+grp(p.xarid||0)+' → '+grp(x)):'');
+    if(!confirm(p.nom+'\n\n'+old+'\n\nSaqlansinmi?'))return;
+    commitEvent('reprice',{pid:pid,sotuv:s,xarid:x,minn:p.minn||0,nom:p.nom});
+    var o=document.getElementById('kirimTapOv');if(o)o.remove();
+    try{renderKatalog();}catch(e){}
+    toast('🏷️ Narx yangilandi: '+p.nom+' — '+grp(s));};
+})();
 </script>
 </body>
 </html>
