@@ -9386,7 +9386,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </style>
 <script>
 /* ===== Billz bilan qoldiqni solishtirish (faqat ko'rsatadi, hech narsani o'zgartirmaydi) ===== */
-var _BZC=null,_BZCT='zero';
+var _BZCMP=null,_BZCT='zero';
 function _bzCmpOpen(){var o=document.getElementById('bzCmpOv');if(o)o.remove();o=document.createElement('div');o.id='bzCmpOv';
   o.innerHTML='<div class="bc-box"><div class="bc-hd"><b>⚖️ Billz bilan qoldiq</b><button onclick="document.getElementById(\'bzCmpOv\').remove()">✕</button></div><div class="bc-bd" id="bzCmpBd"></div></div>';
   o.addEventListener('click',function(e){if(e.target===o)o.remove();});document.body.appendChild(o);_bzCmpStart();}
@@ -9420,8 +9420,8 @@ function _bzCmpRun(rows){
     if(p){if(seen[p.id]){seen[p.id].bq+=bq;continue;}var o={nom:p.nom,bnom:nom,bc:bc,bq:bq,kq:+p.qoldiq||0,id:p.id};seen[p.id]=o;out.push(o);}
     else out.push({nom:nom,bnom:nom,bc:bc,bq:bq,kq:null,id:null});}
   out.forEach(function(o){o.d=o.kq==null?null:Math.round((o.bq-o.kq)*1000)/1000;});
-  _BZC=out;_BZCT='zero';_bzCmpShow();}
-function _bzCmpSets(){var A=_BZC||[];return {
+  _BZCMP=out;_BZCT='zero';_bzCmpShow();}
+function _bzCmpSets(){var A=_BZCMP||[];return {
   zero:A.filter(function(o){return o.kq!=null&&o.bq>0&&o.kq<=0;}),
   diff:A.filter(function(o){return o.kq!=null&&o.d!==0&&!(o.bq>0&&o.kq<=0);}),
   yoq:A.filter(function(o){return o.kq==null&&o.bq>0;}),
