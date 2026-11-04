@@ -10518,11 +10518,12 @@ function _nkRowSum(i,el){var r=_NK.rows[i],e=el.closest('.nk-r').querySelector('
 function _nkSum(){var t=0,n=0;_NK.rows.forEach(function(r){if(r.on&&r.pid&&r.qty>0){t+=r.qty*(r.narx||0);n++;}});return {t:Math.round(t),n:n};}
 function _nkR(){var bd=document.getElementById('nkBd'),ft=document.getElementById('nkFt');if(!bd)return;var h='';
   if(_NK.img)h+='<div class="nk-img'+(_NK.big?' big':'')+'"><img src="'+_NK.img.src+'" onclick="_NK.big=!_NK.big;_nkR()" style="transform:rotate('+(_NK.big?_NK.rot:0)+'deg)"><div class="nk-tools">'+
-    '<button onclick="_nkRun([( _NK.rot+90)%360])"'+(_NK.busy?' disabled':'')+'>↻ Burib qayta o‘qish</button><button onclick="_nkOpen()">📷 Boshqa rasm</button></div></div>';
+    '<button onclick="_nkRun([( _NK.rot+90)%360])"'+(_NK.busy?' disabled':'')+'>↻ Burib qayta o‘qish</button><button onclick="_nkOpen()">📷 Boshqa rasm</button><button onclick="_nkAI()"'+(_NK.busy?' disabled':'')+' style="background:#7A5AF8;color:#fff;border-color:#7A5AF8">🤖 AI bilan o‘qish</button></div></div>';
   if(_NK.st){h+='<div class="nk-st" id="nkSt"><span>'+esc(_NK.st.t)+'</span>'+(_NK.st.err?'':'<div class="nk-bar"><i style="width:'+(_NK.st.p||0)+'%"></i></div>')+'</div>';bd.innerHTML=h;ft.innerHTML='';return;}
   if(_NK.rows.length){var usd=_NK.cur==='usd',kk=_nkKurs();
     h+='<div class="nk-img" style="flex-wrap:wrap;gap:8px"><b style="font-size:14px">💵 Narxlar:</b><div class="nk-tools"><button style="'+(!usd?'background:#2E6BE6;color:#fff;border-color:#2E6BE6':'')+'" onclick="_NK.cur=\'uzs\';_nkR()">So‘mda</button><button style="'+(usd?'background:#2E6BE6;color:#fff;border-color:#2E6BE6':'')+'" onclick="_NK.cur=\'usd\';_nkR()">$ Dollarda</button></div>'+
       (usd?'<label style="flex:1;min-width:150px;font-size:12px;color:#667085">Kurs (1$ = so‘m)<input id="nkKurs" inputmode="numeric" value="'+(kk?grp(kk):'')+'" placeholder="masalan 12 800" style="width:100%;box-sizing:border-box;border:1.5px solid '+(kk?'#D0D5DD':'#D92D20')+';border-radius:8px;padding:8px;font:inherit;font-size:16px;font-weight:700" oninput="_NK.kurs=_pf(this.value);try{localStorage.setItem(\'kroff_nk_kurs\',String(_NK.kurs||\'\'))}catch(e){};_nkFt()" onchange="_nkR()"></label>':'')+'</div>';}
+  if(_NK.img&&!_NK.ai){var gd=_NK.rows.filter(function(r){return r.ok&&r.pid;}).length;if(!_NK.rows.length||gd*2<_NK.rows.length)h+='<div class="nk-st" style="background:#F4F3FF;color:#5925DC;margin-bottom:10px">Yaxshi o‘qilmadimi? <button onclick="_nkAI()" style="margin-left:6px;border:0;background:#7A5AF8;color:#fff;border-radius:10px;padding:8px 12px;font:inherit;font-weight:800;cursor:pointer">🤖 AI bilan o‘qish</button><br><small style="font-weight:500">Qo‘lda yozilgan va xira nakladnoylarni ham o‘qiydi</small>'+(_NK.aiErr?'<div style="color:#D92D20;margin-top:6px">'+esc(_NK.aiErr)+'</div>':'')+'</div>';}
   if(!_NK.rows.length){h+='<div class="nk-st">Rasmdan tovar qatorlari topilmadi 😕<br><small style="font-weight:500;color:#667085">Rasm tekis, yorug‘ va yaqindan olinsin. Yoki “↻ Burib qayta o‘qish”ni bosing.</small></div>';
     if(_NK.text)h+='<div style="font-size:12px;color:#667085;margin:10px 2px 4px">O‘qilgan matn:</div><pre>'+esc(_NK.text)+'</pre>';}
   _NK.rows.forEach(function(r,i){var p=r.pid?findProd(r.pid):null,cls=!p?'bad':(!r.ok||r.guess?'warn':'');
@@ -10659,6 +10660,33 @@ function _kdBtn(){var top=document.querySelector('#view-katalog .kt-top');if(!to
         k.onclick=function(){_kdHold();};f.insertBefore(w,s);w.appendChild(k);w.appendChild(s);}}}catch(e){}return r;};
   var oR=renderKatalog;renderKatalog=function(){var r=oR.apply(this,arguments);try{_kdBtn();}catch(e){}return r;};
 })();
+</script>
+<script>
+/* ===== Nakladnoyni sun'iy intellekt (Claude) bilan o'qish — Supabase "nakladnoy" funksiyasi orqali ===== */
+function _nkAIimg(){var img=_NK.img,W=img.naturalWidth||img.width,H=img.naturalHeight||img.height,sc=Math.min(1,1600/Math.max(W,H)),rot=_NK.rot||0;
+  var w=Math.round(W*sc),h=Math.round(H*sc),sw=(rot%180)?h:w,sh=(rot%180)?w:h,c=document.createElement('canvas');c.width=sw;c.height=sh;var x=c.getContext('2d');
+  x.fillStyle='#fff';x.fillRect(0,0,sw,sh);x.translate(sw/2,sh/2);x.rotate(rot*Math.PI/180);x.drawImage(img,-w/2,-h/2,w,h);
+  return c.toDataURL('image/jpeg',0.85).split(',')[1];}
+function _nkAIerr(m){_NK.st=null;_NK.aiErr=m;_NK.busy=false;_nkR();toast(m);}
+function _nkAI(){_NK.aiErr='';if(!_NK.img||_NK.busy)return;_NK.busy=true;_NK.st={t:'🤖 Sun’iy intellekt o‘qimoqda… (5–20 soniya)',p:40};_nkR();
+  var b64='';try{b64=_nkAIimg();}catch(e){}
+  var url=SB_URL+'/functions/v1/nakladnoy',done=false;
+  var tm=setTimeout(function(){if(done)return;done=true;_NK.busy=false;_nkAIerr('❌ AI javob bermadi (vaqt tugadi). Internetni tekshirib qayta urinib ko‘ring.');},90000);
+  fetch(url,{method:'POST',headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY},body:JSON.stringify({image:b64,media_type:'image/jpeg'})})
+   .then(function(r){return r.text().then(function(t){var j=null;try{j=JSON.parse(t);}catch(e){}return {st:r.status,j:j,t:t};});})
+   .then(function(o){if(done)return;done=true;clearTimeout(tm);_NK.busy=false;
+     if(o.st===404){_nkAIerr('❌ AI hali ulanmagan — Supabase’da “nakladnoy” funksiyasi o‘rnatilmagan.');return;}
+     if(o.st!==200||!o.j||o.j.error){_nkAIerr('❌ AI: '+((o.j&&o.j.error)||('xato '+o.st)));return;}
+     var q=o.j.qatorlar||o.j.rows||[],rows=[];
+     q.forEach(function(x){var n=String(x.nomi||x.name||'').trim(),qt=+x.soni||+x.qty||0,nr=+x.narx||+x.price||0,sm=+x.summa||+x.sum||0;
+       if(!nr&&sm&&qt)nr=Math.round(sm/qt*100)/100;if(!qt&&sm&&nr)qt=Math.round(sm/nr*1000)/1000;
+       var ok=!!(qt>0&&nr>0&&(!sm||Math.abs(qt*nr-sm)<=Math.max(0.01,sm*0.005)));
+       if(n||qt||nr)rows.push({name:n,qty:qt,narx:nr,ok:ok,raw:'🤖 '+n+' · '+qt+' × '+nr+(sm?' = '+sm:'')});});
+     _NK.ai=true;_NK.rows=rows;_NK.jami=+o.j.jami||0;_NK.text=JSON.stringify(o.j);_nkMatch();
+     var v=String(o.j.valyuta||o.j.currency||'').toUpperCase();_NK.cur=(v==='USD'||v==='$')?'usd':(v==='UZS'?'uzs':_nkCurDet());
+     _NK.st=null;_nkR();if(!rows.length)toast('AI rasmdan tovar qatorlarini topmadi');})
+   .catch(function(e){if(done)return;done=true;clearTimeout(tm);_NK.busy=false;_nkAIerr('❌ AI bilan bog‘lanib bo‘lmadi: '+(e&&e.message||e));});}
+(function(){if(window._nkAIW)return;window._nkAIW=1;var o=_nkLoad;_nkLoad=function(){_NK.ai=false;return o.apply(this,arguments);};})();
 </script>
 </body>
 </html>
