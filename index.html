@@ -10251,5 +10251,90 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     return r;};
 })();
 </script>
+<script>
+/* ===== Aralash to'lov — oson: yangi turni bosing, summasini yozing, qolgani o'zi birinchi turda qoladi ===== */
+(function(){
+  if(window._mixEzW)return;window._mixEzW=1;
+  window._MIXANC=null;window._MIXPEND=null;
+  function ins(){return document.querySelectorAll('#splitBox input.sp-in');}
+  function val(e){return e?(_pf(e.value)||0):0;}
+  function onIds(){var r=[],a=ins();for(var i=0;i<a.length;i++)if(val(a[i])>0)r.push(a[i].id);return r;}
+  function fixAnc(){var on=onIds();if(!_MIXANC||on.indexOf(_MIXANC)<0){var best=null,bv=0,a=ins();for(var i=0;i<a.length;i++){var v=val(a[i]);if(v>bv){bv=v;best=a[i].id;}}_MIXANC=best;}}
+  /* aralash yoqilganda — hozirgi tur "asosiy" bo'lib qoladi */
+  var oM=_spMixToggle;
+  _spMixToggle=function(){_MIXPEND=null;var r=oM.apply(this,arguments);_MIXANC=null;if(_ARALASH)fixAnc();try{_payMark();}catch(e){}return r;};
+  /* aralashda yangi turni bosish: summa qolmagan bo'lsa ham joy ochiladi */
+  var oT=_spTake;
+  _spTake=function(id){if(!_ARALASH){_MIXANC=null;_MIXPEND=null;return oT.apply(this,arguments);}
+    var e=document.getElementById(id);if(!e)return;fixAnc();
+    if(val(e)>0){_MIXPEND=null;return oT.apply(this,arguments);}
+    var t=Math.round(saleTotal()),others=0,a=ins();for(var i=0;i<a.length;i++)if(a[i].id!==id)others+=val(a[i]);
+    if(t-others>0){var r=oT.apply(this,arguments);if(!_MIXANC)_MIXANC=id;return r;}
+    _MIXPEND=id;e.value='';try{_payMark();}catch(x){}
+    setTimeout(function(){try{e.focus();}catch(x){}},30);};
+  /* yozilganda — asosiy tur o'zi kamayadi/oshadi */
+  document.addEventListener('input',function(ev){var e=ev.target;if(!_ARALASH||!e||!e.classList||!e.classList.contains('sp-in'))return;
+    if(!e.closest||!e.closest('#splitBox'))return;
+    if(e.id===_MIXPEND&&val(e)>0)_MIXPEND=null;
+    if(val(e)<=0&&e.id!==_MIXANC)_MIXPEND=e.id;
+    fixAnc();if(!_MIXANC||_MIXANC===e.id)return;var anc=document.getElementById(_MIXANC);if(!anc)return;
+    var t=Math.round(saleTotal()),others=0,a=ins();for(var i=0;i<a.length;i++)if(a[i].id!==_MIXANC)others+=val(a[i]);
+    var rest=Math.round(t-others);
+    if(rest<0){/* asosiy turdan ko'p yozildi — cheklaymiz */var mine=val(e),cut=Math.max(0,mine+rest);e.value=cut>0?grp(cut):'';rest=0;}
+    anc.value=rest>0?grp(rest):'';
+    if(rest<=0){/* asosiy tur nolga tushdi — endi yozilayotgan tur asosiy */_MIXANC=e.id;}
+  },true);
+  function x2(id){if(id===_MIXPEND)_MIXPEND=null;if(_ARALASH&&id!==_MIXANC){/* olib tashlangan tur summasi asosiy turga qaytadi */
+      var e=document.getElementById(id),anc=_MIXANC&&document.getElementById(_MIXANC);if(e&&anc){var v=val(e);e.value='';anc.value=grp(Math.round(val(anc)+v));}}}
+  var oX=_spX;
+  _spX=function(ev,id){x2(id);var r=oX.apply(this,arguments);if(_ARALASH&&id===_MIXANC){_MIXANC=null;fixAnc();}return r;};
+  /* kutilayotgan (hali summa yozilmagan) tur ham ochiq ko'rinsin */
+  var oP=_payMark;
+  _payMark=function(){var r=oP.apply(this,arguments);try{if(_ARALASH){var ae=document.activeElement;if(ae&&ae.classList&&ae.classList.contains('sp-in')){var ar=ae.closest('.sp-row');if(ar)ar.classList.add('on');}if(_MIXPEND){var e=document.getElementById(_MIXPEND);var row=e&&e.closest('.sp-row');if(row)row.classList.add('on');}}}catch(x){}return r;};
+  /* yangi to'lov oynasi — tozadan */
+  if(typeof splitBuild==='function'){var oB=splitBuild;splitBuild=function(){_MIXANC=null;_MIXPEND=null;return oB.apply(this,arguments);};}
+})();
+</script>
+<script>
+/* ===== Raqamni tahrirlash qulay: kursor joyida qoladi; to'lov katagiga bosilganda raqam belgilanadi ===== */
+(function(){
+  if(window._caretW)return;window._caretW=1;
+  _numFmt=function(el){
+    if(!el||el.type==='number')return;
+    var v=String(el.value||'');if(!v)return;
+    if(/[%a-zA-Z]/.test(v))return;
+    var neg=/^-/.test(v.replace(/\s/g,''));
+    var d=v.replace(/[^0-9.,]/g,'').replace(',','.');
+    var p=d.split('.'),tam=p[0].replace(/^0+(?=\d)/,''),kasr=p.length>1?('.'+p[1].slice(0,3)):'';
+    if(!tam&&!kasr){el.value='';return;}
+    var out=(neg?'-':'')+String(tam||'0').replace(/\B(?=(\d{3})+(?!\d))/g,' ')+kasr;
+    if(out===v)return;
+    var pos=null;try{pos=el.selectionStart;}catch(e){}
+    /* kursordan oldin nechta raqam bor — formatdan keyin ham shuncha raqamdan keyin turadi */
+    var nd=0;if(pos!=null){var pre=v.slice(0,pos);nd=pre.replace(/[^0-9.,\-]/g,'').length;}
+    el.value=out;
+    if(pos!=null){var np=0,c=0;if(nd>0){for(np=0;np<out.length;np++){if(/[0-9.\-]/.test(out.charAt(np))){c++;if(c===nd){np++;break;}}}}
+      try{el.setSelectionRange(np,np);}catch(e){}}
+  };
+  document.addEventListener('focusin',function(ev){var e=ev.target;
+    if(!e||!e.classList||!e.classList.contains('sp-in')||!e.closest||!e.closest('#splitBox'))return;
+    setTimeout(function(){try{if(document.activeElement===e&&e.value)e.setSelectionRange(0,e.value.length);}catch(x){}},40);},true);
+})();
+</script>
+<script>
+/* ===== Chegirma — eng pastda, "Sotildi" tugmasi ustida: "X so'm chegirma" ===== */
+(function(){
+  if(window._dBotW)return;window._dBotW=1;
+  var st=document.createElement('style');st.textContent='#discBot{display:none;margin:10px 0 8px;padding:12px 14px;border-radius:14px;background:#FEF3F2;border:1.5px solid #FECDCA;color:#B42318;font-weight:800;font-size:16px;text-align:center}#discBot small{display:block;font-weight:600;font-size:13px;color:#912018;margin-top:2px}';document.head.appendChild(st);
+  window._discBot=function(){try{var cf=document.getElementById('cartFoot');if(!cf)return;var btn=cf.querySelector('.btn-sell');if(!btn)return;
+    var d=document.getElementById('discBot');if(!d){d=document.createElement('div');d.id='discBot';}
+    if(d.nextSibling!==btn||d.parentNode!==btn.parentNode)btn.parentNode.insertBefore(d,btn);
+    var dv=Math.round(DISC||0);
+    if(dv>0){var sub=Math.round(cartSum());d.innerHTML='🏷️ '+grp(dv)+' so‘m chegirma<small>Narxi: '+grp(sub)+' → sotildi: '+grp(sub-dv)+'</small>';d.style.display='block';}
+    else{d.style.display='none';d.innerHTML='';}}catch(e){}};
+  var oR=cartRecalc;cartRecalc=function(){var r=oR.apply(this,arguments);_discBot();return r;};
+  if(typeof splitRecalc==='function'){var oS=splitRecalc;splitRecalc=function(){var r=oS.apply(this,arguments);_discBot();return r;};}
+})();
+</script>
 </body>
 </html>
