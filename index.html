@@ -11111,5 +11111,27 @@ function _nkAI(){_NK.aiErr='';if(!_NK.img||_NK.busy)return;_NK.busy=true;_NK.st=
     return r;};
 })();
 </script>
+<script>
+/* ===== 🏠 Kirim (nakladnoy) to'lovida "Ichki kassa" — oldingi kunlarda yig'ilgan puldan to'lash =====
+   Ichki kassadan berilgan pul bugungi kassa (kunlik savdo) dan chiqim bo'lmaydi — "Ta'minotchiga to'lash" dagi kabi.
+   Ta'minotchi qarzidan ayiriladi va to'lov hisobi "ichki" deb yoziladi. */
+(function(){ if(window._kIchW)return;window._kIchW=1;
+  var IC=['ichki','🏠 Ichki kassa'];
+  try{if(typeof _KXACC!=='undefined'&&!_KXACC.some(function(a){return a[0]==='ichki';}))_KXACC.push(IC);}catch(e){}
+  try{if(typeof _KCACCS!=='undefined'&&!_KCACCS.some(function(a){return a[0]==='ichki';}))_KCACCS.push(IC);}catch(e){}
+  function opt(){var s=document.getElementById('kcAcc');if(s&&!s.querySelector('option[value="ichki"]')){var o=document.createElement('option');o.value='ichki';o.textContent=IC[1];s.appendChild(o);}}
+  opt();document.addEventListener('DOMContentLoaded',opt);
+  var _inK=false;
+  var oC=commitEvent;
+  commitEvent=function(kind,p){
+    if(_inK&&kind==='kassa'&&p&&p.acc==='ichki'&&p.dir==='out')return {id:'',skip:1}; /* ichki kassa — kunlik kassaga tegmaydi */
+    return oC.apply(this,arguments);};
+  function wrap(){if(window._kIchS||typeof kcSave!=='function')return;window._kIchS=1;var oS=kcSave;
+    kcSave=function(){_inK=true;try{return oS.apply(this,arguments);}finally{_inK=false;}};}
+  /* kcSave'ning boshqa o'ramlari (aralash to'lov 1.3 s da) dan keyin o'raymiz */
+  function late(){setTimeout(wrap,2200);}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',late);else late();
+})();
+</script>
 </body>
 </html>
