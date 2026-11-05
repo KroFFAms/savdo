@@ -11040,5 +11040,76 @@ function _nkAI(){_NK.aiErr='';if(!_NK.img||_NK.busy)return;_NK.busy=true;_NK.st=
     toast(changed?'\u2705 Nakladnoy o\u2018zgartirildi':'O\u2018zgarish yo\u2018q');};
 })();
 </script>
+<script>
+/* ===== 💳 Yangi to'lov turlari (Click, Uzum…) va 🏷️ kassa guruhlari — Sozlamalarda =====
+   To'lov turi asosiy hisoblardan biriga tushadi (Naqd/Karta/Payme1/Payme2/Hisob raqam):
+   savdo, kassa, hisobot va Moliya hisob-kitobi o'zgarmaydi; savdoda qaysi turdan kelgani "via" bo'lib saqlanadi. */
+(function(){
+  if(window._ptW)return;window._ptW=1;
+  var PK='kroff_pturs',CK='kroff_xcats';
+  var BASE=[['naqd','Naqd'],['karta','Karta'],['payme1','Payme 1'],['payme2','Payme 2'],['bank','Hisob raqam']];
+  function bnom(a){for(var i=0;i<BASE.length;i++)if(BASE[i][0]===a)return BASE[i][1];return a;}
+  function ls(k,d){try{var v=JSON.parse(localStorage.getItem(k)||'null');return v==null?d:v;}catch(e){return d;}}
+  window._ptList=function(){return (ls(PK,[])||[]).filter(function(x){return x&&x.id&&!x.off;});};
+  window._ptAll=function(){return ls(PK,[])||[];};
+  window._xcList=function(){var c=ls(CK,{})||{};return {out:c.out||[],inn:c.inn||[]};};
+  var oE=applyEvent;applyEvent=function(ev){var r=oE.apply(this,arguments);
+    try{if(ev&&ev.kind==='config'&&ev.payload){if(Array.isArray(ev.payload.pturs))localStorage.setItem(PK,JSON.stringify(ev.payload.pturs));if(ev.payload.xcats&&typeof ev.payload.xcats==='object')localStorage.setItem(CK,JSON.stringify(ev.payload.xcats));}}catch(e){}return r;};
+  /* --- savdo: qo'shimcha kataklar --- */
+  var oB=splitBuild;splitBuild=function(){window._SPVIA=null;var r=oB.apply(this,arguments);
+    try{var L=_ptList();if(L.length){var q=document.getElementById('sp_qarz'),qr=q&&q.closest('.sp-row'),box=document.getElementById('splitBox');
+      L.forEach(function(x){if(document.getElementById('sp_x_'+x.id))return;var d=document.createElement('div');d.className='sp-row';d.setAttribute('onclick',"if(event.target.tagName!=='INPUT')splitFillLbl('x_"+x.id+"')");
+        d.innerHTML='<span class="sp-lb tapl">'+(x.ic||'💳')+' '+esc(x.nom)+'</span><input class="sp-in" id="sp_x_'+x.id+'" type="text" inputmode="numeric" placeholder="0" oninput="SPLIT.touched=true;splitRecalc()">';
+        if(qr&&qr.parentNode)qr.parentNode.insertBefore(d,qr);else if(box)box.appendChild(d);});}}catch(e){}
+    return r;};
+  var oP=_splitPaid;_splitPaid=function(){var s=oP.apply(this,arguments);try{_ptList().forEach(function(x){s+=_splitVal('x_'+x.id);});}catch(e){}return s;};
+  var oM=_splitMap;_splitMap=function(){var m=oM.apply(this,arguments);var via={},n=0;
+    try{var s=0,t=saleTotal();for(var k in m)s+=m[k];
+      _ptList().forEach(function(x){var v=_splitVal('x_'+x.id);if(v>0){if(s+v>t)v=Math.max(0,t-s);v=Math.round(v);if(v>0){m[x.acc]=(m[x.acc]||0)+v;via[x.id]=v;n++;}s+=v;}});}catch(e){}
+    window._SPVIA=n?via:null;return m;};
+  var oC=commitEvent;commitEvent=function(kind,payload){if(kind==='sale'&&payload&&!payload.isReturn&&window._SPVIA&&payload.via==null){payload.via=window._SPVIA;window._SPVIA=null;}return oC.apply(this,arguments);};
+  /* --- kassa: o'z guruhlari --- */
+  if(typeof kfRenderChips==='function'){var oK=kfRenderChips;kfRenderChips=function(){var r=oK.apply(this,arguments);
+    try{var box=document.getElementById('kfChips');if(box){var c=_xcList(),L=(typeof KFDIR!=='undefined'&&KFDIR==='in')?c.inn:c.out;
+      L.forEach(function(n){var b=document.createElement('button');b.className='kchip';b.textContent=n;b.onclick=function(){document.getElementById('kfCat').value=this.textContent;};box.insertBefore(b,box.lastChild);});}}catch(e){}return r;};}
+  /* --- Sozlamalar --- */
+  function cls(){try{_gxClose();}catch(e){}}
+  function dlg(t,h){cls();var o=document.createElement('div');o.id='gxOvl';o.innerHTML='<div class="b"><h3>'+t+'</h3>'+h+'</div>';o.addEventListener('click',function(e){if(e.target===o)cls();});document.body.appendChild(o);}
+  window._ptNew=function(){dlg('💳 Yangi to‘lov turi','<label>Nomi</label><input id="ptN" placeholder="masalan: Click, Uzum, Paynet">'+
+      '<label>Belgisi (ixtiyoriy)</label><input id="ptI" placeholder="📲" maxlength="4">'+
+      '<label>Pul qaysi hisobga tushadi?</label><select id="ptA">'+BASE.map(function(a){return '<option value="'+a[0]+'"'+(a[0]==='bank'?' selected':'')+'>'+a[1]+'</option>';}).join('')+'</select>'+
+      '<div style="font-size:12px;color:#667085;margin-top:8px">Sotuvda alohida katak bo‘lib chiqadi. Pul tanlangan hisobga qo‘shiladi — kassa, hisobot va Moliya o‘zgarmaydi. Chekda qaysi turdan kelgani saqlanadi.</div>'+
+      '<div class="act"><button style="background:#F2F4F7" onclick="_gxClose()">Bekor</button><button style="background:#16A34A;color:#fff" onclick="_ptOk()">Qo‘shish</button></div>');
+    setTimeout(function(){var e=document.getElementById('ptN');if(e)e.focus();},50);};
+  window._ptOk=function(){var n=((document.getElementById('ptN')||{}).value||'').trim(),ic=((document.getElementById('ptI')||{}).value||'').trim(),a=(document.getElementById('ptA')||{}).value||'bank';
+    if(!n){toast('Nom yozing');return;}
+    var all=_ptAll();for(var i=0;i<all.length;i++){if(!all[i].off&&String(all[i].nom).toLowerCase()===n.toLowerCase()){toast('Bu tur bor');return;}}
+    if(/^(naqd|karta|payme ?1|payme ?2|hisob raqam|qarz)$/i.test(n)){toast('Bu asosiy hisob — qo‘shish shart emas');return;}
+    var id=n.toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,12)||'t';var u=id,k=2;while(all.some(function(x){return x.id===u;}))u=id+(k++);
+    all.push({id:u,nom:n,ic:ic||'💳',acc:a});commitEvent('config',{pturs:all});cls();toast('💳 To‘lov turi qo‘shildi: '+n+' → '+bnom(a));_gxRender();};
+  window._ptOff=function(id){var all=_ptAll(),x=null;all.forEach(function(y){if(y.id===id)x=y;});if(!x)return;
+    if(!confirm(x.nom+' to‘lov turi olib tashlansinmi?\nOldingi savdolar o‘zgarmaydi.'))return;x.off=1;commitEvent('config',{pturs:all});_gxRender();};
+  window._xcNew=function(dir){dlg(dir==='inn'?'🏷️ Yangi kirim guruhi':'🏷️ Yangi xarajat guruhi','<label>Guruh nomi</label><input id="xcN" placeholder="'+(dir==='inn'?'masalan: Ijaradan kirim':'masalan: Transport, Reklama')+'">'+
+      '<div class="act"><button style="background:#F2F4F7" onclick="_gxClose()">Bekor</button><button style="background:#16A34A;color:#fff" onclick="_xcOk(\''+dir+'\')">Qo‘shish</button></div>');
+    setTimeout(function(){var e=document.getElementById('xcN');if(e)e.focus();},50);};
+  window._xcOk=function(dir){var n=((document.getElementById('xcN')||{}).value||'').trim();if(!n){toast('Nom yozing');return;}
+    var c=_xcList(),L=dir==='inn'?c.inn:c.out;if(L.some(function(x){return x.toLowerCase()===n.toLowerCase();})){toast('Bu guruh bor');return;}
+    L.push(n);commitEvent('config',{xcats:{out:c.out,inn:c.inn}});cls();toast('🏷️ Guruh qo‘shildi: '+n);_gxRender();};
+  window._xcDel=function(dir,i){var c=_xcList(),L=dir==='inn'?c.inn:c.out;var n=L[i];if(n==null)return;if(!confirm('"'+n+'" guruhi olib tashlansinmi?\nOldingi yozuvlar o‘zgarmaydi.'))return;L.splice(i,1);commitEvent('config',{xcats:{out:c.out,inn:c.inn}});_gxRender();};
+  function todayVia(cb){try{salesLoad(function(all){var d=dayStr(new Date()),o={};(all||[]).forEach(function(s){if(s&&s.via&&(s.day===d||String(s.day||'').slice(0,10)===d)&&!s.isReturn){for(var k in s.via)o[k]=(o[k]||0)+(+s.via[k]||0);}});cb(o);});}catch(e){cb({});}}
+  var oG=_gxRender;_gxRender=function(){var r=oG.apply(this,arguments);
+    try{var b=document.getElementById('gxBox');if(!b)return r;var L=_ptList(),c=_xcList(),h='';
+      h+='<div class="bhead">💳 To‘lov turlari</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"><button class="btn btn-ghost sm" onclick="_ptNew()">➕ Yangi to‘lov turi</button></div>';
+      h+='<div style="font-size:12px;color:var(--muted);margin-bottom:6px">Asosiy: Naqd, Karta, Payme 1, Payme 2, Hisob raqam, Qarz'+(L.length?'':' · qo‘shimcha tur yo‘q')+'</div><div id="ptRows">';
+      L.forEach(function(x){h+='<div class="gx-r"><span class="n">'+(x.ic||'💳')+' '+esc(x.nom)+'<br><small>pul → '+bnom(x.acc)+' · bugun: <b data-ptv="'+x.id+'">…</b></small></span><button class="btn btn-ghost sm" onclick="_ptOff(\''+x.id+'\')">✕</button></div>';});
+      h+='</div><div class="bhead">🏷️ Kassa guruhlari</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"><button class="btn btn-ghost sm" onclick="_xcNew(\'out\')">➕ Xarajat guruhi</button><button class="btn btn-ghost sm" onclick="_xcNew(\'inn\')">➕ Kirim guruhi</button></div>';
+      h+='<div style="font-size:12px;color:var(--muted);margin-bottom:4px">Doimiy: Ijara, Kommunal, Oylik, Ta’minotchi, Inkassatsiya, Boshqa</div>';
+      [['out','Xarajat',c.out],['inn','Kirim',c.inn]].forEach(function(g){if(!g[2].length)return;h+='<div style="display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px"><span style="font-size:12px;color:var(--muted);align-self:center">'+g[1]+':</span>'+g[2].map(function(n,i){return '<span class="kchip" style="display:inline-flex;align-items:center;gap:6px">'+esc(n)+'<b style="cursor:pointer;color:#D92D20" onclick="_xcDel(\''+g[0]+'\','+i+')">✕</b></span>';}).join('')+'</div>';});
+      h+='<div style="margin-bottom:14px"></div>';
+      var w=document.createElement('div');w.id='ptBox';var old=document.getElementById('ptBox');if(old)old.remove();w.innerHTML=h;b.appendChild(w);
+      if(L.length)todayVia(function(o){L.forEach(function(x){var e=document.querySelector('[data-ptv="'+x.id+'"]');if(e)e.textContent=grp(o[x.id]||0);});});}catch(e){}
+    return r;};
+})();
+</script>
 </body>
 </html>
