@@ -10676,12 +10676,12 @@ function _nkAIimg(){var img=_NK.img,W=img.naturalWidth||img.width,H=img.naturalH
 function _nkAIerr(m){_NK.st=null;_NK.aiErr=m;_NK.busy=false;_nkR();toast(m);}
 function _nkAI(){_NK.aiErr='';if(!_NK.img||_NK.busy)return;_NK.busy=true;_NK.st={t:'🤖 Sun’iy intellekt o‘qimoqda… (5–20 soniya)',p:40};_nkR();
   var b64='';try{b64=_nkAIimg();}catch(e){}
-  var url=SB_URL+'/functions/v1/nakladnoy',done=false;
+  var url=(window.NK_AI_URL||'https://dbdtnujcospnsuwwazbs.supabase.co/functions/v1/nakladnoy'),done=false;
   var tm=setTimeout(function(){if(done)return;done=true;_NK.busy=false;_nkAIerr('❌ AI javob bermadi (vaqt tugadi). Internetni tekshirib qayta urinib ko‘ring.');},90000);
-  fetch(url,{method:'POST',headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY},body:JSON.stringify({image:b64,media_type:'image/jpeg'})})
+  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:b64,media_type:'image/jpeg'})})
    .then(function(r){return r.text().then(function(t){var j=null;try{j=JSON.parse(t);}catch(e){}return {st:r.status,j:j,t:t};});})
    .then(function(o){if(done)return;done=true;clearTimeout(tm);_NK.busy=false;
-     if(o.st===404){_nkAIerr('❌ AI hali ulanmagan — Supabase’da “nakladnoy” funksiyasi o‘rnatilmagan.');return;}
+     if(o.st===404){_nkAIerr('❌ AI funksiyasi topilmadi (nakladnoy).');return;}
      if(o.st!==200||!o.j||o.j.error){_nkAIerr('❌ AI: '+((o.j&&o.j.error)||('xato '+o.st)));return;}
      var q=o.j.qatorlar||o.j.rows||[],rows=[];
      q.forEach(function(x){var n=String(x.nomi||x.name||'').trim(),qt=+x.soni||+x.qty||0,nr=+x.narx||+x.price||0,sm=+x.summa||+x.sum||0;
