@@ -10674,12 +10674,14 @@ function _nkAIimg(){var img=_NK.img,W=img.naturalWidth||img.width,H=img.naturalH
   var w=Math.round(W*sc),h=Math.round(H*sc),sw=(rot%180)?h:w,sh=(rot%180)?w:h,c=document.createElement('canvas');c.width=sw;c.height=sh;var x=c.getContext('2d');
   x.fillStyle='#fff';x.fillRect(0,0,sw,sh);x.translate(sw/2,sh/2);x.rotate(rot*Math.PI/180);x.drawImage(img,-w/2,-h/2,w,h);
   return c.toDataURL('image/jpeg',0.85).split(',')[1];}
+/* AI manzillari navbat bilan: avval asosiy loyiha (KroFFAms), topilmasa yoki ulanmasa — eski (AIBirjachim) */
+function _nkFetch(L,opt,i){i=i||0;return fetch(L[i],opt).then(function(r){if(r.status===404&&i+1<L.length)return _nkFetch(L,opt,i+1);return r;},function(e){if(i+1<L.length)return _nkFetch(L,opt,i+1);throw e;});}
 function _nkAIerr(m){_NK.st=null;_NK.aiErr=m;_NK.busy=false;_nkR();toast(m);}
 function _nkAI(){_NK.aiErr='';if(!_NK.img||_NK.busy)return;_NK.busy=true;_NK.st={t:'🤖 Sun’iy intellekt o‘qimoqda… (5–20 soniya)',p:40};_nkR();
   var b64='';try{b64=_nkAIimg();}catch(e){}
-  var url=(window.NK_AI_URL||'https://dbdtnujcospnsuwwazbs.supabase.co/functions/v1/nakladnoy'),done=false;
+  var URLS=window.NK_AI_URL?[window.NK_AI_URL]:[SB_URL+'/functions/v1/nakladnoy','https://dbdtnujcospnsuwwazbs.supabase.co/functions/v1/nakladnoy'],done=false;
   var tm=setTimeout(function(){if(done)return;done=true;_NK.busy=false;_nkAIerr('❌ AI javob bermadi (vaqt tugadi). Internetni tekshirib qayta urinib ko‘ring.');},90000);
-  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:b64,media_type:'image/jpeg'})})
+  _nkFetch(URLS,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:b64,media_type:'image/jpeg'})})
    .then(function(r){return r.text().then(function(t){var j=null;try{j=JSON.parse(t);}catch(e){}return {st:r.status,j:j,t:t};});})
    .then(function(o){if(done)return;done=true;clearTimeout(tm);_NK.busy=false;
      if(o.st===404){_nkAIerr('❌ AI funksiyasi topilmadi (nakladnoy).');return;}
