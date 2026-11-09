@@ -11448,5 +11448,28 @@ html.ab-on #ktCartBar,html.ab-on #ktScanPill,html.ab-on #trDateBar,html.ab-on #s
     return r;};}
 })();
 </script>
+<script>
+/* ===== 📅 "Asosiy" (sotuvchilar ulushi + to'lov turlari) — istalgan sana oralig'i ===== */
+(function(){ if(window._sdCalW)return;window._sdCalW=1;
+  var F='',T='';
+  var dmy=function(d){var q=String(d).split('-');return q[2]+'.'+q[1]+'.'+q[0];};
+  if(typeof _trRange==='function'){var oR=_trRange;_trRange=function(p){if(p==='sdcal'&&F)return [F,T];return oR.apply(this,arguments);};}
+  window._sdCalOpen=function(){var o=document.getElementById('trCalOv');if(o)o.remove();o=document.createElement('div');o.id='trCalOv';
+    var r=(_SDP==='sdcal'&&F)?[F,T]:_trRange(_SDP||'bugun');
+    var ps=[['bugun','Bugun'],['kecha','Kecha'],['hafta','7 kun'],['oy','Shu oy'],['otgan','O‘tgan oy']];
+    o.innerHTML='<div class="tc-box"><div class="tc-hd"><b>📅 Sana tanlash</b><button onclick="document.getElementById(\'trCalOv\').remove()">✕</button></div>'+
+      '<div class="tc-ps">'+ps.map(function(x){return '<button onclick="_sdCalPre(\''+x[0]+'\')">'+x[1]+'</button>';}).join('')+'</div>'+
+      '<div class="tc-r"><label>Dan<input type="date" id="tcF" value="'+r[0]+'"></label><label>Gacha<input type="date" id="tcT" value="'+r[1]+'"></label></div>'+
+      '<button class="tc-ok" onclick="_sdCalOk()">Ko‘rsatish</button></div>';
+    o.addEventListener('click',function(e){if(e.target===o)o.remove();});document.body.appendChild(o);};
+  window._sdCalPre=function(p){var r;if(p==='otgan'){var d=new Date();d.setDate(1);d.setDate(0);var e=dayStr(d);r=[e.slice(0,8)+'01',e];}else r=_trRange(p);
+    document.getElementById('tcF').value=r[0];document.getElementById('tcT').value=r[1];};
+  window._sdCalOk=function(){var f=document.getElementById('tcF').value,t=document.getElementById('tcT').value;if(!f&&!t)return;if(!f)f=t;if(!t)t=f;if(f>t){var z=f;f=t;t=z;}
+    F=f;T=t;_SDP='sdcal';var o=document.getElementById('trCalOv');if(o)o.remove();renderSDash();};
+  if(typeof renderSDash==='function'){var oS=renderSDash;renderSDash=function(){var r=oS.apply(this,arguments);try{var c=document.querySelector('#view-sdash .sd-chips');
+      if(c&&!c.querySelector('.sd-cal')){var b=document.createElement('button');b.className='sd-cal'+(_SDP==='sdcal'?' on':'');
+        b.textContent='📅 '+((_SDP==='sdcal'&&F)?(F===T?dmy(F):dmy(F)+' — '+dmy(T)):'Sana tanlash');b.onclick=_sdCalOpen;c.appendChild(b);}}catch(e){}return r;};}
+})();
+</script>
 </body>
 </html>
