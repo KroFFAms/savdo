@@ -2451,11 +2451,11 @@ function renderH_naklad(el){
     var tot=0,tp=0;arr.forEach(function(g){tot+=g.total;tp+=g.paid;});
     var h='<div class="bstat"><div class="bv">'+grp(tot)+'</div><div class="bl">Nakladnoylar \u00b7 '+arr.length+' ta \u00b7 to\u2018langan '+grp(tp)+'</div></div>';
     if(!arr.length){h+=(typeof _hEmpty==='function'?_hEmpty():'<div class="cart-empty">Nakladnoy yo\u2018q</div>');el.innerHTML=h;return;}
-    h+='<div class="htbl"><div class="htr t5 hth"><span>Sana</span><span>Ta\u2019minotchi</span><span>Xil</span><span>Summa</span><span>Qarz</span></div>';
+    h+='<style>.htr.t5.nkr{grid-template-columns:.8fr 1.7fr .7fr 1.3fr 1.3fr;column-gap:8px}</style><div class="htbl"><div class="htr t5 nkr hth"><span>Sana</span><span>Ta\u2019minotchi</span><span>Tovar</span><span>Summa</span><span>Qarz</span></div>';
     arr.forEach(function(g){
       var d=new Date(g.firstts),ds=('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2);
       var qarz=g.total-g.paid;
-      h+='<div class="htr t5" onclick="nakladDetail(\''+g.key+'\')" style="cursor:pointer"><span style="text-align:left">'+ds+'</span><span style="text-align:left;white-space:normal;word-break:break-word">'+esc(supMap[g.supId]||'\u2014')+'</span><span>'+g.n+'</span><span>'+grp(g.total)+'</span><span'+(qarz>0?' style="color:#a32d2d"':'')+'>'+grp(qarz)+'</span></div>';
+      h+='<div class="htr t5 nkr" onclick="nakladDetail(\''+g.key+'\')" style="cursor:pointer"><span style="text-align:left">'+ds+'</span><span style="text-align:left;white-space:normal;word-break:break-word">'+esc(supMap[g.supId]||'\u2014')+'</span><span style="color:#667085;font-size:.85em">'+g.n+' xil</span><span>'+grp(g.total)+'</span><span'+(qarz>0?' style="color:#a32d2d"':'')+'>'+grp(qarz)+'</span></div>';
     });
     h+='</div>';
     el.innerHTML=h;
@@ -11469,6 +11469,81 @@ html.ab-on #ktCartBar,html.ab-on #ktScanPill,html.ab-on #trDateBar,html.ab-on #s
   if(typeof renderSDash==='function'){var oS=renderSDash;renderSDash=function(){var r=oS.apply(this,arguments);try{var c=document.querySelector('#view-sdash .sd-chips');
       if(c&&!c.querySelector('.sd-cal')){var b=document.createElement('button');b.className='sd-cal'+(_SDP==='sdcal'?' on':'');
         b.textContent='📅 '+((_SDP==='sdcal'&&F)?(F===T?dmy(F):dmy(F)+' — '+dmy(T)):'Sana tanlash');b.onclick=_sdCalOpen;c.appendChild(b);}}catch(e){}return r;};}
+})();
+</script>
+<script>
+/* ===== ✅ Kirimni saqlashdan oldin tekshiruv (10-noy) =====
+   1) Pul berilgan bo'lsa — ta'minotchi tanlanishi shart (aks holda pul hech kimning qarzidan ayirilmaydi).
+   2) Soni shtrix-kodga o'xshasa (8+ xonali) — saqlanmaydi; juda katta son yoki summa — "Rostmi?" deb so'raladi. */
+(function(){ if(window._kValW)return;window._kValW=1;
+  function paidNow(){var p=0;try{if(typeof _KCMIX!=='undefined'&&_KCMIX&&typeof _kcMixParts==='function')p=_kcMixParts().t;else p=Math.round(_pf((document.getElementById('kcPaid')||{}).value)||0);}catch(e){}return p;}
+  function check(){
+    if(typeof KCART==='undefined'||!KCART.length)return true;
+    var sup=(document.getElementById('kSup')||{}).value||'';
+    if(paidNow()>0&&!sup){toast('⚠️ Pul berilgan — avval ta’minotchini tanlang');try{alert('Pul berilgan kirimda ta’minotchi tanlanishi shart.\n\nTa’minotchini tanlang (yoki “Yo‘q, qarzga” ni tanlang), keyin saqlang.');}catch(e){}return false;}
+    var bad=[],big=[];
+    KCART.forEach(function(c){var q=Math.abs(+c.qty||0),line=Math.abs(q*(+c.narx||0)),p=(typeof findProd==='function')?findProd(c.id):null,cur=p?Math.abs(+p.qoldiq||0):0;
+      if(q>=10000000||(Math.round(q)===q&&String(Math.round(q)).length>=8))bad.push(c.nom+' — '+grp(q));
+      else if(q>=1000&&q>Math.max(500,cur*20)||line>=50000000)big.push(c.nom+': '+grp(q)+' × '+grp(Math.round(+c.narx||0))+' = '+grp(Math.round(line)));});
+    if(bad.length){try{alert('❌ Soni xato ko‘rinadi (shtrix-kod yozilib qolganga o‘xshaydi):\n\n'+bad.join('\n')+'\n\nSonini to‘g‘rilang.');}catch(e){}return false;}
+    if(big.length&&!confirm('⚠️ Juda katta son yoki summa:\n\n'+big.join('\n')+'\n\nRostdan shunchami? (OK — ha, saqlash)'))return false;
+    return true;}
+  function wrap(){if(window._kValS||typeof kcSave!=='function')return;window._kValS=1;var oS=kcSave;
+    kcSave=function(){if(!check())return;return oS.apply(this,arguments);};}
+  function late(){setTimeout(wrap,2700);}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',late);else late();
+})();
+</script>
+<style>
+#kxSupBal,#spyMol{margin:10px 0 0;padding:10px 12px;border-radius:12px;background:#F5F8FF;border:1px solid #DCE6FA;font-size:13.5px;line-height:1.5;color:#344054}
+#kxSupBal .r,#spyMol .r{display:flex;justify-content:space-between;gap:8px}
+#kxSupBal b.red,#spyMol b.red{color:#B42318}#kxSupBal b.grn,#spyMol b.grn{color:#067647}
+#kxSupBal small,#spyMol small{color:#98A2B3;font-size:11.5px}
+</style>
+<script>
+/* ===== 📒 Ta'minotchi qoldig'i (Moliya bo'yicha) — kirimda va "Ta'minotchiga to'lash"da ko'rinadi =====
+   Moliya'ning "Taminotchilardan qarz" jadvalidagi qoldiq (oxirgi oy) o'qiladi — faqat ko'rsatish, hech narsa yozilmaydi. */
+(function(){ if(window._supBalW)return;window._supBalW=1;
+  var C={t:0,list:null,upd:'',busy:false,cbs:[]};
+  var norm=function(x){return String(x||'').replace(/[’‘`ʻʼ]/g,"'").replace(/\s+/g,' ').trim().toLowerCase();};
+  var SUF=/\s*\((so.?m|\$)\)\s*$/i;
+  var bare=function(x){x=String(x||'').trim();while(SUF.test(x))x=x.replace(SUF,'').trim();return norm(x);};
+  function load(cb){if(C.list&&Date.now()-C.t<300000){cb();return;}C.cbs.push(cb);if(C.busy)return;C.busy=true;
+    var d=new Date(),ids=[];for(var i=0;i<3;i++){var dd=new Date(d.getFullYear(),d.getMonth()-i,1);ids.push(dd.getFullYear()+'_'+dd.getMonth());}
+    var done=function(){C.busy=false;C.t=Date.now();var q=C.cbs;C.cbs=[];q.forEach(function(f){try{f();}catch(e){}});};
+    fetch(SB_URL+'/rest/v1/moliya?select=id,updated_at,sup:payload->suppliers&id=in.('+ids.join(',')+')',{headers:_sbHdr()})
+      .then(function(r){return r.ok?r.json():[];}).then(function(a){a=(a||[]).filter(function(x){return x&&Array.isArray(x.sup)&&x.sup.length;});
+        a.sort(function(x,y){var p=function(s){var q=String(s.id).split('_');return (+q[0])*12+(+q[1]);};return p(y)-p(x);});
+        if(a[0]){C.list=a[0].sup;C.upd=a[0].updated_at||'';C.mon=a[0].id;}else C.list=[];done();})
+      .catch(function(){if(!C.list)C.list=[];done();});}
+  function find(nom){var b=bare(nom),o={som:null,usd:null};(C.list||[]).forEach(function(s){if(bare(s.nom)!==b)return;var v=Math.round(+s.astatka||0);if(/\(\$\)\s*$/.test(s.nom||''))o.usd=(+s.astatka||0);else o.som=v;});return o;}
+  function updTxt(){if(!C.upd)return '';var t=new Date(C.upd);return isNaN(t)?'':(('0'+t.getDate()).slice(-2)+'.'+('0'+(t.getMonth()+1)).slice(-2)+' '+('0'+t.getHours()).slice(-2)+':'+('0'+t.getMinutes()).slice(-2));}
+  function balHtml(nom,plus,pay){var f=find(nom);if(f.som==null&&f.usd==null)return '<div class="r"><span>📒 Moliya’da bu ta’minotchi topilmadi</span></div>';
+    var h='';if(f.som!=null){var q=f.som;h+='<div class="r"><span>📒 Moliya bo‘yicha qarzimiz</span><b class="'+(q>0?'red':(q<0?'grn':''))+'">'+(q<0?'ortiqcha to‘langan '+grp(-q):grp(q))+'</b></div>';
+      if(plus)h+='<div class="r"><span>Bu nakladnoy</span><b>+'+grp(plus)+'</b></div>';
+      if(pay)h+='<div class="r"><span>Hozir to‘lanmoqda</span><b>−'+grp(pay)+'</b></div>';
+      if(plus||pay){var z=q+plus-pay;h+='<div class="r" style="border-top:1px dashed #C7D3EA;margin-top:4px;padding-top:4px"><span>Keyin qoladi</span><b class="'+(z>0?'red':(z<0?'grn':''))+'">'+(z<0?'ortiqcha '+grp(-z)+' (ta’minotchi bizga qarzdor)':grp(z))+'</b></div>';
+        h+='<div class="r"><span></span><small>'+(z<0?'⚠️ ortiqcha to‘lov — qarzdan '+grp(-z)+' ko‘p':(z>q?'⬆️ qarz '+grp(z-q)+' ga ko‘payadi':(z<q?'⬇️ qarz '+grp(q-z)+' ga kamayadi':'qarz o‘zgarmaydi')))+'</small></div>';}}
+    if(f.usd!=null)h+='<div class="r"><span>Dollar hisobi</span><b>'+(Math.round(f.usd*100)/100)+' $</b></div>';
+    var u=updTxt();if(u)h+='<small>Moliya oxirgi yangilangan: '+u+' — bugungi kirimlar hali qo‘shilmagan bo‘lishi mumkin</small>';return h;}
+  /* Kirim → "Kirimni yakunlash" oynasi */
+  function kxBal(){var o=document.getElementById('kxOv');if(!o||typeof _KX==='undefined')return;var sb=o.querySelector('.kx-sup');var box=document.getElementById('kxSupBal');
+    if(!_KX.sup||!sb){if(box)box.remove();return;}
+    var sup=null;(getSup()||[]).forEach(function(x){if(x.id===_KX.sup)sup=x;});if(!sup){if(box)box.remove();return;}
+    if(!box){box=document.createElement('div');box.id='kxSupBal';sb.insertAdjacentElement('afterend',box);}
+    var sum=Math.round(kcSum()),mt=(typeof _kxMixT==='function')?_kxMixT():0,paid=_KX.paid===true?(_KX.mix?mt:Math.min(_KX.amt||0,sum)):0;
+    if(!C.list){box.innerHTML='<small>📒 Moliya’dan qoldiq olinmoqda…</small>';load(kxBal);return;}
+    box.innerHTML=balHtml(sup.nom,sum,paid);}
+  if(typeof _kxR==='function'){var oR=_kxR;_kxR=function(){var r=oR.apply(this,arguments);try{kxBal();}catch(e){}return r;};}
+  if(typeof _kxHint==='function'){var oH=_kxHint;_kxHint=function(){var r=oH.apply(this,arguments);try{kxBal();}catch(e){}return r;};}
+  /* Ta'minotchilar → "To'lash" oynasi */
+  function spBal(){var S=window._SPAY,ov=document.getElementById('supPayOv');if(!S||!ov||!S._sup)return;var box=document.getElementById('spyMol');
+    if(!box){box=document.createElement('div');box.id='spyMol';var bd=ov.querySelector('.spy-body');if(!bd)return;bd.appendChild(box);}
+    if(!C.list){box.innerHTML='<small>📒 Moliya’dan qoldiq olinmoqda…</small>';load(spBal);return;}
+    var t=(typeof _spaySum==='function')?_spaySum().total:0;box.innerHTML=balHtml(S.nom,0,t);}
+  if(typeof spayOpen==='function'){var oO=spayOpen;spayOpen=function(cfg){var r=oO.apply(this,arguments);try{if(cfg&&window._spSup){cfg._sup=1;window._spSup=0;var ov=document.getElementById('supPayOv');if(ov){var sb=ov.querySelector('.spy-sub');if(sb)sb.innerHTML=sb.innerHTML.replace('Joriy qarz:','Savdo bo‘yicha qarz:');var f2=ov.querySelector('.spy-foot2 span');if(f2)f2.textContent='To‘lovdan keyin (Savdo)';}spBal();}}catch(e){}return r;};}
+  if(typeof supPay==='function'){var oP=supPay;supPay=function(){window._spSup=1;try{return oP.apply(this,arguments);}finally{window._spSup=0;}};}
+  if(typeof spayCalc==='function'){var oC=spayCalc;spayCalc=function(){var r=oC.apply(this,arguments);try{spBal();}catch(e){}return r;};}
 })();
 </script>
 </body>
