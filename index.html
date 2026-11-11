@@ -11546,5 +11546,13 @@ html.ab-on #ktCartBar,html.ab-on #ktScanPill,html.ab-on #trDateBar,html.ab-on #s
   if(typeof spayCalc==='function'){var oC=spayCalc;spayCalc=function(){var r=oC.apply(this,arguments);try{spBal();}catch(e){}return r;};}
 })();
 </script>
+<script>
+/* Mijoz kartasi: Billz tarixi kech kelsa ham Dashbord va Tarix bo'limlari qayta chiziladi */
+(function(){ if(window._bzRefW)return;window._bzRefW=1;
+  if(typeof _bzGet!=='function')return;var oG=_bzGet;
+  _bzGet=function(nom,cb){return oG.call(this,nom,function(v){try{cb(v);}finally{try{var m=document.getElementById('custModal');
+    if(m&&m.classList.contains('open')&&typeof _cmSet==='function'){var t=document.querySelector('#cmTabs button.on');setTimeout(function(){_cmSet(t?t.getAttribute('data-t'):'dash');},50);}}catch(e){}}});};
+})();
+</script>
 </body>
 </html>
