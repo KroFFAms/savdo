@@ -1091,7 +1091,7 @@ var DEPLOY = {
   <div class="cmbal" id="cmBal"></div>
   <div class="cmstats" id="cmStats"></div>
   <div class="cmledger" id="cmLedger"></div>
-  <div class="cmfoot"><button class="btn" style="flex:1" onclick="custPayFromDetail()">💵 To’lov qabul qilish</button><button class="btn btn-ghost" id="cmOptBtn" style="flex:0 0 auto" onclick="optMijToggle()">📦 Optom</button><button class="btn btn-ghost" style="flex:0 0 auto;color:#a32d2d" onclick="custDelFromDetail()" title="Mijozni o’chirish">🗑️</button></div>
+  <div class="cmfoot"><button class="btn" style="flex:1" onclick="custPayFromDetail()">💵 To’lov qabul qilish</button><button class="btn btn-ghost" style="flex:0 0 auto;color:#a32d2d;font-weight:700" onclick="custAddDebtFromDetail()" title="Eski (daftardagi) qarzni qo’shish">➕ Qarz</button><button class="btn btn-ghost" id="cmOptBtn" style="flex:0 0 auto" onclick="optMijToggle()">📦 Optom</button><button class="btn btn-ghost" style="flex:0 0 auto;color:#a32d2d" onclick="custDelFromDetail()" title="Mijozni o’chirish">🗑️</button></div>
 </div></div>
 <div class="cmodal" id="retModal" onclick="if(event.target===this)closeRet()"><div class="cmbox">
   <div class="cmhead"><div><div class="cmnom">↩️ Qaytarish</div><div class="cmph" id="retSub">Chekni toping</div></div><button class="cmx" onclick="closeRet()">✕</button></div>
@@ -5454,10 +5454,12 @@ function custDetail(id){
   evAll(function(evs){
     var pays=[];
     evs.forEach(function(e){if(e.kind==='pay'&&e.payload&&e.payload.typ==='cust'&&e.payload.id===id&&!VOID[e.id])pays.push({id:e.id,ts:e.ts,amount:e.payload.amount,method:e.payload.method});});
+    var adjs=[];evs.forEach(function(e){if(e.kind==='custadj'&&e.payload&&e.payload.id===id&&e.payload.eski)adjs.push({id:e.id,ts:e.ts,typ:'adj',amount:+e.payload.amount||0,note:e.payload.note||''});});
     salesLoad(function(all){
       var rows=[];
       all.forEach(function(x){if(x.customer===cust.nom&&!x.isReturn)rows.push({ts:new Date(x.ts||x.day).getTime(),typ:'buy',amount:x.total,items:x.items||[],seller:x.seller,due:x.due,pay:x.pay,given:x.given||0});});
       pays.forEach(function(pp){rows.push({id:pp.id,ts:pp.ts,typ:'pay',amount:pp.amount,method:pp.method});});
+      adjs.forEach(function(a){rows.push(a);});
       rows.sort(function(a,b){return a.ts-b.ts;});
       if(bz)rows=rows.filter(function(r){return r.ts>_bzAt;});
       var bal=bz?Math.round(+bz.qarz||0):0,nBuy=0,tBuy=0,H='';
@@ -5465,8 +5467,13 @@ function custDetail(id){
       if(!rows.length&&!bz)H='<div class="cart-empty">Hali savdo yo\u2018q</div>';
       rows.forEach(function(r){
         if(r.typ==='buy'){nBuy++;tBuy+=r.amount;if(r.pay==='qarz')bal+=Math.max(0,r.amount-(r.given||0));}
+        else if(r.typ==='adj')bal=Math.max(0,bal+r.amount);
         else bal=Math.max(0,bal-r.amount);
         var d=new Date(r.ts),ds=('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear();
+        if(r.typ==='adj'){
+          H+='<div class="cmrow"><div class="cmr-l"><div class="cmr-d">'+ds+'</div><div class="cmr-t" style="color:#a32d2d">\u2795 Eski qarz qo\u2018shildi'+(r.note?' \u00b7 '+esc(r.note):'')+'</div></div><div class="cmr-a" style="color:#a32d2d">+'+grp(r.amount)+'</div><div class="cmr-b">'+grp(bal)+'</div></div>';
+          return;
+        }
         if(r.typ==='buy'){
           var it=(r.items||[]).map(function(z){return esc(z.nom)+' \u00d7'+z.qty;}).join(', ')||'savdo';
           if(r.due){var _od=r.due<dayStr(new Date());it+=' \u00b7 <span style="font-weight:700;color:'+(_od?'#a32d2d':'#9aa4b2')+'">\ud83d\uddd3 '+_dmy(r.due)+(_od?' (muddati o\u2019tgan)':'')+'</span>';}
@@ -5966,6 +5973,17 @@ function custVoidPay(pid,ev){if(ev&&ev.stopPropagation)ev.stopPropagation();if(_
     toast('\u2705 To\u2019lov bekor qilindi \u00b7 '+grp(amt));
     custDetail(cid);renderMijoz();
   });
+}
+// Mavjud mijozga ESKI (daftardagi) qarzni QO'SHISH: hozirgi qarz ustiga qo'shiladi (almashtirmaydi)
+function custAddDebtFromDetail(){if(!_cmId)return;
+  if(_role!=='admin'){toast('Qarz qo\u2018shish faqat admin uchun');return;}
+  var c=_custById(_cmId)||{};var nom=c.nom||'',hoz=Math.round(c.debt||0);
+  var a=_pf(prompt('\u2795 "'+nom+'" ga qo\u2018shiladigan ESKI qarz summasi:\n(hozirgi qarz: '+grp(hoz)+' so\u2018m \u2014 ustiga qo\u2018shiladi)',''));
+  if(!(a>0))return;a=Math.round(a);
+  var note=(prompt('Izoh (ixtiyoriy), masalan: daftardan, 2025-yil:','daftardan')||'').trim().slice(0,120);
+  if(!confirm('"'+nom+'" qarzi:\n'+grp(hoz)+' + '+grp(a)+' = '+grp(hoz+a)+' so\u2018m bo\u2018ladi.\n\nTasdiqlaysizmi?'))return;
+  commitEvent('custadj',{id:_cmId,nom:nom,amount:a,eski:1,note:note});
+  toast('\u2705 Qarz qo\u2018shildi: +'+grp(a));custDetail(_cmId);try{renderMijoz();}catch(_){}
 }
 function custPayFromDetail(){if(!_cmId)return;var _cn='',_cd=0,_cl=getCust();for(var _ci=0;_ci<_cl.length;_ci++)if(_cl[_ci].id===_cmId){_cn=_cl[_ci].nom;_cd=Math.round(_cl[_ci].debt||0);}var _cid=_cmId;spayOpen({icon:'\ud83d\udc64',nom:_cn,debt:_cd,accs:['naqd','karta','payme1','payme2','bank','skidka','oldin'],onSave:function(parts,total){_custPaySave(_cid,_cn,parts,total);custDetail(_cid);renderMijoz();}});}
 
