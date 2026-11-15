@@ -11608,8 +11608,9 @@ html.ab-on #ktCartBar,html.ab-on #ktScanPill,html.ab-on #trDateBar,html.ab-on #s
 <style>
 #phOv{position:fixed;inset:0;z-index:235;background:#F2F4F7;display:flex;flex-direction:column;font-family:inherit}
 #phOv .ph-hd{display:flex;align-items:center;gap:10px;background:#fff;padding:12px 14px;border-bottom:1px solid #E5E7EB}
-#phOv .ph-hd{position:relative;min-height:56px;padding-left:60px}
-#phOv .ph-hd button[aria-label]{display:none}
+#phOv .ph-hd{position:relative;min-height:56px;padding-top:calc(12px + env(safe-area-inset-top))}
+#phOv .ph-hd button.ph-back{display:flex!important;align-items:center;justify-content:center;flex:none;width:40px;height:40px;border-radius:50%;background:#EEF4FF!important;color:#2E6BE6;font-size:26px;line-height:1;padding:0 0 3px}
+#phOv > button[title],#phOv .ph-hd > button[title]{display:none!important}
 #phOv .ph-hd button{border:0;background:none;font-size:26px;color:#2E6BE6;cursor:pointer;padding:0 6px}
 #phOv .ph-hd b{font-size:16px;display:block}
 #phOv .ph-hd small{font-size:12.5px;color:#6b7280}
@@ -11643,7 +11644,7 @@ html.ab-on #ktCartBar,html.ab-on #ktScanPill,html.ab-on #trDateBar,html.ab-on #s
     _PH.pid=pid;_PH.days=days||DAYS;
     var o=document.getElementById('kirimTapOv');if(o)o.remove();
     var ov=document.getElementById('phOv');if(!ov){ov=document.createElement('div');ov.id='phOv';document.body.appendChild(ov);}
-    ov.innerHTML='<div class="ph-hd"><button onclick="_prodHistClose()" aria-label="Orqaga">‹</button><div style="flex:1;min-width:0"><b>'+esc(p.nom)+'</b><small>Hozirgi qoldiq: <b style="display:inline;font-size:12.5px">'+qf(+p.qoldiq||0)+'</b> '+esc(p.olchov||'dona')+(p.artikul?' · '+esc(p.artikul):'')+'</small></div></div><div class="ph-bd" id="phBd"><div class="ph-c">⏳ Yuklanmoqda…</div></div>';
+    ov.innerHTML='<div class="ph-hd"><button class="ph-back" onclick="_prodHistClose()" aria-label="Orqaga">‹</button><div style="flex:1;min-width:0"><b>'+esc(p.nom)+'</b><small>Hozirgi qoldiq: <b style="display:inline;font-size:12.5px">'+qf(+p.qoldiq||0)+'</b> '+esc(p.olchov||'dona')+(p.artikul?' · '+esc(p.artikul):'')+'</small></div></div><div class="ph-bd" id="phBd"><div class="ph-c">⏳ Yuklanmoqda…</div></div>';
     var from=new Date();from.setHours(0,0,0,0);from.setDate(from.getDate()-_PH.days);var fromD=dayStr(from);
     var go=function(){_mvLoad(function(evs){_phDraw(pid,evs,fromD);});};
     try{if(typeof _memEnsure==='function')_memEnsure(from.getTime(),go);else go();}catch(e){go();}
@@ -11673,7 +11674,7 @@ html.ab-on #ktCartBar,html.ab-on #ktScanPill,html.ab-on #trDateBar,html.ab-on #s
       '<div class="ph-c"><div>Kirim</div><b style="color:#1a7f37">'+qf(T.kir)+'</b> <small>'+esc(ol)+'</small></div>'+
       '<div class="ph-c"><div>Mijoz qaytardi</div><b>'+qf(T.mret)+'</b></div>'+
       (ADM()?'<div class="ph-c"><div>Sanoq / tuzatish'+(T.sret?' · ta’minotga qaytdi '+qf(T.sret):'')+'</div><b style="color:'+(T.tuz<0?'#a32d2d':'inherit')+'">'+(T.tuz>0?'+':T.tuz<0?'−':'')+qf(T.tuz)+'</b></div>':'')+'</div>';
-    if(!L.length)h+='<div class="ph-c" style="text-align:center;padding:18px">Oxirgi '+_PH.days+' kunda harakat yo‘q</div>';
+    if(!L.length)h+='<div class="ph-c" style="text-align:center;padding:18px">Oxirgi '+_PH.days+' kunda Savdoda harakat yo‘q<div style="margin-top:6px">Qoldiq Billzdan ko‘chirilgan bo‘lishi mumkin — Billzdagi eski tarix bu yerda ko‘rinmaydi.</div></div>';
     var cur='';
     L.forEach(function(r,i){var e=r.e,x=r.x,pl=e.payload||{},t=new Date(r.ts);
       if(r.d!==cur){if(cur)h+='</div>';cur=r.d;var dd=r.d.split('-');h+='<div class="ph-day"><div class="ph-dh">'+dd[2]+'.'+dd[1]+'.'+dd[0]+'</div>';}
