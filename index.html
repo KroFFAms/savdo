@@ -11605,5 +11605,104 @@ html.ab-on #ktCartBar,html.ab-on #ktScanPill,html.ab-on #trDateBar,html.ab-on #s
     if(m&&m.classList.contains('open')&&typeof _cmSet==='function'){var t=document.querySelector('#cmTabs button.on');setTimeout(function(){_cmSet(t?t.getAttribute('data-t'):'dash');},50);}}catch(e){}}});};
 })();
 </script>
+<style>
+#phOv{position:fixed;inset:0;z-index:235;background:#F2F4F7;display:flex;flex-direction:column;font-family:inherit}
+#phOv .ph-hd{display:flex;align-items:center;gap:10px;background:#fff;padding:12px 14px;border-bottom:1px solid #E5E7EB}
+#phOv .ph-hd{position:relative;min-height:56px;padding-left:60px}
+#phOv .ph-hd button[aria-label]{display:none}
+#phOv .ph-hd button{border:0;background:none;font-size:26px;color:#2E6BE6;cursor:pointer;padding:0 6px}
+#phOv .ph-hd b{font-size:16px;display:block}
+#phOv .ph-hd small{font-size:12.5px;color:#6b7280}
+#phOv .ph-bd{flex:1;overflow:auto;padding:12px 12px 30px;-webkit-overflow-scrolling:touch}
+#phOv .ph-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+#phOv .ph-c{background:#fff;border-radius:12px;padding:10px 12px}
+#phOv .ph-c div{font-size:12px;color:#6b7280}
+#phOv .ph-c b{font-size:17px}
+#phOv .ph-day{background:#fff;border-radius:14px;margin-bottom:10px;overflow:hidden}
+#phOv .ph-dh{padding:11px 14px;font-weight:800;font-size:14.5px;border-bottom:1px solid #F0F2F5}
+#phOv .ph-r{display:flex;justify-content:space-between;gap:10px;padding:10px 14px;border-bottom:1px solid #F5F6F8}
+#phOv .ph-r:last-child{border-bottom:0}
+#phOv .ph-r.clk{cursor:pointer}
+#phOv .ph-r.clk:active{background:#F7F8FA}
+#phOv .ph-t{font-weight:700;font-size:14px}
+#phOv .ph-r.clk .ph-t{color:#2E6BE6}
+#phOv .ph-m{font-size:12.5px;color:#6b7280;margin-top:2px}
+#phOv .ph-q{text-align:right;white-space:nowrap}
+#phOv .ph-q b{font-size:15px}
+#phOv .ph-more{width:100%;padding:12px;border:1px solid #D7DEEA;background:#fff;border-radius:12px;font-weight:700;color:#1F4E79;cursor:pointer;font-family:inherit}
+</style>
+<script>
+/* ===== 🕘 Tovar tarixi (Billz uslubida): Katalogda tovarni bosib — sotuv, vozvrat, kirim, sanoq... sanalar bo'yicha ===== */
+(function(){ if(window._phW)return;window._phW=1;
+  var DAYS=90,_PH={pid:null,days:DAYS};
+  var ADM=function(){return typeof _role!=='undefined'&&_role==='admin';};
+  function p2(n){return ('0'+n).slice(-2);}
+  function qf(v){v=Math.abs(Math.round(v*1000)/1000);var i=Math.floor(v),f=Math.round((v-i)*1000);return grp(i)+(f?(','+String(f).padStart(3,'0').replace(/0+$/,'')):'');}
+  window._prodHist=function(pid,days){
+    var p=findProd(pid);if(!p){toast('Tovar topilmadi');return;}
+    _PH.pid=pid;_PH.days=days||DAYS;
+    var o=document.getElementById('kirimTapOv');if(o)o.remove();
+    var ov=document.getElementById('phOv');if(!ov){ov=document.createElement('div');ov.id='phOv';document.body.appendChild(ov);}
+    ov.innerHTML='<div class="ph-hd"><button onclick="_prodHistClose()" aria-label="Orqaga">‹</button><div style="flex:1;min-width:0"><b>'+esc(p.nom)+'</b><small>Hozirgi qoldiq: <b style="display:inline;font-size:12.5px">'+qf(+p.qoldiq||0)+'</b> '+esc(p.olchov||'dona')+(p.artikul?' · '+esc(p.artikul):'')+'</small></div></div><div class="ph-bd" id="phBd"><div class="ph-c">⏳ Yuklanmoqda…</div></div>';
+    var from=new Date();from.setHours(0,0,0,0);from.setDate(from.getDate()-_PH.days);var fromD=dayStr(from);
+    var go=function(){_mvLoad(function(evs){_phDraw(pid,evs,fromD);});};
+    try{if(typeof _memEnsure==='function')_memEnsure(from.getTime(),go);else go();}catch(e){go();}
+  };
+  window._prodHistClose=function(){var o=document.getElementById('phOv');if(o)o.remove();};
+  function lbl(t,e){var pl=e.payload||{};
+    if(t==='sot')return 'Sotuv #'+String(pl.id||'').replace(/\D/g,'').slice(-6);
+    if(t==='mret')return 'Vozvrat #'+String(pl.id||'').replace(/\D/g,'').slice(-6);
+    if(t==='kir')return 'Kirim'+(pl.nak?' (nakladnoy)':'');
+    if(t==='sret')return 'Ta’minotchiga qaytarildi';
+    if(t==='spis')return 'Spisaniye';
+    if(t==='yangi')return 'Yangi tovar (boshlang‘ich qoldiq)';
+    if(e.kind==='adjust')return 'Sanoq';
+    return 'Qo‘lda tuzatish';}
+  window._phDraw=function(pid,evs,fromD){
+    var bd=document.getElementById('phBd');if(!bd||_PH.pid!==pid)return;
+    var p=findProd(pid)||{},ol=p.olchov||'dona',sn={};try{getSup().forEach(function(s){sn[s.id]=s.nom;});}catch(e){}
+    var L=[],T={sot:0,mret:0,kir:0,sret:0,tuz:0};
+    evs.forEach(function(e){var d=_evDay(e);if(d<fromD)return;var m=_mvOf(e);if(!m)return;
+      m.forEach(function(x){if(String(x.pid)!==String(pid)||!x.q)return;
+        if(!ADM()&&x.t!=='sot'&&x.t!=='mret'&&x.t!=='kir')return;
+        if(x.t==='sot')T.sot+=-x.q;else if(x.t==='mret')T.mret+=x.q;else if(x.t==='kir'||x.t==='yangi')T.kir+=x.q;else if(x.t==='sret')T.sret+=-x.q;else T.tuz+=x.q;
+        L.push({e:e,x:x,d:d,ts:+new Date(e.kind==='sale'&&e.payload.ts?e.payload.ts:(+e.ts||0))});});});
+    L.sort(function(a,b){return b.ts-a.ts;});
+    var h='<div class="ph-cards">'+
+      '<div class="ph-c"><div>Sotildi</div><b>'+qf(T.sot)+'</b> <small>'+esc(ol)+'</small></div>'+
+      '<div class="ph-c"><div>Kirim</div><b style="color:#1a7f37">'+qf(T.kir)+'</b> <small>'+esc(ol)+'</small></div>'+
+      '<div class="ph-c"><div>Mijoz qaytardi</div><b>'+qf(T.mret)+'</b></div>'+
+      (ADM()?'<div class="ph-c"><div>Sanoq / tuzatish'+(T.sret?' · ta’minotga qaytdi '+qf(T.sret):'')+'</div><b style="color:'+(T.tuz<0?'#a32d2d':'inherit')+'">'+(T.tuz>0?'+':T.tuz<0?'−':'')+qf(T.tuz)+'</b></div>':'')+'</div>';
+    if(!L.length)h+='<div class="ph-c" style="text-align:center;padding:18px">Oxirgi '+_PH.days+' kunda harakat yo‘q</div>';
+    var cur='';
+    L.forEach(function(r,i){var e=r.e,x=r.x,pl=e.payload||{},t=new Date(r.ts);
+      if(r.d!==cur){if(cur)h+='</div>';cur=r.d;var dd=r.d.split('-');h+='<div class="ph-day"><div class="ph-dh">'+dd[2]+'.'+dd[1]+'.'+dd[0]+'</div>';}
+      var meta=p2(t.getHours())+':'+p2(t.getMinutes());
+      if(e.kind==='sale'){if(pl.seller)meta+=' · '+esc(pl.seller);if(pl.customer)meta+=' · 👤 '+esc(pl.customer);if(x.narx)meta+=' · '+grp(Math.round(x.narx));}
+      else if(e.kind==='kirim'){var s=ADM()&&pl.supId&&sn[pl.supId];if(s)meta+=' · 🚚 '+esc(s);if(ADM()&&x.q&&pl.summa)meta+=' · '+grp(Math.round(Math.abs(pl.summa/x.q)));if(e.seller)meta+=' · '+esc(e.seller);}
+      else if(e.kind==='writeoff'){if(pl.reason)meta+=' · '+esc(pl.reason);if(e.seller)meta+=' · '+esc(e.seller);}
+      else if(e.kind==='adjust'){meta+=' · '+qf(+pl.from||0)+' → '+qf(+pl.to||0);if(e.seller)meta+=' · '+esc(e.seller);}
+      else if(e.seller)meta+=' · '+esc(e.seller);
+      var clk=e.kind==='sale'&&pl.id&&typeof _scOpenId==='function';
+      h+='<div class="ph-r'+(clk?' clk':'')+'"'+(clk?' onclick="_scOpenId(\''+String(pl.id).replace(/'/g,'')+'\')"':'')+'><div style="min-width:0"><div class="ph-t">'+esc(lbl(x.t,e))+'</div><div class="ph-m">'+meta+'</div></div>'+
+         '<div class="ph-q"><b style="color:'+(x.q>0?'#1a7f37':'#a32d2d')+'">'+(x.q>0?'+':'−')+qf(x.q)+'</b><div class="ph-m">'+esc(ol)+'</div></div></div>';});
+    if(cur)h+='</div>';
+    h+='<button class="ph-more" onclick="_prodHist(\''+String(pid).replace(/'/g,'')+'\','+(_PH.days+180)+')">⬇️ Oldingi tarixni ham ko‘rsatish (hozir: oxirgi '+_PH.days+' kun)</button>';
+    bd.innerHTML=h;};
+  /* Katalog → tovar oynasiga "Tarixni ko'rish" tugmasi */
+  function wrapKT(){if(window._phKT||typeof kirimTap!=='function')return;window._phKT=1;var oKT=kirimTap;
+    kirimTap=function(pid){var r=oKT.apply(this,arguments);try{var box=document.querySelector('#kirimTapOv > div');if(box&&!box.querySelector('.ph-btn')){
+        var b=document.createElement('button');b.type='button';b.className='ph-btn';
+        b.style.cssText='display:flex;align-items:center;justify-content:space-between;width:100%;margin:0 0 12px;padding:12px 14px;border:0;background:#F2F4F7;border-radius:12px;font-weight:700;font-size:14.5px;color:#344054;cursor:pointer;font-family:inherit';
+        b.innerHTML='<span>🕘 Tarixni ko‘rish</span><span style="color:#98A2B3">›</span>';
+        b.onclick=function(){_prodHist(pid);};
+        var ref=box.children[1];if(ref&&ref.nextSibling)box.insertBefore(b,ref.nextSibling);else box.appendChild(b);}}catch(e){}return r;};}
+  /* sotuvchi Katalogda tovarni bossa — kirim o'rniga tarix ochiladi */
+  function wrapKG(){if(window._phKG||typeof _ktgTap!=='function')return;window._phKG=1;var oG=_ktgTap;
+    _ktgTap=function(el){if(!ADM()){var id=el&&el.getAttribute&&el.getAttribute('data-id');if(id){_prodHist(id);return;}}return oG.apply(this,arguments);};}
+  function w(){wrapKT();wrapKG();}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(w,1500);});else setTimeout(w,1500);
+})();
+</script>
 </body>
 </html>
