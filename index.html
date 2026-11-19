@@ -6355,7 +6355,7 @@ var _SRVH={q:{},c:{},since:null,busy:false,ok:false,full:0};
 function srvHolat(full,cb){
   if(!DEPLOY.SERVER_HOLAT||navigator.onLine===false){cb&&cb();return;}
   if(_SRVH.busy){if(cb)setTimeout(function(){srvHolat(full,cb);},300);return;}
-  if(!_SRVH.ok||Date.now()-_SRVH.full>600000)full=true;
+  if(!_SRVH.ok||Date.now()-_SRVH.full>1800000)full=true;
   _SRVH.busy=true;
   fetch(SB_URL+'/rest/v1/rpc/holat_ozgarish',{method:'POST',headers:_sbHdr(),body:JSON.stringify({p_since:full?null:_SRVH.since})})
     .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
@@ -6402,7 +6402,7 @@ function _srvHolatApply(){
 (function(){
   if(typeof cloudPull==='function'){var _cpl=cloudPull;cloudPull=function(cb){_cpl(function(ok){srvHolat();cb&&cb(ok);});};}
   if(typeof cloudPush==='function'){var _cps=cloudPush;cloudPush=function(cb){_cps(function(ok){if(ok)setTimeout(srvHolat,400);cb&&cb(ok);});};}
-  setInterval(function(){srvHolat();},20000);
+  setInterval(function(){if(document.visibilityState!=='hidden')srvHolat();},60000);
   setTimeout(function(){srvHolat(true);},1500);
 })();
 
@@ -6515,7 +6515,7 @@ function onlPoll(){
       var mb=document.getElementById('onlBadge');if(mb){if(n){mb.textContent=n;mb.style.display='inline-flex';}else mb.style.display='none';}
     }).catch(function(){});
 }
-try{setInterval(onlPoll,30000);setTimeout(onlPoll,3000);}catch(e){}
+try{setInterval(function(){if(document.visibilityState!=='hidden')onlPoll();},120000);setTimeout(onlPoll,3000);}catch(e){}
 function catProducts(){return PRODUCTS.filter(function(p){return !p.arxiv;}).map(function(p){var o={id:p.id,nom:p.nom,narx:+p.sotuv||0,qoldiq:+p.qoldiq||0,barcode:p.barcode||''};if(+p.optom>0)o.optom=+p.optom;if(p.img)o.img=p.img;return o;});}
 var _catLastPub=0,_catPubT=null;
 function scheduleCatPublish(){if(!_syncOn)return;clearTimeout(_catPubT);var since=Date.now()-_catLastPub;var wait=Math.max(5000,20000-since);_catPubT=setTimeout(function(){publishCatalog(false);},wait);}
@@ -11833,10 +11833,11 @@ html.ab-on #ktCartBar,html.ab-on #ktScanPill,html.ab-on #trDateBar,html.ab-on #s
   window._rxSearch2=function(){var qi=document.getElementById('rxQ2'),el=document.getElementById('rxRes2');if(!qi||!el)return;var q=(qi.value||'').trim();
     if(!q){el.innerHTML='';return;}
     try{ensureIndex();}catch(e){}
-    var res=[];try{res=_psearch(q,{noArx:true,limit:40});}catch(e){}
+    var res=[];try{res=_psearch(q,{limit:200});}catch(e){}
     if(!res.length&&typeof BCX!=='undefined'&&BCX[q])res=BCX[q];
     if(!res.length){el.innerHTML='<div class="rx-empty">Topilmadi</div>';return;}
-    var h='';res.slice(0,12).forEach(function(p){h+='<button onclick="_rxFreeAdd(\''+String(p.id).replace(/'/g,'')+'\')"><span style="min-width:0">'+esc(p.nom)+'<br><i>qoldiq: '+qn(+p.qoldiq||0)+' '+esc(p.olchov||'dona')+'</i></span><b>'+grp(p.sotuv)+'</b></button>';});
+    var N=res.length,h='';res.slice(0,30).forEach(function(p){h+='<button onclick="_rxFreeAdd(\''+String(p.id).replace(/'/g,'')+'\')"><span style="min-width:0">'+esc(p.nom)+(p.arxiv?' <i style="color:#B54708">arxiv</i>':'')+'<br><i>qoldiq: '+qn(+p.qoldiq||0)+' '+esc(p.olchov||'dona')+'</i></span><b>'+grp(p.sotuv)+'</b></button>';});
+    if(N>30)h+='<div class="rx-empty" style="padding:10px">Yana '+(N-30)+' ta bor \u2014 nomini aniqroq yozing</div>';
     el.innerHTML=h;};
   window._rxFreeAdd=function(id){var p=findProd(id);if(!p||!_RX||!_RX.free)return;
     var it=_RX.s.items,idx=-1,i;
@@ -11905,10 +11906,11 @@ html.ab-on #ktCartBar,html.ab-on #ktScanPill,html.ab-on #trDateBar,html.ab-on #s
   window._rxSearch=function(){var qi=document.getElementById('rxQ'),el=document.getElementById('rxRes');if(!qi||!el)return;var q=(qi.value||'').trim();
     if(!q){el.innerHTML='';return;}
     try{ensureIndex();}catch(e){}
-    var res=[];try{res=_psearch(q,{noArx:true,stockFirst:true,limit:40});}catch(e){}
+    var res=[];try{res=_psearch(q,{noArx:true,stockFirst:true,limit:200});}catch(e){}
     if(!res.length&&typeof BCX!=='undefined'&&BCX[q])res=BCX[q];
     if(!res.length){el.innerHTML='<div class="rx-empty">Topilmadi</div>';return;}
-    var h='';res.slice(0,12).forEach(function(p){h+='<button onclick="_rxAdd(\''+String(p.id).replace(/'/g,'')+'\')"><span style="min-width:0">'+esc(p.nom)+'<br><i>qoldiq: '+qn(+p.qoldiq||0)+' '+esc(p.olchov||'dona')+'</i></span><b>'+grp(p.sotuv)+'</b></button>';});
+    var _N=res.length,h='';res.slice(0,30).forEach(function(p){h+='<button onclick="_rxAdd(\''+String(p.id).replace(/'/g,'')+'\')"><span style="min-width:0">'+esc(p.nom)+'<br><i>qoldiq: '+qn(+p.qoldiq||0)+' '+esc(p.olchov||'dona')+'</i></span><b>'+grp(p.sotuv)+'</b></button>';});
+    if(_N>30)h+='<div class="rx-empty" style="padding:10px">Yana '+(_N-30)+' ta bor \u2014 nomini aniqroq yozing</div>';
     el.innerHTML=h;};
   /* skaner: tovar savatchaga tushadi */
   window._rxScan=function(){if(typeof openScan!=='function'){toast('Skaner yo‘q');return;}var so=document.getElementById('scanOv');if(so)so.style.zIndex='300';window._rxScanOn=1;openScan();};
@@ -12028,6 +12030,28 @@ html.ab-on #ktCartBar,html.ab-on #ktScanPill,html.ab-on #trDateBar,html.ab-on #s
   try{window.addEventListener('visibilitychange',function(){
     if(document.visibilityState==='hidden')return;
     if(rd().length){try{cloudSync();}catch(e){}}
+  });}catch(e){}
+})();
+</script>
+<script>
+/* ===== Serverga so'rovlarni kamaytirish (ko'p telefon birga ishlaganda baza qotmasin) =====
+   Har bir telefon holat so'rovini juda tez-tez yuborardi. Endi:
+   - ekran yopiq bo'lsa so'ralmaydi
+   - ketma-ket so'rovlar orasida kamida 20 soniya bo'ladi
+   - ekran qayta ochilganda darhol yangilanadi */
+(function(){ if(window._thrW)return;window._thrW=1;
+  var last=0,MIN=20000;
+  if(typeof srvHolat==='function'){var o=srvHolat;
+    srvHolat=function(full,cb){
+      if(!full){
+        if(document.visibilityState==='hidden'){if(cb)cb();return;}
+        if(Date.now()-last<MIN){if(cb)cb();return;}
+      }
+      last=Date.now();
+      return o.apply(this,arguments);
+    };}
+  try{document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='visible'){last=0;setTimeout(function(){try{srvHolat();}catch(e){}},300);}
   });}catch(e){}
 })();
 </script>
