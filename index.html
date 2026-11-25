@@ -3227,11 +3227,14 @@ function _kCard(lbl,val,unit,delta,sub,ic,icbg,go){
     '<div class="kpi-v">'+val+(unit?'<span class="kpi-u">'+unit+'</span>':'')+'</div>'+
     '<div class="kpi-b">'+(delta||'')+'<span class="kpi-s">'+(sub||'')+'</span></div></div>';}
 function _kAgg(list){
-  var o={rev:0,cost:0,n:0,units:0,qarz:0,ret:0,retN:0,days:{}};
+  var o={rev:0,cost:0,n:0,units:0,qarz:0,bol:0,bolm:{},ret:0,retN:0,days:{}};
   list.forEach(function(x){
     if(x.isReturn){o.ret+=Math.abs(x.total||0);o.retN++;}
     o.rev+=x.total||0;o.n++;o.days[x.day]=1;
-    if(x.pay==='qarz')o.qarz+=x.total||0;
+    if(x.pay==='qarz'){
+      if(x.bolim){o.bol+=x.total||0;o.bolm[x.bolim]=(o.bolm[x.bolim]||0)+(x.total||0);}
+      else o.qarz+=x.total||0;
+    }
     (x.items||[]).forEach(function(it){o.cost+=(it.xarid||0)*it.qty;o.units+=Math.abs(it.qty||0);});});
   o.foyda=o.rev-o.cost;o.avg=o.n?Math.round(o.rev/o.n):0;o.dayN=Object.keys(o.days).length||1;
   return o;}
@@ -3251,11 +3254,17 @@ function _kpiGrid(all,sel){
 
   var v,h='<div class="kper">'+_periodLabel()+' · oldingi davr bilan solishtirilgan</div><div class="kgrid">';
   v=_kNum(C.rev);   h+=_kCard('Umumiy tushum',v[0],v[1],_kDelta(C.rev,pv('rev')),C.n+' ta chek','💰','#EAF2FB',"setHTab('cheklar')");
-  v=_kNum(C.foyda); h+=_kCard('Sof foyda',v[0],v[1],_kDelta(C.foyda,pv('foyda')),'marja '+marja+'%','📈','#E8F5EE',"setHTab('pnl')");
+  v=_kNum(C.foyda); h+=_kCard('Yalpi foyda',v[0],v[1],_kDelta(C.foyda,pv('foyda')),'marja '+marja+'% · xarajat ayirilmagan','📈','#E8F5EE',"setHTab('pnl')");
   v=_kNum(C.avg);   h+=_kCard("O‘rtacha chek",v[0],v[1],_kDelta(C.avg,pv('avg')),grp(Math.round(C.units))+' dona tovar','🧾','#F3EDFB',"setHTab('umumiy')");
   v=_kNum(C.n);     h+=_kCard('Savdolar soni',grp(C.n),'ta',_kDelta(C.n,pv('n')),'kuniga ~'+grp(Math.round(C.n/C.dayN))+' ta','🛒','#FFF3E4',"setHTab('sotuvchi')");
   v=_kNum(kunlik);  h+=_kCard('Kunlik o‘rtacha',v[0],v[1],'<span class="kpi-d nu">'+C.dayN+' kun</span>','eng yaxshi kun '+bd,'📅','#EAF2FB',"setHTab('kunlik')");
-  v=_kNum(C.qarz);  h+=_kCard('Qarzga berildi',v[0],v[1],_kDelta(C.qarz,pv('qarz'),1),'jami qarz '+_kNum(debtT)[0]+' '+_kNum(debtT)[1]+' · '+debtC+' mijoz','💳','#FDECEC',"gotoQarzdor()");
+  v=_kNum(C.qarz);  h+=_kCard('Qarzga berildi',v[0],v[1],_kDelta(C.qarz,pv('qarz'),1),'faqat mijoz · jami qarz '+_kNum(debtT)[0]+' '+_kNum(debtT)[1]+' · '+debtC+' mijoz','💳','#FDECEC',"gotoQarzdor()");
+  if(C.bol>0){
+    var _bn='Bo‘lim',_bk=Object.keys(C.bolm);
+    if(_bk.length===1){try{_bn=(typeof bolimNom==='function'?bolimNom(_bk[0]):'')||'Bo‘lim';}catch(e){}}
+    var _bs=(_bk.length>1)?(_bk.length+' ta bo‘lim'):'bo‘lim qarzi · mijoz qarziga kirmaydi';
+    v=_kNum(C.bol); h+=_kCard(_bn,v[0],v[1],_kDelta(C.bol,pv('bol'),1),_bs,'🏭','#FFF1E6',"setHTab('qarz')");
+  }
   v=_kNum(stockVal);h+=_kCard('Ombor qiymati',v[0],v[1],'<span class="kpi-d nu">tannarx</span>',posN+' pozitsiya · tugagan '+outN,'📦','#EEF1F6',"setHTab('qoldiq')");
   v=_kNum(C.ret);   h+=_kCard('Vozvrat',v[0],v[1],_kDelta(C.ret,pv('ret'),1),C.retN+' ta qaytarish · kam '+lowN,'↩️','#FFF3E4',"setHTab('vozvrat')");
   h+='</div>';
@@ -11392,7 +11401,7 @@ html.ab-on #ktCartBar,html.ab-on #ktScanPill,html.ab-on #trDateBar,html.ab-on #s
       '<div class="cmi-row"><span>Qarz limiti</span><b>'+(c.limit?g_(c.limit)+' UZS':'<span style="color:#98A2B3">—</span>')+'</b></div>'+
       '<div class="cmi-row"><span>🎁 Bonus</span><b>'+g_(c.bonus||0)+'</b></div>'+
       '<div style="display:flex;gap:8px;margin-top:12px">'+(c.phone?'<button class="btn btn-ghost" style="flex:1" onclick="custCall(\''+c.id+'\')">📞 Qo‘ng‘iroq</button><button class="btn btn-ghost" style="flex:1" onclick="custSms(\''+c.id+'\')">✉️ SMS</button>':'')+'</div>'+
-      (ADM()?'<button class="btn" style="width:100%;margin-top:8px" onclick="_cmEditInfo()">✏️ Tahrirlash</button><div style="font-size:12px;color:#98A2B3;margin-top:6px">Ismni o‘zgartirib bo‘lmaydi — savdolar va qarz shu ism bilan bog‘langan.</div>':'');}
+      (ADM()?'<button class="btn" style="width:100%;margin-top:8px" onclick="_cmEditInfo()">✏️ Tahrirlash</button><div style="font-size:12px;color:#98A2B3;margin-top:6px">Nomni o‘zgartirish uchun yuqoridagi ism yonidagi ✏️ ni bosing.</div>':'');}
   window._cmEditInfo=function(){var c=curC();if(!c||!ADM())return;
     var ph=prompt('Telefon raqami:',c.phone||'');if(ph==null)return;
     var lm=prompt('Qarz limiti (so‘m, 0 — cheklovsiz):',String(c.limit||0));if(lm==null)return;
@@ -12050,6 +12059,104 @@ html.ab-on #ktCartBar,html.ab-on #ktScanPill,html.ab-on #trDateBar,html.ab-on #s
   try{document.addEventListener('visibilitychange',function(){
     if(document.visibilityState==='visible'){last=0;setTimeout(function(){try{srvHolat();}catch(e){}},300);}
   });}catch(e){}
+})();
+</script>
+<script>
+/* ===== Mijoz nomini to'g'rilash (eski nom bilan bog'langan savdolar yo'qolmaydi) ===== */
+(function(){ if(window._cnmW)return;window._cnmW=1;
+  var ADM=function(){return typeof _role!=='undefined'&&_role==='admin';};
+  function nrm(s){return String(s||'').toLowerCase().replace(/\s+/g,' ').trim();}
+  var _RM;                       /* eski nom -> hozirgi nom */
+  function rmap(){
+    if(_RM!==undefined)return _RM;
+    var m=null;
+    try{getCust().forEach(function(c){
+      if(c&&c.eski&&c.eski.length)c.eski.forEach(function(n){if(n&&n!==c.nom){(m=m||{})[n]=c.nom;}});
+    });}catch(e){}
+    _RM=m;return m;}
+  window._custRmap=rmap;
+
+  /* 1) 'cust' hodisasidagi eski nomlar mijoz yozuviga saqlanadi */
+  if(typeof applyEvent==='function'){var oAE=applyEvent;
+    applyEvent=function(ev){
+      var r=oAE.apply(this,arguments);
+      try{
+        if(ev&&(ev.kind==='cust'||ev.kind==='custbulk'||ev.kind==='custdel'))_RM=undefined;
+        var pl=ev&&ev.payload;
+        if(ev&&ev.kind==='cust'&&pl&&pl.eski&&pl.eski.length){
+          var g=getCust(),ch=false;
+          for(var i=0;i<g.length;i++){if(g[i].id===pl.id){
+            var e=(g[i].eski||[]).slice();
+            pl.eski.forEach(function(n){if(n&&n!==pl.nom&&e.indexOf(n)<0)e.push(n);});
+            if(e.length){g[i].eski=e;ch=true;}break;}}
+          if(ch)setCust(g);
+        }
+      }catch(e){}
+      return r;};}
+
+  /* 2) savdolarda eski nom hozirgisiga almashtirib ko'rsatiladi (hodisaga tegilmaydi) */
+  if(typeof salesLoad==='function'){var oSL=salesLoad;
+    salesLoad=function(cb){return oSL.call(this,function(a){
+      try{var m=rmap();
+        if(m&&a&&a.length){a=a.map(function(x){
+          var n=(x&&x.customer)?m[x.customer]:null;
+          if(!n)return x;
+          var y={};for(var k in x){if(x.hasOwnProperty(k))y[k]=x[k];}
+          y.customer=n;return y;});}
+      }catch(e){}
+      cb(a);});};}
+
+  /* 3) Billz tarixi eski nom bilan saqlangan bo'lsa ham topiladi */
+  if(typeof _bzGet==='function'){var oBZ=_bzGet;
+    _bzGet=function(nom,cb){return oBZ.call(this,nom,function(bz){
+      if(bz){cb(bz);return;}
+      var old=null;
+      try{getCust().forEach(function(c){if(c.nom===nom&&c.eski&&c.eski.length)old=c.eski[c.eski.length-1];});}catch(e){}
+      if(!old){cb(bz);return;}
+      oBZ.call(this,old,cb);});};}
+
+  /* 4) nomni o'zgartirish */
+  window._custRename=function(id){
+    if(!ADM()){toast('Faqat rahbar nomni o‘zgartiradi');return;}
+    var g=getCust(),c=null,i;
+    for(i=0;i<g.length;i++)if(g[i].id===id){c=g[i];break;}
+    if(!c){toast('Mijoz topilmadi');return;}
+    var n=prompt('Mijozning to‘g‘ri nomi:',c.nom||'');
+    if(n==null)return;
+    n=String(n).replace(/\s+/g,' ').trim();
+    if(!n){toast('Nom bo‘sh bo‘lmasin');return;}
+    if(n===c.nom)return;
+    for(i=0;i<g.length;i++){
+      if(g[i].id!==id&&nrm(g[i].nom)===nrm(n)){
+        if(!confirm('Shu nomli boshqa mijoz bor:\n'+g[i].nom+'\n\nBaribir shunday nomlansinmi?'))return;
+        break;}}
+    if(!confirm('Nom o‘zgartirilsinmi?\n\n'+c.nom+'\n↓\n'+n+'\n\nEski savdolari va qarzi shu mijozda qoladi.'))return;
+    var eski=(c.eski||[]).slice();
+    if(eski.indexOf(c.nom)<0)eski.push(c.nom);
+    commitEvent('cust',{id:c.id,nom:n,phone:c.phone||'',limit:c.limit||0,eski:eski});
+    _RM=undefined;
+    toast('✅ Nom o‘zgardi: '+n);
+    try{if(typeof renderMijoz==='function')renderMijoz();}catch(e){}
+    try{var t=document.getElementById('cmNom');if(t)t.textContent=n;}catch(e){}
+    try{if(typeof custDetail==='function')custDetail(id);}catch(e){}
+  };
+
+  /* 5) mijoz kartasidagi nom yoniga qalamcha */
+  if(typeof custDetail==='function'){var oCD=custDetail;
+    custDetail=function(id){
+      var r=oCD.apply(this,arguments);
+      try{setTimeout(function(){
+        if(!ADM())return;
+        var el=document.getElementById('cmNom');
+        if(!el||el.querySelector('.cm-ren'))return;
+        var b=document.createElement('span');
+        b.className='cm-ren';b.textContent='✏️';
+        b.title='Nomini to‘g‘rilash';
+        b.style.cssText='margin-left:8px;cursor:pointer;font-size:15px;vertical-align:middle';
+        b.onclick=function(ev){ev.stopPropagation();_custRename(id);};
+        el.appendChild(b);
+      },140);}catch(e){}
+      return r;};}
 })();
 </script>
 </body>
