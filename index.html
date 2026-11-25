@@ -3821,7 +3821,18 @@ function renderH_pnl(el){
   salesLoad(function(all){
     evAll(function(evs){
       var sel=all.filter(function(x){return inPeriod(x.day);});
-      var rev=0,cogs=0;sel.forEach(function(x){rev+=x.total;(x.items||[]).forEach(function(it){cogs+=(it.xarid||0)*it.qty;});});
+      var rev=0,cogs=0,gTol=0,gQarz=0;
+      sel.forEach(function(x){
+        rev+=x.total;
+        var c=0;(x.items||[]).forEach(function(it){c+=(it.xarid||0)*it.qty;});
+        cogs+=c;
+        /* shu chekning foydasi to'langan va qarzda qolgan qismga bo'linadi */
+        var f=(x.total||0)-c, t=Math.abs(x.total||0), q=0;
+        try{var pp=_payParts(x);q=Math.abs(pp.qarz||0);}catch(e){}
+        if(t<=0||q<=0){gTol+=f;}
+        else if(q>=t){gQarz+=f;}
+        else{var qd=f*(q/t);gQarz+=qd;gTol+=f-qd;}
+      });
       var gross=rev-cogs;
       var exp=0,byCat={};
       evs.forEach(function(e){if(e.kind!=='kassa'||!e.payload||e.payload.dir!=='out'||VOID[e.id])return;var d=new Date(e.ts),ds=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);if(!inPeriod(ds))return;var c=e.payload.cat||'Boshqa';byCat[c]=(byCat[c]||0)+e.payload.amount;exp+=e.payload.amount;});
@@ -3830,12 +3841,18 @@ function renderH_pnl(el){
       h+='<div class="brow"><span>Savdo (tushum)</span><b>'+grp(rev)+'</b></div>';
       h+='<div class="brow"><span>Tannarx (\u2212)</span><b style="color:#a32d2d">'+grp(cogs)+'</b></div>';
       h+='<div class="brow" style="border-top:2px solid #e5e5e5;font-weight:800"><span>Yalpi foyda</span><b style="color:#375623">'+grp(gross)+'</b></div>';
+      h+='<div class="brow" style="font-size:13px;color:#5b6b7d"><span>· to‘langan savdolardan</span><b style="color:#375623">'+grp(Math.round(gTol))+'</b></div>';
+      h+='<div class="brow" style="font-size:13px;color:#5b6b7d"><span>· qarzga berilganidan (hali pul kelmagan)</span><b style="color:#a32d2d">'+grp(Math.round(gQarz))+'</b></div>';
       h+='<div class="bhead">Xarajatlar (kassadan)</div>';
       var ck=Object.keys(byCat);
       if(!ck.length)h+='<div class="cart-empty">Xarajat yo\u2018q</div>';
       ck.sort(function(a,b){return byCat[b]-byCat[a];}).forEach(function(c){h+='<div class="brow"><span>'+esc(c)+'</span><b style="color:#a32d2d">\u2212'+grp(byCat[c])+'</b></div>';});
       if(ck.length)h+='<div class="brow" style="font-weight:700"><span>Jami xarajat</span><b style="color:#a32d2d">\u2212'+grp(exp)+'</b></div>';
       h+='<div class="brow sof" style="border-top:2px solid #1F4E79;margin-top:6px;font-weight:800;font-size:15px"><span>SOF FOYDA</span><b style="color:'+(net>=0?'#375623':'#a32d2d')+'">'+grp(net)+'</b></div>';
+      var qolga=Math.round(gTol)-exp;
+      h+='<div class="brow" style="font-size:13px;color:#5b6b7d"><span>· shundan qo‘lga tushgani</span><b style="color:'+(qolga>=0?'#375623':'#a32d2d')+'">'+grp(qolga)+'</b></div>';
+      h+='<div class="brow" style="font-size:13px;color:#5b6b7d"><span>· qarzda turgani</span><b style="color:#a32d2d">'+grp(Math.round(gQarz))+'</b></div>';
+      h+='<div style="font-size:12px;color:#98A2B3;padding:6px 4px 0">Qarzga berilgan savdoning foydasi hali pul emas — mijoz to‘lagach qo‘lga tushadi. Xarajatlar to‘langan qismdan ayirilgan.</div>';
       el.innerHTML=h;
     });
   });
