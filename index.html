@@ -10520,6 +10520,13 @@ function _nkParse(text){var out=[],jami=0;
       if(pre.length&&name)name=(name+' '+pre.join(' ')).trim();
       row={name:name,qty:tr.q,narx:tr.p,ok:true};}
     else{
+      /* "... 2 x 21509.25 =" — jami keyingi qatorga tushib ketgan.
+         Bunda oxirgi raqam JAMI emas, 1 donaning NARXI. */
+      var mEq=raw.match(/([0-9][0-9 ]*(?:[.,][0-9]+)?)\s*[xх×]\s*([0-9][0-9 ]*(?:[.,][0-9]+)?)\s*[=—–]\s*$/i);
+      if(mEq){
+        var _q1=_nkNum(mEq[1].trim().split(/\s+/)),_p1=_nkNum(mEq[2].trim().split(/\s+/));
+        if(_q1>0&&_p1>0){row={name:name,qty:_q1,narx:_p1,ok:true,raw:raw};out.push(row);return;}
+      }
       /* uchlik topilmadi — taxmin qilamiz (tekshirish kerak) */
       var dash=/[—–=]/.test(raw),cand=null;
       function put(q,p,sc){if(q>0&&p>0&&(!cand||sc>cand.sc))cand={q:q,p:p,sc:sc};}
@@ -10606,7 +10613,12 @@ function _nkR(){var bd=document.getElementById('nkBd'),ft=document.getElementByI
   if(_NK.st){h+='<div class="nk-st" id="nkSt"><span>'+esc(_NK.st.t)+'</span>'+(_NK.st.err?'':'<div class="nk-bar"><i style="width:'+(_NK.st.p||0)+'%"></i></div>')+'</div>';bd.innerHTML=h;ft.innerHTML='';return;}
   if(_NK.rows.length){var usd=_NK.cur==='usd',kk=_nkKurs();
     h+='<div class="nk-img" style="flex-wrap:wrap;gap:8px"><b style="font-size:14px">💵 Narxlar:</b><div class="nk-tools"><button style="'+(!usd?'background:#2E6BE6;color:#fff;border-color:#2E6BE6':'')+'" onclick="_NK.cur=\'uzs\';_nkR()">So‘mda</button><button style="'+(usd?'background:#2E6BE6;color:#fff;border-color:#2E6BE6':'')+'" onclick="_NK.cur=\'usd\';_nkR()">$ Dollarda</button></div>'+
-      (usd?'<label style="flex:1;min-width:150px;font-size:12px;color:#667085">Kurs (1$ = so‘m)<input id="nkKurs" inputmode="numeric" value="'+(kk?grp(kk):'')+'" placeholder="masalan 12 800" style="width:100%;box-sizing:border-box;border:1.5px solid '+(kk?'#D0D5DD':'#D92D20')+';border-radius:8px;padding:8px;font:inherit;font-size:16px;font-weight:700" oninput="_NK.kurs=_pf(this.value);try{localStorage.setItem(\'kroff_nk_kurs\',String(_NK.kurs||\'\'))}catch(e){};_nkFt()" onchange="_nkR()"></label>':'')+'</div>';}
+      (usd?'<label style="flex:1;min-width:150px;font-size:12px;color:#667085">Kurs (1$ = so‘m)<input id="nkKurs" inputmode="numeric" value="'+(kk?grp(kk):'')+'" placeholder="masalan 12 800" style="width:100%;box-sizing:border-box;border:1.5px solid '+(kk?'#D0D5DD':'#D92D20')+';border-radius:8px;padding:8px;font:inherit;font-size:16px;font-weight:700" oninput="_NK.kurs=_pf(this.value);try{localStorage.setItem(\'kroff_nk_kurs\',String(_NK.kurs||\'\'))}catch(e){};_nkFt()" onchange="_nkR()"></label>':'')+'</div>';
+    var _nst=_NK.rows.filter(function(r){return r.sot>0;}).length;
+    h+='<div class="nk-img" style="flex-wrap:wrap;gap:8px"><b style="font-size:14px">🏷️ Ustama:</b><div class="nk-tools">'+
+      [10,15,20,25,30].map(function(pc){return '<button onclick="_nkPct('+pc+')">+'+pc+'%</button>';}).join('')+
+      '<button onclick="_nkPctAsk()">Boshqa %</button>'+(_nst?'<button onclick="_nkPctOff()" style="color:#D92D20">Tozalash</button>':'')+
+      '</div><div style="flex:1;min-width:160px;font-size:12px;color:#667085">'+(_nst?(_nst+' ta tovarga sotuv narxi qo‘yildi'):'Hammasiga birdan sotuv narxi qo‘yiladi · har qatorda qo‘lda ham yozsa bo‘ladi')+'</div></div>';}
   if(_NK.img&&!_NK.ai){var gd=_NK.rows.filter(function(r){return r.ok&&r.pid;}).length;if(!_NK.rows.length||gd*2<_NK.rows.length)h+='<div class="nk-st" style="background:#F4F3FF;color:#5925DC;margin-bottom:10px">Yaxshi o‘qilmadimi? <button onclick="_nkAI()" style="margin-left:6px;border:0;background:#7A5AF8;color:#fff;border-radius:10px;padding:8px 12px;font:inherit;font-weight:800;cursor:pointer">🤖 AI bilan o‘qish</button><br><small style="font-weight:500">Qo‘lda yozilgan va xira nakladnoylarni ham o‘qiydi</small>'+(_NK.aiErr?'<div style="color:#D92D20;margin-top:6px">'+esc(_NK.aiErr)+'</div>':'')+'</div>';}
   if(!_NK.rows.length){h+='<div class="nk-st">Rasmdan tovar qatorlari topilmadi 😕<br><small style="font-weight:500;color:#667085">Rasm tekis, yorug‘ va yaqindan olinsin. Yoki “↻ Burib qayta o‘qish”ni bosing.</small></div>';
     if(_NK.text)h+='<div style="font-size:12px;color:#667085;margin:10px 2px 4px">O‘qilgan matn:</div><pre>'+esc(_NK.text)+'</pre>';}
@@ -10618,9 +10630,27 @@ function _nkR(){var bd=document.getElementById('nkBd'),ft=document.getElementByI
       (p?('📦 '+esc(p.nom)+'<small>'+(r.learn?'✅ avval tanlangan':(r.guess?'⚠️ taxminiy — tekshiring':''))+' · qoldiq '+grp(p.qoldiq||0)+' · eski tan narxi '+grp(p.xarid||0)+'</small>'):'❗ Tovar tanlang ›<small>'+esc(r.name||'nomi o‘qilmadi')+'</small>')+'</button>';
     h+='<div class="nk-n"><label>Soni<input inputmode="decimal" value="'+(r.qty||'')+'" oninput="_NK.rows['+i+'].qty=_pf(this.value);_nkFt();_nkRowSum('+i+',this)"></label>'+
       '<label>Narxi (1 dona'+(_NK.cur==='usd'?', $':'')+')<input inputmode="decimal" value="'+(r.narx?(_NK.cur==='usd'?r.narx:grp(r.narx)):'')+'" oninput="_NK.rows['+i+'].narx=_pf(this.value);_nkFt();_nkRowSum('+i+',this)"></label></div>'+
+      '<div class="nk-n"><label>Sotuv narxi (so‘m)<input inputmode="decimal" value="'+(r.sot>0?grp(r.sot):'')+'" placeholder="'+(p?grp(p.sotuv||0):'0')+'" oninput="_NK.rows['+i+'].sot=_pf(this.value);_nkSotM('+i+')"></label>'+
+      '<div id="nkM'+i+'" style="flex:1;min-width:120px;font-size:12px;color:#667085;align-self:flex-end;padding-bottom:8px"></div></div>'+
       '<div class="nk-sum">= '+(_NK.cur==='usd'?'$'+(Math.round((r.qty||0)*(r.narx||0)*100)/100)+(_nkKurs()?' · '+grp(Math.round((r.qty||0)*(r.narx||0)*_nkKurs()))+' so‘m':''):grp(Math.round((r.qty||0)*(r.narx||0))))+(r.ok?'':' <span style="color:#B54708">· tekshiring</span>')+'</div></div>';});
   if(_NK.img)h+='<button class="nk-add" onclick="_NK.rows.push({name:\'\',qty:1,narx:0,ok:false,on:true,pid:null});_NK.pick=_NK.rows.length-1;_nkR();setTimeout(function(){var q=document.getElementById(\'nkSq\');if(q)q.focus();},30)">+ Qator qo‘shish</button>';
-  bd.innerHTML=h;_nkFt();}
+  bd.innerHTML=h;_nkFt();
+  try{_NK.rows.forEach(function(r,i){if(r.sot>0)_nkSotM(i);});}catch(e){}}
+/* Ustama: tan narxga foiz qo'shib sotuv narxini belgilaydi */
+function _nkCost(r){return Math.round((r.narx||0)*(_nkRate()||1));}
+function _nkRound(v){return (v>=1000)?Math.ceil(v/100)*100:Math.ceil(v);}
+function _nkSotM(i){var r=_NK.rows[i];if(!r)return;var m=document.getElementById('nkM'+i);if(!m)return;
+  var c=_nkCost(r),sv=Math.round(r.sot||0);
+  if(!sv){m.textContent='';return;}
+  var f=sv-c;m.style.color=(f<0)?'#D92D20':'#667085';
+  m.textContent=(f<0)?('⚠️ tan narxidan past ('+grp(f)+')'):('foyda '+grp(f)+(c?(' · '+Math.round(f*100/c)+'%'):''));}
+function _nkPct(pc){var n=0;
+  _NK.rows.forEach(function(r){if(!r.on)return;var c=_nkCost(r);if(c>0){r.sot=_nkRound(c*(1+pc/100));n++;}});
+  if(!n){toast('Avval narxlarni kiriting');return;}
+  _nkR();toast('🏷️ '+n+' ta tovarga +'+pc+'% qo‘yildi');}
+function _nkPctAsk(){var v=prompt('Necha foiz ustama qo‘shilsin?','35');if(v==null)return;
+  var pc=_pf(v);if(!(pc>0)){toast('Noto‘g‘ri foiz');return;}_nkPct(pc);}
+function _nkPctOff(){_NK.rows.forEach(function(r){delete r.sot;});_nkR();toast('Sotuv narxlari tozalandi');}
 function _nkFt(){var ft=document.getElementById('nkFt');if(!ft||_NK.st)return;var s=_nkSum();if(!_NK.rows.length){ft.innerHTML='';return;}
   var need=_NK.rows.filter(function(r){return r.on&&!r.pid;}).length;
   var usd=_NK.cur==='usd',rt=_nkRate(),tt=0;_NK.rows.forEach(function(r){if(r.on&&r.pid&&r.qty>0)tt+=r.qty*(r.narx||0);});tt=Math.round(tt*100)/100;
@@ -10636,8 +10666,9 @@ function _nkPick(i,pid){var r=_NK.rows[i];if(!r)return;r.pid=pid;r.guess=false;r
 function _nkPut(){var map=_nkMap(),add=0,skip=0;
   _NK.rows.forEach(function(r){if(!r.on||!r.pid||!(r.qty>0))return;var p=findProd(r.pid);if(!p)return;
     var narx=Math.round(r.narx>0?r.narx*_nkRate():(p.xarid||0)),qty=Math.round(r.qty*1000)/1000,found=false;
-    for(var k=0;k<KCART.length;k++){if(String(KCART[k].id)===String(r.pid)){KCART[k].qty=Math.round((KCART[k].qty+qty)*1000)/1000;KCART[k].narx=narx;found=true;break;}}
-    if(!found){if(KCART.length>=30){skip++;return;}KCART.push({id:r.pid,nom:p.nom,qty:qty,narx:narx});}
+    var _sot=(r.sot>0&&Math.round(r.sot)!==(p.sotuv||0))?Math.round(r.sot):null;
+    for(var k=0;k<KCART.length;k++){if(String(KCART[k].id)===String(r.pid)){KCART[k].qty=Math.round((KCART[k].qty+qty)*1000)/1000;KCART[k].narx=narx;if(_sot)KCART[k].sot=_sot;found=true;break;}}
+    if(!found){if(KCART.length>=30){skip++;return;}var _it={id:r.pid,nom:p.nom,qty:qty,narx:narx};if(_sot)_it.sot=_sot;KCART.push(_it);}
     add++;if(r.name&&(r.manual||r.guess))map[_nkKey(r.name)]=r.pid;});
   try{localStorage.setItem(_NKMAPK,JSON.stringify(map));}catch(e){}
   try{renderKCart();}catch(e){}_nkClose();try{renderKatalog();}catch(e){}
