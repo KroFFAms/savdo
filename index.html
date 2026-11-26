@@ -10614,6 +10614,9 @@ function _nkR(){var bd=document.getElementById('nkBd'),ft=document.getElementByI
   if(_NK.rows.length){var usd=_NK.cur==='usd',kk=_nkKurs();
     h+='<div class="nk-img" style="flex-wrap:wrap;gap:8px"><b style="font-size:14px">💵 Narxlar:</b><div class="nk-tools"><button style="'+(!usd?'background:#2E6BE6;color:#fff;border-color:#2E6BE6':'')+'" onclick="_NK.cur=\'uzs\';_nkR()">So‘mda</button><button style="'+(usd?'background:#2E6BE6;color:#fff;border-color:#2E6BE6':'')+'" onclick="_NK.cur=\'usd\';_nkR()">$ Dollarda</button></div>'+
       (usd?'<label style="flex:1;min-width:150px;font-size:12px;color:#667085">Kurs (1$ = so‘m)<input id="nkKurs" inputmode="numeric" value="'+(kk?grp(kk):'')+'" placeholder="masalan 12 800" style="width:100%;box-sizing:border-box;border:1.5px solid '+(kk?'#D0D5DD':'#D92D20')+';border-radius:8px;padding:8px;font:inherit;font-size:16px;font-weight:700" oninput="_NK.kurs=_pf(this.value);try{localStorage.setItem(\'kroff_nk_kurs\',String(_NK.kurs||\'\'))}catch(e){};_nkFt()" onchange="_nkR()"></label>':'')+'</div>';
+    h+='<div class="nk-img" style="flex-wrap:wrap;gap:8px"><b style="font-size:14px">🚚 Yo‘l kira:</b>'+
+      '<label style="flex:1;min-width:150px;font-size:12px;color:#667085">so‘m<input id="nkYol" inputmode="numeric" value="'+(_NK.yol>0?grp(_NK.yol):'')+'" placeholder="0" oninput="_NK.yol=_pf(this.value);_nkYolR()" style="width:100%;box-sizing:border-box;border:1.5px solid #D0D5DD;border-radius:8px;padding:8px;font:inherit;font-size:16px;font-weight:700"></label>'+
+      '<div style="flex:1;min-width:160px;font-size:12px;color:#667085">Tovarlarga summasiga qarab bo‘linadi va tan narxiga qo‘shiladi</div></div>';
     var _nst=_NK.rows.filter(function(r){return r.sot>0;}).length;
     h+='<div class="nk-img" style="flex-wrap:wrap;gap:8px"><b style="font-size:14px">🏷️ Ustama:</b><div class="nk-tools">'+
       [10,15,20,25,30].map(function(pc){return '<button onclick="_nkPct('+pc+')">+'+pc+'%</button>';}).join('')+
@@ -10632,12 +10635,27 @@ function _nkR(){var bd=document.getElementById('nkBd'),ft=document.getElementByI
       '<label>Narxi (1 dona'+(_NK.cur==='usd'?', $':'')+')<input inputmode="decimal" value="'+(r.narx?(_NK.cur==='usd'?r.narx:grp(r.narx)):'')+'" oninput="_NK.rows['+i+'].narx=_pf(this.value);_nkFt();_nkRowSum('+i+',this)"></label></div>'+
       '<div class="nk-n"><label>Sotuv narxi (so‘m)<input inputmode="decimal" value="'+(r.sot>0?grp(r.sot):'')+'" placeholder="'+(p?grp(p.sotuv||0):'0')+'" oninput="_NK.rows['+i+'].sot=_pf(this.value);_nkSotM('+i+')"></label>'+
       '<div id="nkM'+i+'" style="flex:1;min-width:120px;font-size:12px;color:#667085;align-self:flex-end;padding-bottom:8px"></div></div>'+
+      '<div id="nkY'+i+'" style="font-size:12px;color:#B54708;margin:-4px 2px 4px"></div>'+
       '<div class="nk-sum">= '+(_NK.cur==='usd'?'$'+(Math.round((r.qty||0)*(r.narx||0)*100)/100)+(_nkKurs()?' · '+grp(Math.round((r.qty||0)*(r.narx||0)*_nkKurs()))+' so‘m':''):grp(Math.round((r.qty||0)*(r.narx||0))))+(r.ok?'':' <span style="color:#B54708">· tekshiring</span>')+'</div></div>';});
   if(_NK.img)h+='<button class="nk-add" onclick="_NK.rows.push({name:\'\',qty:1,narx:0,ok:false,on:true,pid:null});_NK.pick=_NK.rows.length-1;_nkR();setTimeout(function(){var q=document.getElementById(\'nkSq\');if(q)q.focus();},30)">+ Qator qo‘shish</button>';
   bd.innerHTML=h;_nkFt();
-  try{_NK.rows.forEach(function(r,i){if(r.sot>0)_nkSotM(i);});}catch(e){}}
+  try{_nkYolR();_NK.rows.forEach(function(r,i){if(r.sot>0)_nkSotM(i);});}catch(e){}}
 /* Ustama: tan narxga foiz qo'shib sotuv narxini belgilaydi */
-function _nkCost(r){return Math.round((r.narx||0)*(_nkRate()||1));}
+function _nkYolAdd(i){/* 1 dona uchun yo'l kira ulushi (so'm) */
+  var y=Math.round(_NK.yol||0);if(!(y>0))return 0;
+  var rt=_nkRate()||1,tot=0;
+  _NK.rows.forEach(function(x){if(x.on&&x.pid&&x.qty>0)tot+=x.qty*(x.narx||0)*rt;});
+  if(!(tot>0))return 0;
+  var r=_NK.rows[i];if(!r||!r.on||!r.pid||!(r.qty>0))return 0;
+  return (y*(r.qty*(r.narx||0)*rt)/tot)/r.qty;}
+function _nkCost(r){var i=_NK.rows.indexOf(r);return Math.round((r.narx||0)*(_nkRate()||1)+_nkYolAdd(i));}
+function _nkYolR(){try{
+  _NK.rows.forEach(function(r,i){
+    var e=document.getElementById('nkY'+i);if(!e)return;
+    var a=Math.round(_nkYolAdd(i));
+    e.textContent=a>0?('\u002b yo\u2018l '+grp(a)+'/dona \u00b7 tan narxi '+grp(_nkCost(r))):'';
+    if(r.sot>0)_nkSotM(i);
+  });}catch(e){}}
 function _nkRound(v){return (v>=1000)?Math.ceil(v/100)*100:Math.ceil(v);}
 function _nkSotM(i){var r=_NK.rows[i];if(!r)return;var m=document.getElementById('nkM'+i);if(!m)return;
   var c=_nkCost(r),sv=Math.round(r.sot||0);
@@ -10665,7 +10683,8 @@ function _nkSr(i){var q=document.getElementById('nkSq'),l=document.getElementByI
 function _nkPick(i,pid){var r=_NK.rows[i];if(!r)return;r.pid=pid;r.guess=false;r.learn=false;r.manual=true;r.on=true;_NK.pick=-1;_nkR();}
 function _nkPut(){var map=_nkMap(),add=0,skip=0;
   _NK.rows.forEach(function(r){if(!r.on||!r.pid||!(r.qty>0))return;var p=findProd(r.pid);if(!p)return;
-    var narx=Math.round(r.narx>0?r.narx*_nkRate():(p.xarid||0)),qty=Math.round(r.qty*1000)/1000,found=false;
+    var _yi=_NK.rows.indexOf(r);
+    var narx=Math.round((r.narx>0?r.narx*_nkRate():(p.xarid||0))+_nkYolAdd(_yi)),qty=Math.round(r.qty*1000)/1000,found=false;
     var _sot=(r.sot>0&&Math.round(r.sot)!==(p.sotuv||0))?Math.round(r.sot):null;
     for(var k=0;k<KCART.length;k++){if(String(KCART[k].id)===String(r.pid)){KCART[k].qty=Math.round((KCART[k].qty+qty)*1000)/1000;KCART[k].narx=narx;if(_sot)KCART[k].sot=_sot;found=true;break;}}
     if(!found){if(KCART.length>=30){skip++;return;}var _it={id:r.pid,nom:p.nom,qty:qty,narx:narx};if(_sot)_it.sot=_sot;KCART.push(_it);}
