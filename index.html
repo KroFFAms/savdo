@@ -2427,10 +2427,11 @@ function supDetail(id){var s=getSup(),sup=null;for(var i=0;i<s.length;i++)if(s[i
 function renderH_naklad(el){
   evAll(function(evs){
     var supMap={};getSup().forEach(function(s){supMap[s.id]=s.nom;});
-    var G={},order=[];
+    var G={},order=[],_YS={},_YO={};
     evs.forEach(function(e){
       if(e.kind!=='kirim'||!e.payload)return;
       var pl=e.payload;
+      _YS[e.id]=Math.abs(pl.summa||0);
       var key=pl.nak||('d'+dayStr(new Date(e.ts))+(pl.supId||'x'));
       var g=G[key];
       if(!g){g=G[key]={key:key,firstts:e.ts,supId:pl.supId||'',items:{},paid:0};order.push(key);}
@@ -2440,13 +2441,23 @@ function renderH_naklad(el){
       var it=g.items[pl.pid]||(g.items[pl.pid]={pid:pl.pid,qty:0,summa:0});
       it.qty+=(pl.qty||0);it.summa+=(pl.summa||0);
       g.paid+=(pl.paid||0);
+      _YO[e.id]=key;
+    });
+    /* yo'l kira (ykmark) \u2014 qaysi nakladnoyga tegishli bo'lsa o'shanga yoziladi */
+    evs.forEach(function(e){
+      if(e.kind!=='ykmark'||!e.payload)return;
+      var ids=e.payload.ids||[],yk=Math.round(+e.payload.yk||0);
+      if(!yk||!ids.length)return;
+      var base=0;ids.forEach(function(i){base+=_YS[i]||0;});
+      ids.forEach(function(i){var gg=G[_YO[i]];if(!gg)return;
+        gg.yol=(gg.yol||0)+(base>0?(yk*((_YS[i]||0)/base)):(yk/ids.length));});
     });
     var arr=order.map(function(k){var g=G[k];var tot=0,n=0;for(var p in g.items){tot+=g.items[p].summa;if(Math.round(g.items[p].qty*1000)!==0)n++;}g.total=tot;g.n=n;return g;})
       .filter(function(g){return inPeriod(dayStr(new Date(g.firstts)))&&g.n>0;})
       .sort(function(a,b){return b.firstts-a.firstts;});
     window._NAKLAD={};arr.forEach(function(g){window._NAKLAD[g.key]=g;});
-    var tot=0,tp=0;arr.forEach(function(g){tot+=g.total;tp+=g.paid;});
-    var h='<div class="bstat"><div class="bv">'+grp(tot)+'</div><div class="bl">Nakladnoylar \u00b7 '+arr.length+' ta \u00b7 to\u2018langan '+grp(tp)+'</div></div>';
+    var tot=0,tp=0,ty=0;arr.forEach(function(g){tot+=g.total;tp+=g.paid;ty+=(g.yol||0);});
+    var h='<div class="bstat"><div class="bv">'+grp(tot)+'</div><div class="bl">Nakladnoylar \u00b7 '+arr.length+' ta \u00b7 to\u2018langan '+grp(tp)+(ty>0?(' \u00b7 \ud83d\ude9b yo\u2018l kira '+grp(Math.round(ty))):'')+'</div></div>';
     if(!arr.length){h+=(typeof _hEmpty==='function'?_hEmpty():'<div class="cart-empty">Nakladnoy yo\u2018q</div>');el.innerHTML=h;return;}
     h+='<style>.htr.t5.nkr{grid-template-columns:.8fr 1.7fr .7fr 1.3fr 1.3fr;column-gap:8px}</style><div class="htbl"><div class="htr t5 nkr hth"><span>Sana</span><span>Ta\u2019minotchi</span><span>Tovar</span><span>Summa</span><span>Qarz</span></div>';
     arr.forEach(function(g){
@@ -11130,7 +11141,11 @@ function _nkAI(){_NK.aiErr='';if(!_NK.img||_NK.busy)return;_NK.busy=true;_NK.st=
       '<div style="font-size:16px;font-weight:800;margin-bottom:8px">\ud83d\udcc4 Nakladnoy \u2014 o\u2018zgartirish</div>'+supSel+
       '<div id="nak2Rows">'+rows+'</div>'+
       '<div class="nk2-add"><input id="nak2Q" placeholder="\u2795 Tovar qo\u2018shish \u2014 nomini yozing" oninput="_nak2S(this.value)"><div class="nk2-res" id="nak2Res"></div></div>'+
-      '<div class="nk2-tot"><span>Jami</span><span id="nak2Tot"></span></div>'+
+      '<div class="nk2-tot"><span>Tovarlar jami</span><span id="nak2Tot"></span></div>'+
+      ((g.yol>0)?('<div class="nk2-tot" style="color:#9a3412"><span>\ud83d\ude9b Yo\u2018l kira</span><span>'+F(g.yol)+'</span></div>'+
+        '<div class="nk2-tot" style="border-top:1px dashed #e5e7eb;padding-top:6px"><span>Hammasi</span><span>'+F((g.total||0)+g.yol)+'</span></div>'+
+        '<div style="font-size:11px;color:#6b7280;margin:-4px 2px 6px">Yo\u2018l kira tovarlar tannarxiga qo\u2018shilgan \u00b7 kassadan chiqim qilingan</div>'):
+        '<div style="font-size:11px;color:#6b7280;margin:2px 2px 6px">\ud83d\ude9b Yo\u2018l kira qo\u2018shilmagan \u2014 Katalog bo\u2018limidagi \u201cYo\u2018l kira (tannarxga)\u201d tugmasidan qo\u2018shiladi</div>')+
       '<div style="font-size:11px;color:#6b7280;margin:2px 2px 12px">Miqdor yoki narxni o\u2018zgartiring; \ud83d\uddd1 yoki 0 \u2014 o\u2018chadi. Qoldiq va ta\u2019minotchi qarzi o\u2018zi to\u2018g\u2018rilanadi.</div>'+
       '<div style="display:flex;gap:8px"><button type="button" onclick="var o=document.getElementById(\'nakOv\');if(o)o.remove();" style="flex:1;padding:11px;border:1px solid #e5e7eb;background:#fff;border-radius:10px;font-weight:700;cursor:pointer;font-family:inherit">Yopish</button>'+
         '<button type="button" onclick="nakladDelAll(\''+key+'\')" style="flex:1;padding:11px;border:1px solid #f0c9c9;background:#fff;color:#a32d2d;border-radius:10px;font-weight:700;cursor:pointer;font-family:inherit">\ud83d\uddd1 Bekor</button>'+
